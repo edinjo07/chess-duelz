@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <title>Admin Setup - One Time Use</title>
   <style>
     * {
@@ -170,7 +171,7 @@
   </div>
 
   <script>
-    const API_URL = window.location.origin;
+    const API_URL = window.CHESS_API;
 
     document.getElementById('setup-form').addEventListener('submit', async (e) => {
       e.preventDefault();

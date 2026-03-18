@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <title>Admin Panel - Chess Duelz</title>
   <style>
     * {
@@ -585,7 +586,7 @@
   </div>
 
   <script>
-    const API_BASE = window.location.origin;
+    const API_BASE = window.CHESS_API;
     let allUsers = [];
     let currentUser = null;
 

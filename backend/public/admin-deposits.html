@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <title>Deposit Management - Admin Panel</title>
   <style>
     * {
@@ -506,7 +507,7 @@
   </div>
 
   <script>
-    const API_URL = window.location.origin;
+    const API_URL = window.CHESS_API;
     const TOKEN_KEY = 'accessToken';
     const LOGIN_PAGE = '/admin-login';
 

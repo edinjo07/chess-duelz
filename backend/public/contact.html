@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <title>Contact Us - Chess Duelz</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -316,7 +317,7 @@
   </div>
 
   <script>
-    const API_URL = window.location.origin;
+    const API_URL = window.CHESS_API;
 
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();

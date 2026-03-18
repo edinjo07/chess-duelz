@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <title>Profile | Chess Duelz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1863,7 +1864,7 @@
   </div>
 
   <script>
-    const API_URL = window.location.origin;
+    const API_URL = window.CHESS_API;
     let userData = null;
     let tokenRefreshInterval = null;
 

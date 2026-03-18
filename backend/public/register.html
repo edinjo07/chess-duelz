@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/config.js"></script>
   <meta name="robots" content="noindex,nofollow">
   <title>Sign Up - Chess Duelz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -475,8 +476,7 @@
   </main>
 
   <script>
-    // Automatically use the correct API base URL
-    const API_BASE = window.location.origin;
+    const API_BASE = window.CHESS_API;
     const API = {
       register: API_BASE + '/register'
     };

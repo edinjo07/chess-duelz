@@ -2302,7 +2302,7 @@ async function syncBalanceToServer(outcome, betAmount, potAmount) {
   const potDollars = (potAmount / 100).toFixed(2);
   
   try {
-    const response = await fetch('http://localhost:3000/chess/update-balance', {
+    const response = await fetch((window.CHESS_API || 'http://localhost:3000') + '/chess/update-balance', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -2386,7 +2386,7 @@ async function handleRegister() {
     authMessage.textContent = '⏳ Creating account...';
     authMessage.style.color = '#ffaa00';
     
-    const response = await fetch('http://localhost:3000/api/auth/register', {
+    const response = await fetch((window.CHESS_API || 'http://localhost:3000') + '/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: user, password: pass, balance: bal })
@@ -6765,13 +6765,13 @@ function maybeEngineReply(){
 /* ===== History & persistence ===== */
 async function saveMatchHistoryExtended(rec){
   try{ const key='history:'+username; const arr=JSON.parse(localStorage.getItem(key)||'[]'); arr.unshift(rec); localStorage.setItem(key, JSON.stringify(arr.slice(0,50))); }catch(_){}
-  try{ const res=await fetch('http://localhost:3000/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,result:rec.result,outcome:rec.outcome,opponent:rec.opponent,rating:rec.rating,bet:rec.bet,ts:rec.ts})}); const data=await res.json(); if(data&&typeof data.balance==='number'){ balance=data.balance; updateBalanceUI(); } }catch(_){}
+  try{ const res=await fetch((window.CHESS_API||'http://localhost:3000')+'/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,result:rec.result,outcome:rec.outcome,opponent:rec.opponent,rating:rec.rating,bet:rec.bet,ts:rec.ts})}); const data=await res.json(); if(data&&typeof data.balance==='number'){ balance=data.balance; updateBalanceUI(); } }catch(_){}
   renderMatchHistory();
 }
 async function renderMatchHistory(){
   const box=document.getElementById('matchHistory'); if(!username){ box.textContent=''; return; }
   try{
-    const res=await fetch(`http://localhost:3000/history/${username}`);
+    const res=await fetch(`${window.CHESS_API||'http://localhost:3000'}/history/${username}`);
     if(res.ok){
       const history=await res.json();
       // ⛔ REPLACE this:
