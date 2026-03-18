@@ -387,6 +387,25 @@ db.query('SELECT current_database() AS db', (err, rows) => {
   }
   console.log(`✅ Connected to PostgreSQL database: ${rows[0].db}`);
   initializeDatabase();
+  // Ensure chess_user_stats exists independently (critical for /chess/user/stats)
+  pool.query(`
+    CREATE TABLE IF NOT EXISTS chess_user_stats (
+      user_id BIGINT PRIMARY KEY,
+      elo_rating INT DEFAULT 1500,
+      games_played INT DEFAULT 0,
+      games_won INT DEFAULT 0,
+      games_lost INT DEFAULT 0,
+      games_drawn INT DEFAULT 0,
+      total_winnings DECIMAL(10,2) DEFAULT 0.00,
+      total_losses DECIMAL(10,2) DEFAULT 0.00,
+      best_win_streak INT DEFAULT 0,
+      current_win_streak INT DEFAULT 0,
+      last_played_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).then(() => console.log('✅ chess_user_stats ensured'))
+    .catch(e => console.error('⚠️  chess_user_stats ensure failed:', e.message));
 });
 
 // Auto-initialize database tables (Supabase PostgreSQL)
