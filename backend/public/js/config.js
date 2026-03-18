@@ -4,7 +4,7 @@
 window.CHESS_API = (function () {
   // Replace the string below with your Railway app URL, e.g.:
   // return 'https://chess-duelz-production.up.railway.app';
-  var railwayUrl = 'https://YOUR_RAILWAY_APP.up.railway.app';
+  var railwayUrl = 'https://chess-duelz-production.up.railway.app';
 
   // Fallback to same-origin when running locally
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
