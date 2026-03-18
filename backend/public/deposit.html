@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
-  :root{--bg:#0f1115;--panel:#171a21;--panel2:#1e232d;--text:#e9eef5;--muted:#9aa4b2;--accent:#2bb1ff;--border:#2a3140;--success:#2ecc71;--warn:#ffb020;--danger:#ff5c5c}
+  :root{--bg:#0f1115;--panel:#171a21;--panel2:#1e232d;--text:#e9eef5;--muted:#9aa4b2;--accent:#d4af37;--border:#2a3140;--success:#2ecc71;--warn:#ffb020;--danger:#ff5c5c}
   *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,sans-serif}
   .wrap{max-width:1180px;margin:0 auto;padding:24px}h1{margin:0 0 14px;font-size:22px;display:flex;align-items:center;gap:12px}
   .grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:1200px){.grid{grid-template-columns:1fr 1fr}}
@@ -52,8 +53,8 @@
 <body>
 <div class="wrap">
   <h1>
-    <span>💰 Deposit Crypto</span>
-    <button onclick="window.location.href='/dashboard.html'" class="btn" style="margin-left:auto;font-size:13px">← Back</button>
+    <i class="fa-solid fa-coins" style="color:var(--accent)"></i> Deposit Crypto
+    <button onclick="window.location.href='/dashboard.html'" class="btn" style="margin-left:auto;font-size:13px"><i class="fa-solid fa-arrow-left"></i> Back</button>
   </h1>
 
   <div id="auth-error" class="alert alert-error" style="display:none">

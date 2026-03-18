@@ -8,10 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e232d; --text:#e9eef5;
-    --muted:#9aa4b2; --accent:#2bb1ff; --border:#2a3140;
+    --muted:#9aa4b2; --accent:#d4af37; --border:#2a3140;
     --success:#2ecc71; --warn:#ffb020; --danger:#ff5c5c;
   }
   *{box-sizing:border-box}
@@ -35,12 +36,12 @@
   .btn{background:#11151c;border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;transition:all 0.2s;width:100%}
   .btn:hover{border-color:#3a4254}
   .btn:disabled{opacity:0.5;cursor:not-allowed}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#00121e}
-  .btn.primary:hover:not(:disabled){background:#1fc5ff}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#0a0800}
+  .btn.primary:hover:not(:disabled){background:#e6c76a}
   .kv{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin-top:12px}
   .kv .k{color:var(--muted)}
   .kv .v{justify-self:end;text-align:right;font-weight:600}
-  .balance-box{background:rgba(43,177,255,.08);border:1px solid rgba(43,177,255,.2);border-radius:10px;padding:12px;margin:12px 0}
+  .balance-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:12px;margin:12px 0}
   .balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
   .balance-value{font-size:24px;font-weight:700;color:var(--accent);margin-top:4px}
   .info-box{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.2);border-radius:10px;padding:12px;margin-top:12px}
@@ -50,8 +51,8 @@
   .history-row:last-child{margin-bottom:0}
   .badge{display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
   .badge-pending{background:rgba(255,176,32,.15);color:var(--warn)}
-  .badge-approved{background:rgba(43,177,255,.15);color:var(--accent)}
-  .badge-sending{background:rgba(43,177,255,.2);color:var(--accent)}
+  .badge-approved{background:rgba(212,175,55,.15);color:var(--accent)}
+  .badge-sending{background:rgba(212,175,55,.2);color:var(--accent)}
   .badge-sent{background:rgba(46,204,113,.15);color:var(--success)}
   .badge-failed{background:rgba(255,92,92,.15);color:var(--danger)}
   .badge-rejected{background:rgba(255,92,92,.2);color:var(--danger)}
@@ -68,8 +69,8 @@
 <body>
 <div class="wrap">
   <h1 style="display:flex;align-items:center;justify-content:space-between">
-    <span>💸 Withdraw Crypto</span>
-    <button onclick="window.location.href='/dashboard.html'" class="btn" style="width:auto;padding:8px 16px;font-size:13px">← Back to Dashboard</button>
+    <span><i class="fa-solid fa-money-bill-wave" style="color:var(--accent)"></i> Withdraw Crypto</span>
+    <button onclick="window.location.href='/dashboard.html'" class="btn" style="width:auto;padding:8px 16px;font-size:13px"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
   </h1>
 
   <div class="grid">

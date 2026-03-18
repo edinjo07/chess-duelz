@@ -83,6 +83,7 @@ window.onGameEnded = function(data) {
   
   // Update balance from server (convert dollars to cents!)
   balance = Math.round(data.newBalance * 100); // Server sends dollars, we need cents
+  sessionStorage.setItem('balance', parseFloat(data.newBalance).toFixed(2));
   updateBalanceUI();
   
   // Stop the game
