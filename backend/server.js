@@ -1185,7 +1185,7 @@ app.post('/api/admin/login', async (req, res) => {
     return res.status(400).json({ error: 'Username and password required' });
   }
   try {
-    const [rows] = await pool.query(
+    const { rows } = await pool.query(
       'SELECT id, username, password_hash FROM admins WHERE username = $1 LIMIT 1',
       [username]
     );
@@ -1234,13 +1234,13 @@ app.post('/api/admin/create-first', async (req, res) => {
     return res.status(400).json({ error: 'Username and password (min 8 chars) required' });
   }
   try {
-    const [existing] = await pool.query('SELECT COUNT(*) AS cnt FROM admins');
-    if (parseInt(existing[0].cnt) > 0) {
+    const { rows: existingRows } = await pool.query('SELECT COUNT(*) AS cnt FROM admins');
+    if (parseInt(existingRows[0].cnt) > 0) {
       return res.status(403).json({ error: 'Admin accounts already exist. Use the admin panel to create more.' });
     }
     const hash = await bcrypt.hash(password, 12);
-    const [result] = await pool.query(
-      'INSERT INTO admins (username, password_hash) VALUES ($1, $2) RETURNING id',
+    await pool.query(
+      'INSERT INTO admins (username, password_hash) VALUES ($1, $2)',
       [username, hash]
     );
     console.log(`[ADMIN] First admin created: ${username} from IP: ${getClientIP(req)}`);
