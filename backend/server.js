@@ -5,7 +5,7 @@ const path = require('path');
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const mysql = require('mysql2');
+const { db, pool } = require('./pool');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -365,415 +365,283 @@ app.post('/api/save-css', (req, res) => {
 });
 
 // ---------- DB ----------
-const dbConfig = {
-  host:     process.env.DB_HOST || 'localhost',
-  user:     process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || process.env.DB_PASS || 'Italy101!@',
-  database: process.env.DB_NAME || 'treasure_hunt',
-  port:     process.env.DB_PORT || 3306,
-  // Connection pool settings for better reliability
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-  connectTimeout: 60000
-};
-
-// Add SSL for Aiven - use fallback if certificate not found
-if (process.env.DB_HOST?.includes('aivencloud.com')) {
-  try {
-    const caPath = path.join(__dirname, 'ca-certificate.pem');
-    if (fs.existsSync(caPath)) {
-      dbConfig.ssl = {
-        ca: fs.readFileSync(caPath),
-        rejectUnauthorized: true
-      };
-      console.log('✅ Using Aiven CA certificate');
-    } else {
-      console.log('⚠️ CA certificate not found, using fallback SSL');
-      dbConfig.ssl = { rejectUnauthorized: false };
-    }
-  } catch (err) {
-    console.log('⚠️ SSL setup error, using fallback:', err.message);
-    dbConfig.ssl = { rejectUnauthorized: false };
-  }
-}
-
-// Use connection pool instead of single connection for better reliability
-const dbPool = mysql.createPool(dbConfig);
-const db = dbPool;
-
-// Test database connection
-dbPool.getConnection((err, connection) => {
+// PostgreSQL via Supabase — pool is imported from pool.js at the top.
+// Verify connectivity and auto-initialise tables on startup.
+db.query('SELECT current_database() AS db', (err, rows) => {
   if (err) {
-    console.error('DB connect error:', err);
+    console.error('❌ DB connect error:', err.message);
     process.exit(1);
   }
-  
-  connection.query('SELECT DATABASE() AS db', (e, r) => {
-    if (e) {
-      console.error('DB check error:', e);
-      connection.release();
-      process.exit(1);
-    }
-    
-    console.log(`Connected to MySQL database: ${r[0].db}`);
-    connection.release();
-    
-    // Auto-initialize database tables on first run
-    initializeDatabase();
-  });
+  console.log(`✅ Connected to PostgreSQL database: ${rows[0].db}`);
+  initializeDatabase();
 });
 
-// Handle pool errors
-dbPool.on('error', (err) => {
-  console.error('Database pool error:', err);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    console.error('Database connection lost. Pool will automatically reconnect.');
+// Auto-initialize database tables (Supabase PostgreSQL)
+async function initializeDatabase() {
+  console.log('🔍 Initializing Supabase PostgreSQL tables...');
+  const run = (sql) => pool.query(sql);
+
+  try {
+    // ── users ─────────────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        balance DECIMAL(10,2) DEFAULT 0.00,
+        currency VARCHAR(3) DEFAULT 'USD',
+        dob DATE,
+        phone VARCHAR(20),
+        referral_code VARCHAR(50),
+        language VARCHAR(10) DEFAULT 'en',
+        is_admin BOOLEAN DEFAULT FALSE,
+        reset_token VARCHAR(255),
+        reset_token_expiration TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users(reset_token)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_users_is_admin ON users(is_admin)`);
+    const userCols = [
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(50)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10) DEFAULT 'en'`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiration TIMESTAMP`,
+    ];
+    for (const sql of userCols) { try { await run(sql); } catch (_) {} }
+    console.log('✅ users table ready');
+
+    // ── withdrawals ───────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS withdrawals (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL,
+        asset VARCHAR(10) NOT NULL,
+        network VARCHAR(32) NOT NULL,
+        to_address VARCHAR(128) NOT NULL,
+        amount_atomic DECIMAL(65,0) NOT NULL,
+        fee_atomic DECIMAL(65,0) DEFAULT 0,
+        status VARCHAR(20) DEFAULT 'requested',
+        provider VARCHAR(32) DEFAULT 'nowpayments',
+        provider_payout_id VARCHAR(128),
+        provider_batch_id VARCHAR(128),
+        txid VARCHAR(128),
+        rejection_reason TEXT,
+        internal_note TEXT,
+        approved_by BIGINT,
+        approved_at TIMESTAMP,
+        sent_by BIGINT,
+        sent_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        completed_at TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_withdrawals_user_id ON withdrawals(user_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_withdrawals_status ON withdrawals(status)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_withdrawals_created_at ON withdrawals(created_at)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_withdrawals_approved_by ON withdrawals(approved_by)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_withdrawals_sent_by ON withdrawals(sent_by)`);
+    const wdCols = [
+      `ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS approved_by BIGINT`,
+      `ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP`,
+      `ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS sent_by BIGINT`,
+      `ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS sent_at TIMESTAMP`,
+      `ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS internal_notes TEXT`,
+    ];
+    for (const sql of wdCols) { try { await run(sql); } catch (_) {} }
+    console.log('✅ withdrawals table ready');
+
+    // ── chess_statistics ──────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS chess_statistics (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL,
+        games_played INT DEFAULT 0,
+        games_won INT DEFAULT 0,
+        games_lost INT DEFAULT 0,
+        games_drawn INT DEFAULT 0,
+        win_rate DECIMAL(5,2) DEFAULT 0.00,
+        total_winnings DECIMAL(10,2) DEFAULT 0.00,
+        total_losses DECIMAL(10,2) DEFAULT 0.00,
+        current_streak INT DEFAULT 0,
+        best_streak INT DEFAULT 0,
+        elo_rating INT DEFAULT 1200,
+        last_played TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_stats_user_id ON chess_statistics(user_id)`);
+    console.log('✅ chess_statistics table ready');
+
+    // ── chess_games ───────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS chess_games (
+        id SERIAL PRIMARY KEY,
+        room_id VARCHAR(100) UNIQUE NOT NULL,
+        white_player_id INT,
+        black_player_id INT,
+        white_username VARCHAR(50),
+        black_username VARCHAR(50),
+        stake DECIMAL(10,2) DEFAULT 0.00,
+        currency VARCHAR(3) DEFAULT 'USD',
+        status VARCHAR(20) DEFAULT 'waiting',
+        winner_id INT,
+        winner_username VARCHAR(50),
+        result VARCHAR(20),
+        pgn TEXT,
+        final_fen TEXT,
+        time_control INT DEFAULT 600,
+        white_time INT DEFAULT 600,
+        black_time INT DEFAULT 600,
+        move_count INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        started_at TIMESTAMP,
+        completed_at TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_room_id ON chess_games(room_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_white ON chess_games(white_player_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_black ON chess_games(black_player_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_status ON chess_games(status)`);
+    console.log('✅ chess_games table ready');
+
+    // ── chess_game_moves ──────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS chess_game_moves (
+        id SERIAL PRIMARY KEY,
+        game_id INT NOT NULL,
+        move_number INT NOT NULL,
+        player_id INT NOT NULL,
+        move_san VARCHAR(10) NOT NULL,
+        move_from VARCHAR(5),
+        move_to VARCHAR(5),
+        fen_after TEXT,
+        time_spent INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_moves_game_id ON chess_game_moves(game_id)`);
+    console.log('✅ chess_game_moves table ready');
+
+    // ── crypto_deposits ───────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS crypto_deposits (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        payment_id VARCHAR(255) UNIQUE,
+        order_id VARCHAR(255),
+        pay_currency VARCHAR(20),
+        pay_address VARCHAR(255),
+        price_amount DECIMAL(20,8),
+        price_currency VARCHAR(10) DEFAULT 'USD',
+        pay_amount DECIMAL(20,8),
+        amount_received DECIMAL(20,8) DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'waiting',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_deposits_user_id ON crypto_deposits(user_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_deposits_payment_id ON crypto_deposits(payment_id)`);
+    console.log('✅ crypto_deposits table ready');
+
+    // ── kyc_documents ─────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS kyc_documents (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        document_type VARCHAR(50) NOT NULL,
+        file_url TEXT,
+        status VARCHAR(20) DEFAULT 'pending',
+        rejection_reason TEXT,
+        reviewed_by INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_kyc_user_id ON kyc_documents(user_id)`);
+    console.log('✅ kyc_documents table ready');
+
+    // ── ledger_entries ────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS ledger_entries (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        amount DECIMAL(20,8) NOT NULL,
+        balance_before DECIMAL(20,8),
+        balance_after DECIMAL(20,8),
+        reference_id VARCHAR(255),
+        reference_type VARCHAR(50),
+        description TEXT,
+        metadata JSONB,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_ledger_user_id ON ledger_entries(user_id)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_ledger_type ON ledger_entries(type)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_ledger_created_at ON ledger_entries(created_at)`);
+    console.log('✅ ledger_entries table ready');
+
+    // ── balance_adjustments ───────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS balance_adjustments (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL,
+        admin_id BIGINT NOT NULL,
+        amount DECIMAL(20,8) NOT NULL,
+        reason TEXT,
+        ledger_entry_id BIGINT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_bal_adj_user_id ON balance_adjustments(user_id)`);
+    console.log('✅ balance_adjustments table ready');
+
+    // ── responsible_gaming_limits ─────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS responsible_gaming_limits (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL,
+        deposit_limit_daily DECIMAL(10,2),
+        deposit_limit_weekly DECIMAL(10,2),
+        deposit_limit_monthly DECIMAL(10,2),
+        loss_limit_daily DECIMAL(10,2),
+        loss_limit_weekly DECIMAL(10,2),
+        loss_limit_monthly DECIMAL(10,2),
+        session_time_limit INT,
+        self_exclusion_until TIMESTAMP,
+        cooldown_until TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ responsible_gaming_limits table ready');
+
+    // ── refresh_tokens ────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        token_hash VARCHAR(255) UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens(user_id)`);
+    console.log('✅ refresh_tokens table ready');
+
+    console.log('✅ All database tables initialized successfully');
+  } catch (err) {
+    console.error('❌ Database initialization error:', err.message);
   }
-});
-
-// Auto-initialize database tables
-function initializeDatabase() {
-  const fs = require('fs');
-  const sqlPath = path.join(__dirname, 'chess-integration.sql');
-  
-  // Check if users table exists
-  db.query("SHOW TABLES LIKE 'users'", (err, results) => {
-    if (err) {
-      console.error('Error checking tables:', err);
-      return;
-    }
-    
-    if (results.length === 0) {
-      console.log('📋 Initializing database tables...');
-      
-      // Create users table first
-      const createUsers = `
-        CREATE TABLE IF NOT EXISTS users (
-          id INT PRIMARY KEY AUTO_INCREMENT,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          username VARCHAR(50) UNIQUE NOT NULL,
-          password VARCHAR(255) NOT NULL,
-          balance DECIMAL(10,2) DEFAULT 0.00,
-          currency VARCHAR(3) DEFAULT 'USD',
-          dob DATE,
-          phone VARCHAR(20),
-          referral_code VARCHAR(50),
-          language VARCHAR(10) DEFAULT 'en',
-          is_admin BOOLEAN DEFAULT FALSE,
-          reset_token VARCHAR(255),
-          reset_token_expiration DATETIME,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          INDEX idx_username (username),
-          INDEX idx_email (email),
-          INDEX idx_reset_token (reset_token),
-          INDEX idx_is_admin (is_admin)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-      `;
-      
-      db.query(createUsers, (err) => {
-        if (err) {
-          console.error('Error creating users table:', err);
-          return;
-        }
-        console.log('✅ Users table created');
-        
-        // Now run chess integration SQL
-        if (fs.existsSync(sqlPath)) {
-          const sql = fs.readFileSync(sqlPath, 'utf8');
-          db.query(sql, (err) => {
-            if (err) {
-              console.error('Error creating chess tables:', err);
-            } else {
-              console.log('✅ Chess tables created successfully!');
-            }
-          });
-        }
-      });
-    } else {
-      console.log('✅ Database tables already initialized');
-      
-      // Ensure columns exist (migration for existing tables)
-      const migrations = [
-        { name: 'phone', sql: "ALTER TABLE users ADD COLUMN phone VARCHAR(20)" },
-        { name: 'referral_code', sql: "ALTER TABLE users ADD COLUMN referral_code VARCHAR(50)" },
-        { name: 'language', sql: "ALTER TABLE users ADD COLUMN language VARCHAR(10) DEFAULT 'en'" },
-        { name: 'is_admin', sql: "ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE" },
-        { name: 'is_admin_index', sql: "ALTER TABLE users ADD INDEX idx_is_admin (is_admin)" },
-        { name: 'reset_token', sql: "ALTER TABLE users ADD COLUMN reset_token VARCHAR(255)" },
-        { name: 'reset_token_expiration', sql: "ALTER TABLE users ADD COLUMN reset_token_expiration DATETIME" },
-        { name: 'reset_token_index', sql: "ALTER TABLE users ADD INDEX idx_reset_token (reset_token)" }
-      ];
-      
-      migrations.forEach(({ name, sql }) => {
-        db.query(sql, (err) => {
-          if (err) {
-            if (err.code === 'ER_DUP_FIELDNAME' || err.code === 'ER_DUP_KEYNAME') {
-              // Column/Index already exists, this is fine
-            } else {
-              console.error(`Error adding ${name} column:`, err.message);
-            }
-          } else {
-            console.log(`✅ Added ${name} column to users table`);
-          }
-        });
-      });
-      
-      // Also ensure chess tables exist
-      console.log('🔍 Checking chess tables...');
-      db.query("SHOW TABLES LIKE 'chess_statistics'", (err, results) => {
-        if (err) {
-          console.error('Error checking chess tables:', err);
-          return;
-        }
-        
-        if (results.length === 0 && fs.existsSync(sqlPath)) {
-          console.log('📋 Creating chess tables...');
-          const sql = fs.readFileSync(sqlPath, 'utf8');
-          db.query(sql, (err) => {
-            if (err) {
-              console.error('Error creating chess tables:', err);
-            } else {
-              console.log('✅ Chess tables created successfully!');
-            }
-          });
-        } else {
-          console.log('✅ Chess tables already exist');
-        }
-      });
-
-      // Ensure withdrawals table exists (CRITICAL for admin withdrawals)
-      console.log('🔍 Checking withdrawals table...');
-      db.query("SHOW TABLES LIKE 'withdrawals'", (err, results) => {
-        if (err) {
-          console.error('Error checking withdrawals table:', err);
-          return;
-        }
-        
-        if (results.length === 0) {
-          console.log('📋 Creating withdrawals table...');
-          const createWithdrawals = `
-            CREATE TABLE IF NOT EXISTS withdrawals (
-              id BIGINT AUTO_INCREMENT PRIMARY KEY,
-              user_id BIGINT NOT NULL,
-              asset ENUM('BTC','ETH','USDT','USDC','LTC','DOGE','TRX') NOT NULL,
-              network VARCHAR(32) NOT NULL,
-              to_address VARCHAR(128) NOT NULL,
-              amount_atomic DECIMAL(65,0) NOT NULL,
-              fee_atomic DECIMAL(65,0) DEFAULT 0,
-              status ENUM('requested','approved','creating','sending','completed','rejected','failed','canceled') DEFAULT 'requested',
-              provider VARCHAR(32) DEFAULT 'nowpayments',
-              provider_payout_id VARCHAR(128),
-              provider_batch_id VARCHAR(128),
-              txid VARCHAR(128),
-              rejection_reason TEXT,
-              internal_note TEXT,
-              approved_by BIGINT,
-              sent_by BIGINT,
-              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-              completed_at TIMESTAMP NULL,
-              INDEX idx_user_id (user_id),
-              INDEX idx_status (status),
-              INDEX idx_created_at (created_at),
-              INDEX idx_asset (asset),
-              INDEX idx_network (network),
-              INDEX idx_approved_by (approved_by),
-              INDEX idx_sent_by (sent_by)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-          `;
-          
-          db.query(createWithdrawals, (err) => {
-            if (err) {
-              console.error('❌ Error creating withdrawals table:', err);
-            } else {
-              console.log('✅ Withdrawals table created successfully!');
-            }
-          });
-        } else {
-          console.log('✅ Withdrawals table already exists');
-        }
-      });
-
-      // Ensure Candyfall tables exist
-      console.log('🔍 Checking Candyfall tables...');
-      const candyfallSchemaPath = path.join(__dirname, 'database', 'slots-schema.sql');
-      db.query("SHOW TABLES LIKE 'candyfall_history'", (err, results) => {
-        if (err) {
-          console.error('Error checking Candyfall tables:', err);
-          return;
-        }
-        
-        if (results.length === 0 && fs.existsSync(candyfallSchemaPath)) {
-          console.log('📋 Creating Candyfall tables...');
-          const candyfallSql = fs.readFileSync(candyfallSchemaPath, 'utf8');
-          db.query(candyfallSql, (err) => {
-            if (err) {
-              console.error('Error creating Candyfall tables:', err);
-            } else {
-              console.log('✅ Candyfall tables created successfully!');
-            }
-          });
-        } else {
-          console.log('✅ Candyfall tables already exist');
-        }
-      });
-
-      // Ensure KYC tables exist
-      console.log('🔍 Checking KYC tables...');
-      const kycSchemaPath = path.join(__dirname, 'database', 'kyc_schema.sql');
-      db.query("SHOW TABLES LIKE 'kyc_documents'", (err, results) => {
-        if (err) {
-          console.error('Error checking KYC tables:', err);
-          return;
-        }
-        
-        if (results.length === 0 && fs.existsSync(kycSchemaPath)) {
-          console.log('📋 Creating KYC tables...');
-          const kycSql = fs.readFileSync(kycSchemaPath, 'utf8');
-          // Execute each statement separately since MySQL doesn't support IF NOT EXISTS for ALTER TABLE
-          const statements = kycSql.split(';').filter(stmt => stmt.trim());
-          let completed = 0;
-          statements.forEach(statement => {
-            if (statement.trim()) {
-              db.query(statement, (err) => {
-                completed++;
-                if (err) {
-                  if (err.code === 'ER_DUP_FIELDNAME' || err.code === 'ER_DUP_KEYNAME') {
-                    // Column/Index already exists
-                  } else {
-                    console.error('Error in KYC migration:', err.message);
-                  }
-                }
-                if (completed === statements.length) {
-                  console.log('✅ KYC tables created successfully!');
-                }
-              });
-            }
-          });
-        } else {
-          console.log('✅ KYC tables already exist');
-        }
-      });
-
-      // Ensure Responsible Gaming tables exist
-      console.log('🔍 Checking Responsible Gaming tables...');
-      const rgSchemaPath = path.join(__dirname, 'database', 'responsible_gaming_schema.sql');
-      db.query("SHOW TABLES LIKE 'responsible_gaming_limits'", (err, results) => {
-        if (err) {
-          console.error('Error checking Responsible Gaming tables:', err);
-          return;
-        }
-        
-        if (results.length === 0 && fs.existsSync(rgSchemaPath)) {
-          console.log('📋 Creating Responsible Gaming tables...');
-          const rgSql = fs.readFileSync(rgSchemaPath, 'utf8');
-          const statements = rgSql.split(';').filter(stmt => stmt.trim());
-          let completed = 0;
-          statements.forEach(statement => {
-            if (statement.trim()) {
-              db.query(statement, (err) => {
-                completed++;
-                if (err) {
-                  if (err.code === 'ER_DUP_FIELDNAME' || err.code === 'ER_DUP_KEYNAME' || err.code === 'ER_TABLE_EXISTS_ERROR') {
-                    // Already exists
-                  } else {
-                    console.error('Error in Responsible Gaming migration:', err.message);
-                  }
-                }
-                if (completed === statements.length) {
-                  console.log('✅ Responsible Gaming tables created successfully!');
-                }
-              });
-            }
-          });
-        } else {
-          console.log('✅ Responsible Gaming tables already exist');
-        }
-      });
-
-      // Ensure Ledger tables exist (CRITICAL for balance integrity)
-      console.log('🔍 Checking Ledger tables...');
-      const ledgerSchemaPath = path.join(__dirname, 'database', 'ledger_entries_schema.sql');
-      db.query("SHOW TABLES LIKE 'ledger_entries'", (err, results) => {
-        if (err) {
-          console.error('Error checking Ledger tables:', err);
-          return;
-        }
-        
-        if (results.length === 0 && fs.existsSync(ledgerSchemaPath)) {
-          console.log('📋 Creating Ledger tables...');
-          const ledgerSql = fs.readFileSync(ledgerSchemaPath, 'utf8');
-          db.query(ledgerSql, (err) => {
-            if (err) {
-              console.error('Error creating Ledger tables:', err);
-            } else {
-              console.log('✅ Ledger tables created successfully!');
-              
-              // Add ledger_entry_id to balance_adjustments if needed
-              db.query("SHOW COLUMNS FROM balance_adjustments LIKE 'ledger_entry_id'", (err, cols) => {
-                if (!err && cols.length === 0) {
-                  db.query(`
-                    ALTER TABLE balance_adjustments 
-                    ADD COLUMN ledger_entry_id BIGINT NULL,
-                    ADD KEY idx_ledger_entry (ledger_entry_id)
-                  `, (err) => {
-                    if (err && err.code !== 'ER_DUP_FIELDNAME') {
-                      console.error('Error adding ledger_entry_id column:', err);
-                    } else {
-                      console.log('✅ Added ledger_entry_id to balance_adjustments');
-                    }
-                  });
-                }
-              });
-            }
-          });
-        } else {
-          console.log('✅ Ledger tables already exist');
-        }
-      });
-
-      // Ensure Withdrawal 2-step columns exist
-      console.log('🔍 Checking Withdrawal 2-step columns...');
-      db.query("SHOW COLUMNS FROM withdrawals LIKE 'approved_by'", (err, cols) => {
-        if (err) {
-          console.error('Error checking Withdrawal columns:', err);
-          return;
-        }
-        
-        if (cols.length === 0) {
-          console.log('📋 Adding Withdrawal 2-step columns...');
-          const alterStatements = [
-            "ALTER TABLE withdrawals ADD COLUMN approved_by BIGINT NULL AFTER status",
-            "ALTER TABLE withdrawals ADD COLUMN approved_at TIMESTAMP NULL AFTER approved_by",
-            "ALTER TABLE withdrawals ADD COLUMN sent_by BIGINT NULL AFTER approved_at",
-            "ALTER TABLE withdrawals ADD COLUMN sent_at TIMESTAMP NULL AFTER sent_by",
-            "ALTER TABLE withdrawals ADD COLUMN txid VARCHAR(128) NULL AFTER sent_at",
-            "ALTER TABLE withdrawals ADD COLUMN internal_notes TEXT NULL AFTER txid",
-            "ALTER TABLE withdrawals ADD KEY idx_approved_by (approved_by)",
-            "ALTER TABLE withdrawals ADD KEY idx_sent_by (sent_by)"
-          ];
-          
-          let completed = 0;
-          alterStatements.forEach(statement => {
-            db.query(statement, (err) => {
-              completed++;
-              if (err && err.code !== 'ER_DUP_FIELDNAME' && err.code !== 'ER_DUP_KEYNAME') {
-                console.error('Error in Withdrawal migration:', err.message);
-              }
-              if (completed === alterStatements.length) {
-                console.log('✅ Withdrawal 2-step columns added successfully!');
-              }
-            });
-          });
-        } else {
-          console.log('✅ Withdrawal 2-step columns already exist');
-        }
-      });
-    }
-  });
 }
 
 // Make database available to routes
@@ -5323,116 +5191,3 @@ server.listen(PORT, async () => {
 
 
 
-
-// Manual migration endpoint (temporary - remove after use)
-app.get('/admin/run-chess-migration', (req, res) => {
-  const fs = require('fs');
-  const sqlPath = path.join(__dirname, 'chess-integration.sql');
-  
-  if (!fs.existsSync(sqlPath)) {
-    return res.status(404).json({ error: 'Migration file not found' });
-  }
-  
-  let sql = fs.readFileSync(sqlPath, 'utf8');
-  
-  // Remove all SQL comments (-- style)
-  sql = sql.replace(/--[^\n]*/g, '');
-  
-  // Split on semicolons and clean up
-  const statements = sql
-    .split(';')
-    .map(s => s.trim().replace(/\s+/g, ' '))
-    .filter(s => s.length > 10);
-  
-  let executed = 0;
-  let errors = [];
-  
-  const executeNext = (index) => {
-    if (index >= statements.length) {
-      if (errors.length > 0) {
-        return res.json({ success: false, errors, executed });
-      }
-      return res.json({ success: true, message: 'Chess tables created!', executed });
-    }
-    
-    const stmt = statements[index];
-    
-    db.query(stmt, (err) => {
-      if (err && err.code !== 'ER_TABLE_EXISTS_ERROR' && err.code !== 'ER_DUP_KEYNAME') {
-        console.error(`SQL Error at statement ${index}:`, err.message);
-        errors.push({ index, error: err.message, code: err.code, sql: stmt.substring(0, 100) });
-      } else {
-        executed++;
-      }
-      executeNext(index + 1);
-    });
-  };
-  
-  executeNext(0);
-});
-
-// Treasure Picks Migration Endpoint
-app.get('/admin/run-treasure-migration', (req, res) => {
-  const sql1 = `CREATE TABLE IF NOT EXISTS treasure_sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    island_key VARCHAR(50) DEFAULT NULL,
-    status ENUM('active', 'completed', 'cancelled') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP NULL DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
-  
-  const sql2 = `CREATE TABLE IF NOT EXISTS treasure_picks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    session_id INT NOT NULL,
-    number INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES treasure_sessions(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_pick (session_id, number)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
-  
-  const sql3 = `CREATE TABLE IF NOT EXISTS treasure_draws (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    draw_number INT NOT NULL UNIQUE,
-    winning_numbers JSON NOT NULL,
-    draw_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
-  
-  const sql4 = `CREATE TABLE IF NOT EXISTS treasure_wins (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    session_id INT NOT NULL,
-    user_id INT NOT NULL,
-    draw_id INT NOT NULL,
-    matched_numbers INT NOT NULL,
-    prize_amount DECIMAL(10,2) DEFAULT 0.00,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES treasure_sessions(id) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
-  
-  const statements = [sql1, sql2, sql3, sql4];
-  let executed = 0;
-  let errors = [];
-  
-  const executeNext = (index) => {
-    if (index >= statements.length) {
-      if (errors.length > 0) {
-        return res.json({ success: false, errors, executed });
-      }
-      return res.json({ success: true, message: 'Treasure tables created successfully!', executed, tables: ['treasure_sessions', 'treasure_picks', 'treasure_draws', 'treasure_wins'] });
-    }
-    
-    db.query(statements[index], (err) => {
-      if (err && err.code !== 'ER_TABLE_EXISTS_ERROR' && err.code !== 'ER_DUP_KEYNAME') {
-        console.error(`SQL Error at statement ${index}:`, err.message);
-        errors.push({ index, error: err.message, code: err.code });
-      } else {
-        executed++;
-      }
-      executeNext(index + 1);
-    });
-  };
-  
-  executeNext(0);
-});
