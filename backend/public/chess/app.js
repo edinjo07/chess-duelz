@@ -7223,7 +7223,7 @@ async function fetchUserStats() {
   }
   
   try {
-    const response = await fetch(window.location.origin + '/chess/user/stats', {
+    const response = await fetch(window.CHESS_API + '/chess/user/stats', {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${authToken}` }
     });

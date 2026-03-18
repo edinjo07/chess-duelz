@@ -2,7 +2,7 @@
 :root{--glow:#22ff99;--bg:#061a14;--headerH:70px;--sidebarW:180px;--logoW:clamp(150px,16vw,260px);--panelW:clamp(240px,26vw,360px);--gap:18px;--btn:#0f2b22;--btnBorder:rgba(34,255,153,.35);--btnText:#e7fff4;--card:#0b2019;--border:rgba(34,255,153,.28);--danger:#ff5050;--good:#22ff99;--nav-bg:rgba(6,26,20,0.98);--nav-border:rgba(34,255,153,.2);}
 *{box-sizing:border-box} 
 html,body{height:100%;margin:0;padding:0;}
-body{background:url('/assets/background.png') center top/cover fixed no-repeat,var(--bg);color:#e8fff7;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{background:url('assets/background.png') center top/cover fixed no-repeat,var(--bg);color:#e8fff7;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
 
 /* Main content wrapper */
 .main-content-wrapper {
