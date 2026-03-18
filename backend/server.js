@@ -45,6 +45,8 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 4000;
 const JWT_ACCESS_SECRET  = process.env.JWT_ACCESS_SECRET  || 'your_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_refresh_secret_key';
+// Separate secret for admin JWTs — must differ from player JWT secrets
+const ADMIN_JWT_SECRET   = process.env.ADMIN_JWT_SECRET   || 'admin_secret_change_me_in_production';
 
 // If you serve the frontend from this server, FRONTEND_URL should be this server's origin
 // (e.g. http://localhost:4000). If your frontend is elsewhere, set it accordingly.
@@ -406,6 +408,18 @@ db.query('SELECT current_database() AS db', (err, rows) => {
     )
   `).then(() => console.log('✅ chess_user_stats ensured'))
     .catch(e => console.error('⚠️  chess_user_stats ensure failed:', e.message));
+
+  // Ensure admins table exists independently (separate from player users)
+  pool.query(`
+    CREATE TABLE IF NOT EXISTS admins (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(50) UNIQUE NOT NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      last_login TIMESTAMP
+    )
+  `).then(() => console.log('✅ admins table ensured'))
+    .catch(e => console.error('⚠️  admins table ensure failed:', e.message));
 });
 
 // Auto-initialize database tables (Supabase PostgreSQL)
@@ -582,6 +596,19 @@ async function initializeDatabase() {
     `);
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_user_stats_user_id ON chess_user_stats(user_id)`);
     console.log('✅ chess_user_stats table ready');
+
+    // ── admins ────────────────────────────────────────────────────────
+    // Separate table for admin accounts — never connected to the game/balance system
+    await run(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMP
+      )
+    `);
+    console.log('✅ admins table ready');
 
     // ── crypto_deposits ───────────────────────────────────────────────
     await run(`
@@ -1128,6 +1155,105 @@ function ipAllowlist(req, res, next) {
   next();
 }
 
+// Separate admin token middleware — admin JWTs use ADMIN_JWT_SECRET, NOT the player JWT secret.
+// A regular player token (even with isAdmin:true) will be rejected here.
+function verifyAdminToken(req, res, next) {
+  const header = req.header('Authorization') || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return res.status(403).json({ error: 'Admin token missing' });
+
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    if (!decoded.isAdminToken) {
+      return res.status(403).json({ error: 'Forbidden: Not a valid admin token' });
+    }
+    // Expose as both req.admin and req.user so adminAuth middleware still works
+    req.admin = decoded;
+    req.user = { userId: decoded.adminId, username: decoded.username, isAdmin: true, isSuperAdmin: true };
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired admin token' });
+  }
+}
+
+// ============ ADMIN AUTH ENDPOINTS ============
+
+// POST /api/admin/login — dedicated admin login (queries `admins` table, issues ADMIN_JWT_SECRET token)
+app.post('/api/admin/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, username, password_hash FROM admins WHERE username = $1 LIMIT 1',
+      [username]
+    );
+    if (!rows || rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const admin = rows[0];
+    const match = await bcrypt.compare(password, admin.password_hash);
+    if (!match) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    // Update last_login
+    pool.query('UPDATE admins SET last_login = NOW() WHERE id = $1', [admin.id]).catch(() => {});
+
+    const token = jwt.sign(
+      { adminId: admin.id, username: admin.username, isAdminToken: true },
+      ADMIN_JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+    console.log(`[ADMIN LOGIN] ${admin.username} (ID: ${admin.id}) from IP: ${getClientIP(req)}`);
+    res.json({ token, admin: { id: admin.id, username: admin.username } });
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/admin/me — verify admin token and return admin info
+app.get('/api/admin/me', verifyAdminToken, (req, res) => {
+  res.json({ id: req.admin.adminId, username: req.admin.username });
+});
+
+// POST /api/admin/create-first — one-time setup to create first admin account
+// Only works when admins table is empty; requires ADMIN_SETUP_SECRET env var
+app.post('/api/admin/create-first', async (req, res) => {
+  const SETUP_SECRET = process.env.ADMIN_SETUP_SECRET;
+  if (!SETUP_SECRET) {
+    return res.status(403).json({ error: 'ADMIN_SETUP_SECRET not configured on server' });
+  }
+  const { username, password, setupSecret } = req.body;
+  if (setupSecret !== SETUP_SECRET) {
+    console.warn(`[SECURITY] Invalid admin create-first attempt from IP: ${getClientIP(req)}`);
+    return res.status(403).json({ error: 'Invalid setup secret' });
+  }
+  if (!username || !password || password.length < 8) {
+    return res.status(400).json({ error: 'Username and password (min 8 chars) required' });
+  }
+  try {
+    const [existing] = await pool.query('SELECT COUNT(*) AS cnt FROM admins');
+    if (parseInt(existing[0].cnt) > 0) {
+      return res.status(403).json({ error: 'Admin accounts already exist. Use the admin panel to create more.' });
+    }
+    const hash = await bcrypt.hash(password, 12);
+    const [result] = await pool.query(
+      'INSERT INTO admins (username, password_hash) VALUES ($1, $2) RETURNING id',
+      [username, hash]
+    );
+    console.log(`[ADMIN] First admin created: ${username} from IP: ${getClientIP(req)}`);
+    res.json({ success: true, message: `Admin '${username}' created successfully.` });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Username already taken' });
+    }
+    console.error('Admin create-first error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // --- Profile route (protected) ---
 app.get('/profile', verifyToken, (req, res) => {
   const userId = req.user.userId;
@@ -1498,7 +1624,7 @@ app.post('/api/profile/close-account', verifyToken, (req, res) => {
 // ============================ ADMIN API ROUTES ============================
 
 // Get all users (admin only)
-app.get('/admin/users', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('users.view'), (req, res) => {
+app.get('/admin/users', verifyAdminToken, adminAuth.requirePermission('users.view'), (req, res) => {
   try {
     // Log the action (non-blocking)
     if (req.user && req.user.userId && req.user.username) {
@@ -1529,7 +1655,7 @@ app.get('/admin/users', verifyToken, adminAuth.requireAdmin, adminAuth.requirePe
 });
 
 // Update user (admin only) - BALANCE EDITS DISABLED, use /api/admin/ledger/balance/adjust instead
-app.put('/admin/users/:userId', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('users.edit'), (req, res) => {
+app.put('/admin/users/:userId', verifyAdminToken, adminAuth.requirePermission('users.edit'), (req, res) => {
   const { userId } = req.params;
   const { email, currency, phone, balance } = req.body;
   
@@ -1598,7 +1724,7 @@ app.put('/admin/users/:userId', verifyToken, adminAuth.requireAdmin, adminAuth.r
     });
   });
 });// Get all chess games (admin only)
-app.get('/admin/games', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('system.view'), (req, res) => {
+app.get('/admin/games', verifyAdminToken, adminAuth.requirePermission('system.view'), (req, res) => {
   logAdminAction(req.user.userId, req.user.username, 'VIEW_ALL_GAMES', { ip: getClientIP(req) });
   
   db.query(
@@ -1623,7 +1749,7 @@ app.get('/admin/games', verifyToken, adminAuth.requireAdmin, adminAuth.requirePe
 });
 
 // Delete chess game (admin only)
-app.delete('/admin/games/:gameId', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('system.manage'), (req, res) => {
+app.delete('/admin/games/:gameId', verifyAdminToken, adminAuth.requirePermission('system.manage'), (req, res) => {
   const { gameId } = req.params;
   
   logAdminAction(req.user.userId, req.user.username, 'DELETE_GAME', { gameId, ip: getClientIP(req) });
@@ -1649,7 +1775,7 @@ app.delete('/admin/games/:gameId', verifyToken, adminAuth.requireAdmin, adminAut
 });
 
 // Cleanup inactive users (admin only)
-app.post('/admin/cleanup/inactive-users', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('users.delete'), (req, res) => {
+app.post('/admin/cleanup/inactive-users', verifyAdminToken, adminAuth.requirePermission('users.delete'), (req, res) => {
   logAdminAction(req.user.userId, req.user.username, 'CLEANUP_INACTIVE_USERS', { ip: getClientIP(req) });
   
   // This is a placeholder - define your own "inactive" criteria
@@ -1657,7 +1783,7 @@ app.post('/admin/cleanup/inactive-users', verifyToken, adminAuth.requireAdmin, a
 });
 
 // Cleanup old games (admin only)
-app.delete('/admin/cleanup/old-games', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('system.manage'), (req, res) => {
+app.delete('/admin/cleanup/old-games', verifyAdminToken, adminAuth.requirePermission('system.manage'), (req, res) => {
   const { days } = req.query;
   const daysAgo = parseInt(days) || 30;
   
@@ -1679,7 +1805,7 @@ app.delete('/admin/cleanup/old-games', verifyToken, adminAuth.requireAdmin, admi
 });
 
 // Reset balances (admin only - DANGEROUS!)
-app.post('/admin/reset-balances', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('balance.adjust'), (req, res) => {
+app.post('/admin/reset-balances', verifyAdminToken, adminAuth.requirePermission('balance.adjust'), (req, res) => {
   logAdminAction(req.user.userId, req.user.username, 'RESET_BALANCES_ATTEMPT', { ip: getClientIP(req) });
   
   // This is a dangerous operation, so just return info for now
@@ -2612,7 +2738,7 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
   }
 );
 
-app.delete('/admin/users/:userId', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('users.delete'), (req, res) => {
+app.delete('/admin/users/:userId', verifyAdminToken, adminAuth.requirePermission('users.delete'), (req, res) => {
   const { userId } = req.params;
   
   console.log('Admin deleting user:', userId, 'by admin:', req.user.userId);
@@ -2677,7 +2803,7 @@ app.use('/api/kyc', kycRoutes);
 // ============ ENHANCED ADMIN ROUTES WITH RBAC ============
 
 // Admin audit logs routes
-app.get('/api/admin/audit-logs', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('audit.view'), (req, res) => {
+app.get('/api/admin/audit-logs', verifyAdminToken, adminAuth.requirePermission('audit.view'), (req, res) => {
   const { startDate, endDate, userId, action, limit = 100, offset = 0 } = req.query;
   
   let query = 'SELECT * FROM admin_audit_logs WHERE 1=1';
@@ -2719,7 +2845,7 @@ app.get('/api/admin/audit-logs', verifyToken, adminAuth.requireAdmin, adminAuth.
 });
 
 // Security events routes
-app.get('/api/admin/security-events', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('audit.view'), (req, res) => {
+app.get('/api/admin/security-events', verifyAdminToken, adminAuth.requirePermission('audit.view'), (req, res) => {
   const { severity, resolved, userId, limit = 100, offset = 0 } = req.query;
   
   let query = 'SELECT * FROM security_events WHERE 1=1';
@@ -2757,11 +2883,11 @@ app.get('/api/admin/security-events', verifyToken, adminAuth.requireAdmin, admin
 });
 
 // Balance adjustment ledger routes
-const adminLedgerRoutes = require('./routes/admin-ledger')(db, verifyToken, adminAuth.requireAdmin);
+const adminLedgerRoutes = require('./routes/admin-ledger')(db, verifyAdminToken, adminAuth.requireAdmin);
 app.use('/api/admin/ledger', adminLedgerRoutes);
 
 // Admin deposit management routes
-const adminDepositsRoutes = require('./routes/admin-deposits')(db, verifyToken, requireAdmin);
+const adminDepositsRoutes = require('./routes/admin-deposits')(db, verifyAdminToken, requireAdmin);
 app.use('/api/admin/deposits', adminDepositsRoutes);
 
 // Admin risk and fraud management routes
@@ -2793,7 +2919,7 @@ const adminMonitoringLogsRoutes = require('./routes/admin-monitoring-logs')(db, 
 app.use('/api/admin/monitoring', adminMonitoringLogsRoutes);
 
 // Admin management routes
-const adminManagementRoutes = require('./routes/admin-management')(db, verifyToken, requireAdmin);
+const adminManagementRoutes = require('./routes/admin-management')(db, verifyAdminToken, requireAdmin);
 app.use('/api/admin', adminManagementRoutes);
 
 // NOWPayments deposit routes (new)
@@ -2813,7 +2939,7 @@ const adminWithdrawRouter = require('./routes/admin_withdraw');
 app.use('/api/admin', adminWithdrawRouter);
 
 // Admin withdrawal management routes (2-step approval flow)
-const adminWithdrawalsRoutes = require('./routes/admin-withdrawals')(db, verifyToken, adminAuth.requireAdmin);
+const adminWithdrawalsRoutes = require('./routes/admin-withdrawals')(db, verifyAdminToken, adminAuth.requireAdmin);
 app.use('/api/admin/withdrawals', adminWithdrawalsRoutes);
 
 // NOWPayments Payout IPN webhook (new)
@@ -4199,7 +4325,7 @@ app.get('/api/rates', async (req, res) => {
 // ========== ADMIN WITHDRAWAL ENDPOINTS ==========
 
 // Get pending withdrawals (admin only)
-app.get('/api/admin/withdrawals/pending', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('withdrawals.view'), async (req, res) => {
+app.get('/api/admin/withdrawals/pending', verifyAdminToken, adminAuth.requirePermission('withdrawals.view'), async (req, res) => {
   try {
     const withdrawals = await withdrawalHandler.getPendingWithdrawals();
     
@@ -4231,7 +4357,7 @@ app.get('/api/admin/withdrawals/pending', verifyToken, adminAuth.requireAdmin, a
 // The modular route in routes/admin-withdrawals.js is more feature-complete
 // and handles the 2-step approval flow properly
 /*
-app.get('/api/admin/withdrawals', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('withdrawals.view'), async (req, res) => {
+app.get('/api/admin/withdrawals', verifyAdminToken, adminAuth.requirePermission('withdrawals.view'), async (req, res) => {
   try {
     const { status, userId, startDate, endDate, limit = 100, offset = 0 } = req.query;
     
@@ -4291,7 +4417,7 @@ app.get('/api/admin/withdrawals', verifyToken, adminAuth.requireAdmin, adminAuth
 */
 
 // Approve withdrawal (admin only) - DOES NOT AUTO-SEND
-app.post('/api/admin/withdraw/approve/:id', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('withdrawals.approve'), async (req, res) => {
+app.post('/api/admin/withdraw/approve/:id', verifyAdminToken, adminAuth.requirePermission('withdrawals.approve'), async (req, res) => {
   try {
     const withdrawalId = parseInt(req.params.id);
     const { internalNote } = req.body;
@@ -4396,7 +4522,7 @@ app.post('/api/admin/withdraw/approve/:id', verifyToken, adminAuth.requireAdmin,
 });
 
 // Send funds for approved withdrawal (admin only) - SEPARATE ACTION
-app.post('/api/admin/withdraw/send/:id', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('withdrawals.send'), async (req, res) => {
+app.post('/api/admin/withdraw/send/:id', verifyAdminToken, adminAuth.requirePermission('withdrawals.send'), async (req, res) => {
   try {
     const withdrawalId = parseInt(req.params.id);
     const { confirmationCode, internalNote } = req.body; // Could require 2FA code here
@@ -4488,7 +4614,7 @@ app.post('/api/admin/withdraw/send/:id', verifyToken, adminAuth.requireAdmin, ad
 });
 
 // Reject withdrawal (admin only)
-app.post('/api/admin/withdraw/reject/:id', verifyToken, adminAuth.requireAdmin, adminAuth.requirePermission('withdrawals.reject'), async (req, res) => {
+app.post('/api/admin/withdraw/reject/:id', verifyAdminToken, adminAuth.requirePermission('withdrawals.reject'), async (req, res) => {
   try {
     const withdrawalId = parseInt(req.params.id);
     const { reason } = req.body;

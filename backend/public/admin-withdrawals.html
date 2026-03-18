@@ -155,10 +155,10 @@ const API_URL = window.CHESS_API;
 let currentFilter = 'pending';
 let currentRejectId = null;
 
-// Check authentication - check both accessToken (OAuth) and token (regular login)
-const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+// Check authentication
+const token = localStorage.getItem('adminToken');
 if (!token) {
-  window.location.href = '/login.html';
+  window.location.href = '/admin-login';
 }
 
 // Load withdrawals on page load
@@ -190,7 +190,7 @@ async function loadWithdrawals() {
     if (!res.ok) {
       if (res.status === 403) {
         alert('Admin access required');
-        window.location.href = '/login.html';
+        window.location.href = '/admin-login';
         return;
       }
       throw new Error('Failed to load withdrawals');

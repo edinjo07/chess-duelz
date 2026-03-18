@@ -590,15 +590,12 @@
     let allUsers = [];
     let currentUser = null;
 
-    // Get auth token - try admin-prefixed first, then regular
+    // Get admin token — admins use a dedicated key, never the player session token
     function getAuthToken() {
-      return localStorage.getItem('admin_accessToken') || 
-             sessionStorage.getItem('admin_accessToken') ||
-             localStorage.getItem('accessToken') || 
-             sessionStorage.getItem('accessToken');
+      return localStorage.getItem('adminToken');
     }
 
-    // Check authentication
+    // Check authentication via /api/admin/me (admin-only endpoint)
     async function checkAuth() {
       const token = getAuthToken();
       if (!token) {
@@ -607,7 +604,7 @@
       }
 
       try {
-        const response = await fetch(`${API_BASE}/profile`, {
+        const response = await fetch(`${API_BASE}/api/admin/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -615,15 +612,8 @@
           throw new Error('Not authenticated');
         }
 
-        const profile = await response.json();
-        currentUser = profile;
-
-        // Check if user is admin
-        if (!profile.isAdmin) {
-          console.error('User is not an admin');
-          window.location.href = '/admin-login';
-          return false;
-        }
+        const admin = await response.json();
+        currentUser = admin;
         return true;
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -889,10 +879,7 @@
     document.getElementById('editUserForm').addEventListener('submit', saveUserChanges);
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('accessToken');
-      sessionStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      sessionStorage.removeItem('refreshToken');
+      localStorage.removeItem('adminToken');
       window.location.href = '/admin-login';
     });
 
