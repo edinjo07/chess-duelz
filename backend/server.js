@@ -55,7 +55,20 @@ const EMAIL_USER = process.env.EMAIL_USER || 'your-email@gmail.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || 'your-app-password';
 
 // ---------- MIDDLEWARE ----------
-app.use(cors({ origin: true, credentials: true }));
+const ALLOWED_ORIGINS = [
+  'https://chess-duelz.vercel.app',
+  'http://localhost:4000',
+  'http://localhost:3000',
+  FRONTEND_URL
+].filter(Boolean);
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static frontend from /public
