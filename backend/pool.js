@@ -1,10 +1,10 @@
-'use strict';
-// pool.js — PostgreSQL (Supabase) connection pool with mysql2 callback compatibility
+﻿'use strict';
+// pool.js - PostgreSQL (Supabase) connection pool with mysql2 callback compatibility
 // Allows existing db.query(sql, params, callback) code to work unchanged.
 
 const { Pool } = require('pg');
 
-// Strip sslmode from the URL — newer pg versions parse sslmode=require as verify-full
+// Strip sslmode from the URL - newer pg versions parse sslmode=require as verify-full
 // which rejects Supabase's certificate chain. We handle SSL via the explicit ssl option.
 const _rawDbUrl = process.env.DATABASE_URL || '';
 const _dbUrl = _rawDbUrl
@@ -108,7 +108,7 @@ const db = {
       });
   },
 
-  // db.getConnection(callback) — for transaction support
+  // db.getConnection(callback) - for transaction support
   getConnection(callback) {
     pool.connect((err, client, release) => {
       if (err) return callback(err);

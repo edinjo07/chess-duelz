@@ -1,4 +1,4 @@
-// /app.js
+﻿// /app.js
 console.log('[APP.JS] Loading...');
 
 /* ===== SESSION AUTHENTICATION ===== */
@@ -3834,7 +3834,7 @@ function switchClock(){
 function applyIncrementForSide(color){
   const inc=1000; if(color==='w') wMillis+=inc; else bMillis+=inc; updateClockUI();
 }
-function flag(side){ stopClock(); (side==='w'?wClockEl:bClockEl).classList.add('flag'); statusMsg.textContent=(side==='w')?'White flagged — Black wins on time':'Black flagged — White wins on time'; sFlag(); endMatch(true); }
+function flag(side){ stopClock(); (side==='w'?wClockEl:bClockEl).classList.add('flag'); statusMsg.textContent=(side==='w')?'White flagged - Black wins on time':'Black flagged - White wins on time'; sFlag(); endMatch(true); }
 
 // Update player headers to show correct player in correct position based on color
 function updatePlayerHeaders() {
@@ -3995,7 +3995,7 @@ function pickBotIdUnique(){
 }
 
 function seedAvatar(el, seedStr){
-  // keep your nice gradient avatar — seed by numeric id
+  // keep your nice gradient avatar - seed by numeric id
   const h = [...seedStr].reduce((a,c)=>a+c.charCodeAt(0),0);
   const c1 = `hsl(${h%360} 70% 35%)`;
   const c2 = `hsl(${(h*7)%360} 70% 55%)`;
@@ -5258,7 +5258,7 @@ duelBtn.addEventListener('click', async ()=>{
     active=null; updateClockUI();
     wClockEl.style.display='flex'; bClockEl.style.display='flex'; movesBox.style.display='block'; matchResult.textContent='';
 
-  statusMsg.textContent=`Bullet 1+1 — You’re playing vs ${opponent.name}.`;
+  statusMsg.textContent=`Bullet 1+1 - You’re playing vs ${opponent.name}.`;
   matchStarted = true;
   
   // Start tracking game in database
@@ -5436,7 +5436,7 @@ function showResultBanner(outcome, potCents, payoutCents){
   // Set the class and message
   toast.className = 'toast ' + (outcome || 'draw');
   toastMessage.textContent = (outcome === 'win' ? 'YOU WON' : 'YOU ' + (outcome === 'lose' ? 'LOST' : 'DREW')) + 
-    ` — POT ${fmt(potCents)}  •  Payout ${fmt(payoutCents)}`;
+    ` - POT ${fmt(potCents)}  •  Payout ${fmt(payoutCents)}`;
   
   // Show/hide rematch button based on if it was a multiplayer game
   const lastGame = window.lastGameInfo;
@@ -5717,7 +5717,7 @@ async function endMatch(flagged=false, forceOutcome=null){
 
 
   if(activeOverride){ finalizeAdminHistory(username, outcome); activeOverride=null; hideOppRating=false; }
-  const ts=new Date().toISOString(); const rec={opponent:opponent?opponent.name:'—',rating:opponent?opponent.rating:'—',bet:stake/100,result:matchResult.textContent,outcome,ts}; saveMatchHistoryExtended(rec);
+  const ts=new Date().toISOString(); const rec={opponent:opponent?opponent.name:'-',rating:opponent?opponent.rating:'-',bet:stake/100,result:matchResult.textContent,outcome,ts}; saveMatchHistoryExtended(rec);
   setPot(0);
   rig=null;
   hidePlatformFee();
@@ -6778,7 +6778,7 @@ async function renderMatchHistory(){
       // if(Array.isArrayArray(history)&&history.length){
       // ✅ WITH this:
       if (Array.isArray(history) && history.length){
-        box.innerHTML=history.slice(0,10).map(m=>`<div>vs <b>${m.opponent||'Player'}</b> — $${m.bet||'?'} — ${m.result} <span class="note">(${new Date(m.ts||Date.now()).toLocaleString()})</span></div>`).join('');
+        box.innerHTML=history.slice(0,10).map(m=>`<div>vs <b>${m.opponent||'Player'}</b> - $${m.bet||'?'} - ${m.result} <span class="note">(${new Date(m.ts||Date.now()).toLocaleString()})</span></div>`).join('');
         return;
       }
     }
@@ -6786,7 +6786,7 @@ async function renderMatchHistory(){
   try{
     const key='history:'+username;
     const arr=JSON.parse(localStorage.getItem(key)||'[]');
-    box.innerHTML=arr.slice(0,10).map(m=>`<div>vs <b>${m.opponent}</b> — $${m.bet} — ${m.result} <span class="note">(${new Date(m.ts).toLocaleString()})</span></div>`).join('');
+    box.innerHTML=arr.slice(0,10).map(m=>`<div>vs <b>${m.opponent}</b> - $${m.bet} - ${m.result} <span class="note">(${new Date(m.ts).toLocaleString()})</span></div>`).join('');
   }catch(_){ box.textContent=''; }
 }
 
@@ -6853,7 +6853,7 @@ function abort(){
   if(plies===0){
     stopClock(); matchStarted=false; balance+=stake; updateBalanceUI();
     matchResult.className='result draw'; matchResult.textContent='Game aborted. Bet returned.';
-    const ts=new Date().toISOString(); const rec={opponent:opponent?opponent.name:'—',rating:opponent?opponent.rating:'—',bet:stake/100,result:'Game aborted. Bet returned.',outcome:'abort',ts}; saveMatchHistoryExtended(rec);
+    const ts=new Date().toISOString(); const rec={opponent:opponent?opponent.name:'-',rating:opponent?opponent.rating:'-',bet:stake/100,result:'Game aborted. Bet returned.',outcome:'abort',ts}; saveMatchHistoryExtended(rec);
     setPot(0);
   }else{
     statusMsg.textContent='Abort after first move: you forfeit your stake.';

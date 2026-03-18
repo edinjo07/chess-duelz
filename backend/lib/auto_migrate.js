@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Auto-migration for NOWPayments database tables (PostgreSQL)
  * This runs automatically when the server starts
  */
@@ -105,7 +105,7 @@ async function autoMigrate() {
   } catch (error) {
     console.error('[Migration] ❌ Migration failed:', error.message);
     console.error('[Migration] DATABASE_URL set:', !!process.env.DATABASE_URL);
-    // Don't throw — let server continue even if migration fails
+    // Don't throw - let server continue even if migration fails
   }
 }
 

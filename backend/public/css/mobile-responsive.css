@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Mobile & Tablet Responsive Styles
  * Treasure Hunt Platform
  * Optimized for devices 320px - 1024px
@@ -479,7 +479,7 @@
   }
 
   .tr > div[data-label]::before {
-    content: attr(data-label) ' — ';
+    content: attr(data-label) ' - ';
     color: var(--text-muted, #888) !important;
     font-weight: 600 !important;
   }

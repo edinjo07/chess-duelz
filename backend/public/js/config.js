@@ -1,4 +1,4 @@
-// Chess Duelz — Backend API URL
+﻿// Chess Duelz - Backend API URL
 // Update this to your Railway backend URL when you deploy.
 // All frontend pages load this file from <head> to get window.CHESS_API.
 window.CHESS_API = (function () {
