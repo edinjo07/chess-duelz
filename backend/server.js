@@ -1012,10 +1012,10 @@ function logAdminAction(userId, username, action, details = {}) {
   );
 }
 
-// Create admin_audit_logs table if it doesn't exist (unified table name)
+// Create admin_audit_logs table if it doesn't exist
 db.query(`
   CREATE TABLE IF NOT EXISTS admin_audit_logs (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGSERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     username VARCHAR(50) NOT NULL,
     action VARCHAR(100) NOT NULL,
@@ -1023,24 +1023,26 @@ db.query(`
     resource_id VARCHAR(100),
     old_value TEXT,
     new_value TEXT,
-    details JSON,
+    details JSONB,
     ip_address VARCHAR(45),
     user_agent TEXT,
-    status ENUM('success', 'failed', 'pending') DEFAULT 'success',
+    status VARCHAR(16) DEFAULT 'success',
     error_message TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_user_id (user_id),
-    INDEX idx_action (action),
-    INDEX idx_resource (resource_type, resource_id),
-    INDEX idx_created_at (created_at),
-    INDEX idx_status (status)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
 `, (err) => {
-  if (err && err.code !== 'ER_TABLE_EXISTS_ERROR') {
+  if (err) {
     console.error('Error creating admin_audit_logs table:', err.message);
   } else {
     console.log('✅ Admin audit logs table ready');
   }
+  // Create indexes separately (idempotent)
+  ['CREATE INDEX IF NOT EXISTS idx_aal_user_id ON admin_audit_logs(user_id)',
+   'CREATE INDEX IF NOT EXISTS idx_aal_action ON admin_audit_logs(action)',
+   'CREATE INDEX IF NOT EXISTS idx_aal_resource ON admin_audit_logs(resource_type, resource_id)',
+   'CREATE INDEX IF NOT EXISTS idx_aal_created_at ON admin_audit_logs(created_at)',
+   'CREATE INDEX IF NOT EXISTS idx_aal_status ON admin_audit_logs(status)'
+  ].forEach(sql => db.query(sql, () => {}));
 });
 
 // ============================ PROTECTED ============================

@@ -4,10 +4,16 @@
 
 const { Pool } = require('pg');
 
+// Strip sslmode from the URL — newer pg versions parse sslmode=require as verify-full
+// which rejects Supabase's certificate chain. We handle SSL via the explicit ssl option.
+const _rawDbUrl = process.env.DATABASE_URL || '';
+const _dbUrl = _rawDbUrl
+  .replace(/([?&])sslmode=[^&]*/g, '$1')
+  .replace(/[?&]$/, '')
+  .replace(/\?&/, '?');
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // rejectUnauthorized:false required for Supabase pooler — pg parses sslmode=require
-  // from the connection string as verify-full in newer versions, which rejects the cert chain.
+  connectionString: _dbUrl,
   ssl: { rejectUnauthorized: false },
   max: 10,
   idleTimeoutMillis: 30000,
