@@ -1,0 +1,10 @@
+# KYC Document Uploads
+
+This directory stores user-uploaded KYC documents.
+
+**Security:**
+- Files are only accessible via authenticated API endpoints
+- Direct file access is blocked by server configuration
+- Filenames are randomized for security
+
+**Do not delete this directory.**

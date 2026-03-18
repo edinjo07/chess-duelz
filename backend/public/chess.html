@@ -1,0 +1,210 @@
+<!-- /index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <title>Treasure Chess Duels — Fixed (Green Classic)</title>
+  <link rel="stylesheet" href="styles.css?v=5"/>
+</head>
+<body>
+  <!-- Professional Navigation Header -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="logo-section">
+        <div>
+          <h1 class="logo-text">⚔️ Chess Duels</h1>
+          <div class="game-status" id="gameStatus">Ready to Play</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-center">
+      <div class="pot-info" id="potInfo" style="display: none;">
+        <div class="pot-info-content">
+          <span class="pot-label">Prize Pool</span>
+          <span class="pot-value" id="navPotAmount">$0.00</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="user-section">
+        <div class="balance-display" id="navBalance">$100.00</div>
+        <div class="user-menu" id="userMenu">
+          <span class="user-name" id="navUsername">Guest</span>
+          <div class="user-avatar" id="navAvatar">👤</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper (everything below nav) -->
+  <div class="main-content-wrapper">
+    <canvas id="matrix"></canvas><div class="matrix-overlay"></div><div class="vignette"></div><div class="particles"></div>
+
+    <div class="mmodal" id="matchmaking">
+    <div class="box"><div class="spinner"></div>
+      <div style="font-weight:700;margin-bottom:6px;">Prepare for a Duel</div>
+      <div class="note">Matching your $<span id="mmAmount">—</span> duel.</div>
+    </div>
+  </div>
+
+  <!-- Promotion modal -->
+  <div class="mmodal" id="promoteModal">
+    <div class="box">
+      <div style="font-weight:700;margin-bottom:8px">Choose promotion</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" data-piece="q">Queen</button>
+        <button class="btn" data-piece="r">Rook</button>
+        <button class="btn" data-piece="b">Bishop</button>
+        <button class="btn" data-piece="n">Knight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result toast + confetti canvas -->
+  <div id="resultToast" class="toast">
+    <div class="toast-message" id="toastMessage"></div>
+    <div class="toast-buttons">
+      <button class="toast-btn toast-btn-primary" id="toastOkBtn">OK</button>
+      <button class="toast-btn toast-btn-secondary" id="toastRematchBtn">REMATCH</button>
+    </div>
+  </div>
+
+  <!-- Rematch Request Banner -->
+  <div id="rematchRequestBanner" class="toast" style="display: none;">
+    <div class="toast-message" id="rematchRequestMessage"></div>
+    <div class="toast-buttons">
+      <button class="toast-btn toast-btn-primary" id="rematchAcceptBtn">ACCEPT</button>
+      <button class="toast-btn toast-btn-secondary" id="rematchDeclineBtn">DECLINE</button>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <main class="stage">
+    <div class="block">
+      <div class="main-area">
+        <div class="board-wrap">
+          <div class="status" id="statusMsg">Log in, choose a bet, then hit <strong>DUEL</strong>.</div>
+          
+          <!-- Opponent Name & Clock (Top) -->
+          <div class="player-header top">
+            <div class="player-info" id="oppInfo">
+              <strong id="oppNameTop">Opponent</strong>
+              <div class="captured-pieces-container">
+                <div id="capturedByPlayerDisplay" class="captured-pieces"></div>
+                <span id="playerMaterialAdvantage" class="material-advantage"></span>
+              </div>
+              <span id="oppRatingTop" style="display: none;">Rating: —</span>
+            </div>
+            <div class="clock" id="bClock">
+              <div class="who">Black</div>
+              <div class="time" id="bTime">01:00</div>
+            </div>
+          </div>
+
+          <div class="chessboard" id="board"></div>
+
+          <!-- Your Name & Clock (Bottom) -->
+          <div class="player-header bottom">
+            <div class="player-info">
+              <strong id="userNameBottom" style="color:#22ff99">You</strong>
+              <div class="captured-pieces-container">
+                <div id="capturedByOpponentDisplay" class="captured-pieces"></div>
+                <span id="opponentMaterialAdvantage" class="material-advantage"></span>
+              </div>
+              <span id="userRatingBottom" style="display: none;">Rating: —</span>
+              <div id="debugInfo" style="font-size: 11px; color: #666; margin-top: 2px; display: none;">
+                <div>Computer ELO: <span id="computerElo">—</span></div>
+                <div>Your ELO: <span id="yourElo">—</span></div>
+              </div>
+            </div>
+            <div class="clock" id="wClock">
+              <div class="who">White</div>
+              <div class="time" id="wTime">01:00</div>
+            </div>
+          </div>
+
+          <div id="legalMoves" class="note"></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card" id="authCard">
+        <div class="row"><label>Username</label><input type="text" id="username" placeholder="yourname"/></div>
+        <div class="row"><label>Password</label><input type="password" id="password" placeholder="password"/></div>
+        <div class="row" id="balanceRow" style="display:none;"><label>Starting Balance</label><input type="number" id="balance" placeholder="10000" value="10000"/></div>
+        <button class="btn" id="loginBtn">Log In</button>
+        <button class="btn" id="registerBtn" style="margin-top: 10px; background-color: #28a745;">Register</button>
+        <div id="authMessage" style="margin-top: 10px; color: #ff4444; font-size: 14px;"></div>
+      </div>
+
+      <div class="card" id="betCard" style="display:none;">
+        <div class="row">
+          <label>Bet</label>
+          <div class="bet-buttons">
+            <button class="btn bet-btn" data-amt="1">$1</button>
+            <button class="btn bet-btn" data-amt="5">$5</button>
+            <button class="btn bet-btn" data-amt="10">$10</button>
+            <button class="btn bet-btn" data-amt="50">$50</button>
+          </div>
+        </div>
+        <div class="pot-display" id="potDisplay" style="display:none;">
+          <div class="pot-label">Current Pot</div>
+          <div class="pot-amount" id="potAmount">$0.00</div>
+        </div>
+        <div class="opponent" id="opponentBox" style="display:none;">
+          <div class="avatar" id="oppAvatar">?</div>
+          <div class="opp-meta">
+            <div class="opp-name" id="oppName">—</div>
+            <div class="opp-rating" id="oppRating">—</div>
+          </div>
+        </div>
+        <div class="duel-button-container">
+          <button class="btn" id="duelBtn">DUEL</button>
+        </div>
+        <div class="note">Match with players who stake the same amount.</div>
+        <div class="result" id="matchResult"></div>
+      </div>
+
+      <div class="moves" id="movesBox" style="display:none;"></div>
+
+      <div class="card" id="feedbackCard">
+        <h3>Report Issues</h3>
+        <div style="margin-bottom: 12px;">
+          <textarea id="feedbackText" placeholder="Describe any bugs, issues, or suggestions..." style="width: 100%; min-height: 80px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(34,255,153,.3); border-radius: 6px; color: var(--fg); font-family: inherit; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+        <button class="btn" id="submitFeedbackBtn">Submit Feedback</button>
+        <div id="feedbackMessage" style="margin-top: 8px; font-size: 12px; color: var(--glow); display: none;"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:6px;">Recent Matches</div>
+        <div id="matchHistory" class="note"></div>
+      </div>
+
+      <!-- Live Stats at bottom of sidebar -->
+      <div class="card stats-card">
+        <div id="liveStats" aria-live="polite">—</div>
+      </div>
+    </aside>
+  </main>
+  </div>
+  <!-- End Main Content Wrapper -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="multiplayer.js"></script>
+  <script src="assets/opponent-stereotypes.js"></script>
+  <script src="assets/lc0/lc0-engine.js"></script>
+  <script src="assets/game-profile-engine.js"></script>
+  <script src="assets/opening-book-engine.js"></script>
+  <script src="assets/blunder-engine.js"></script>
+  <script src="assets/middlegame-pattern-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

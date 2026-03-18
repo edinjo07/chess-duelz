@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <title>Chess Duelz — Reset Password</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --accent-hover: #00ff00;
+      --border-color: #2f4553;
+      --error-color: #ff4655;
+      --success-color: #00e701;
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font:16px/1.5 'Inter',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text-primary);
+      background:var(--bg-primary);
+    }
+    .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+    .card{
+      width:100%; max-width:440px;
+      background:var(--bg-secondary);
+      border:1px solid var(--border-color);
+      border-radius:12px;
+      padding:40px;
+      box-shadow:0 20px 50px rgba(0,0,0,.5);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; margin-bottom:24px; justify-content:center;
+    }
+    .brand img{
+      width:44px; height:44px; object-fit:contain;
+    }
+    h1{margin:.1em 0 .3em; font-size:24px; font-weight:800; text-align:center}
+    p.muted{color:var(--text-secondary); margin:.2em 0 1.5em; text-align:center; font-size:14px}
+    label{display:block; font-size:14px; font-weight:500; margin:.8em 0 .35em; color:var(--text-secondary)}
+    input{
+      width:100%; padding:14px 16px; border-radius:8px;
+      border:1px solid var(--border-color); background:var(--bg-tertiary); color:var(--text-primary);
+      outline:none; transition:all 0.2s; font-family:inherit; font-size:14px;
+    }
+    input:focus{border-color:var(--accent-primary); background:#2a3f4d}
+    input::placeholder{color:#566b7d}
+    button{
+      width:100%; padding:14px; margin-top:16px; border:0; cursor:pointer;
+      font-weight:700; border-radius:8px; background:var(--accent-primary); color:#000000;
+      transition:all 0.2s; font-size:15px;
+    }
+    button:hover:not([disabled]){transform:translateY(-1px); background:var(--accent-hover)}
+    button[disabled]{opacity:.6; cursor:not-allowed; transform:none}
+    .row{display:flex; gap:10px}
+    .msg{margin-top:16px; font-size:14px; border-radius:8px; padding:12px 16px}
+    .err{color:var(--error-color); background:rgba(255,70,85,.1); border:1px solid var(--error-color)}
+    .ok{color:var(--success-color); background:rgba(0,231,1,.1); border:1px solid var(--success-color)}
+    .links{display:flex; justify-content:center; margin-top:20px; font-size:14px; padding-top:20px; border-top:1px solid var(--border-color)}
+    a{color:var(--accent-primary); text-decoration:none; transition:color 0.2s; font-weight:500}
+    a:hover{text-decoration:underline}
+    .tiny{font-size:12px; color:var(--text-secondary); margin-top:12px}
+    form{margin:0}
+    label span{font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand">
+        <img src="./chess/assets/logo.png" alt="Chess Duelz" onerror="this.style.display='none'">
+        <div>
+          <div style="font-weight:800; letter-spacing:.3px">Chess Duelz</div>
+          <div class="tiny">Account Security</div>
+        </div>
+      </div>
+
+      <h1>Reset your password</h1>
+      <p class="muted">Create a new password for your account. The link is valid for 60 minutes.</p>
+
+      <div id="tokenWarning" class="msg err" style="display:none">Missing or invalid link token. Open the link from your email again.</div>
+
+      <form id="resetForm" novalidate>
+        <label for="password">New password <span style="color:var(--danger)">*</span></label>
+        <input id="password" type="password" autocomplete="new-password" placeholder="NewStrongPass!23" required />
+        <div id="passwordError" class="msg err" style="display:none"></div>
+
+        <label for="password2">Confirm password <span style="color:var(--danger)">*</span></label>
+        <input id="password2" type="password" autocomplete="new-password" placeholder="Repeat the password" required />
+        <div id="password2Error" class="msg err" style="display:none"></div>
+
+        <div class="row">
+          <button type="submit" id="btn">Update password</button>
+        </div>
+      </form>
+      <div id="msg" class="msg"></div>
+
+      <div class="links">
+        <a href="./homepagetressurehunt.html">← Back to Home</a>
+        <a href="./dashboard.html">Go to Dashboard →</a>
+      </div>
+      <div class="tiny">If this wasn’t you, ignore this page.</div>
+    </div>
+  </div>
+
+  <script>
+    // If backend serves frontend on same origin, this can be empty string.
+    // Otherwise, set to 'http://localhost:4000' or your API domain.
+    const API_BASE = '';
+    const RESET_ENDPOINT = (token) => (API_BASE || '') + '/reset-password';
+
+    const qs = new URLSearchParams(location.search);
+    const token = qs.get('token');
+
+    const $form = document.getElementById('resetForm');
+    const $btn  = document.getElementById('btn');
+    const $p1   = document.getElementById('password');
+    const $p2   = document.getElementById('password2');
+    const $msg  = document.getElementById('msg');
+    const $tw   = document.getElementById('tokenWarning');
+    const $p1Error = document.getElementById('passwordError');
+    const $p2Error = document.getElementById('password2Error');
+
+    if (!token) {
+      $tw.style.display = '';
+      $btn.disabled = true;
+    }
+
+    function show(text, ok=false){
+      $msg.textContent = text;
+      $msg.className = 'msg ' + (ok ? 'ok' : 'err');
+    }
+
+    function showError(element, text) {
+      element.textContent = text;
+      element.style.display = text ? 'block' : 'none';
+    }
+
+    function strongEnough(p){
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p);
+    }
+
+    function validatePassword() {
+      const p1 = $p1.value.trim();
+      
+      if (!p1) {
+        showError($p1Error, '');
+        return false;
+      }
+      
+      if (p1.length < 8) {
+        showError($p1Error, 'Password must be at least 8 characters long.');
+        return false;
+      }
+      
+      if (!strongEnough(p1)) {
+        showError($p1Error, 'Password must include uppercase, lowercase, digit, and special character.');
+        return false;
+      }
+      
+      showError($p1Error, '');
+      return true;
+    }
+
+    function validatePasswordMatch() {
+      const p1 = $p1.value.trim();
+      const p2 = $p2.value.trim();
+      
+      if (!p2) {
+        showError($p2Error, '');
+        return false;
+      }
+      
+      if (p1 !== p2) {
+        showError($p2Error, 'Passwords do not match.');
+        return false;
+      }
+      
+      showError($p2Error, '');
+      return true;
+    }
+
+    // Real-time validation
+    $p1.addEventListener('input', validatePassword);
+    $p2.addEventListener('input', () => {
+      validatePassword();
+      validatePasswordMatch();
+    });
+
+    // Form submission
+    $form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const p1 = $p1.value.trim();
+      const p2 = $p2.value.trim();
+
+      if (!token) return show('Missing token. Reopen the email link.');
+      if (!p1 || !p2) return show('Please fill both password fields.');
+      if (p1 !== p2)   return show('Passwords do not match.');
+      if (!strongEnough(p1)) return show('Password must be 8+ chars and include upper, lower, digit, special.');
+
+      $btn.disabled = true; show('Updating password...');
+
+      try {
+        // Body-version route on backend: { token, password }
+        const res = await fetch(RESET_ENDPOINT(token), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password: p1 })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          let errorMessage = 'Reset failed. Please try again.';
+          
+          // Enhanced error messages
+          if (res.status === 400 || data?.error?.toLowerCase().includes('invalid') || 
+              data?.error?.toLowerCase().includes('token')) {
+            errorMessage = 'Invalid or expired reset link. Please request a new password reset.';
+          } else if (res.status === 404 || data?.error?.toLowerCase().includes('not found')) {
+            errorMessage = 'Reset link not found or has expired. Please request a new password reset.';
+          } else if (res.status === 410 || data?.error?.toLowerCase().includes('expired')) {
+            errorMessage = 'This reset link has expired. Please request a new password reset.';
+          } else if (res.status === 429 || data?.error?.toLowerCase().includes('too many')) {
+            errorMessage = 'Too many reset attempts. Please try again later.';
+          } else if (data?.error?.toLowerCase().includes('password')) {
+            errorMessage = data.error;
+          } else if (data?.error) {
+            errorMessage = data.error;
+          }
+          
+          show(errorMessage);
+          $btn.disabled = false;
+          return;
+        }
+
+        show('Password updated! Redirecting to login...', true);
+        
+        // Store success state for login page
+        try{ 
+          sessionStorage.setItem('pwdReset','1');
+          sessionStorage.setItem('resetSuccess', 'Your password has been successfully updated!');
+        }catch(e){}
+        
+        // Redirect after short delay
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+        
+      } catch (e) {
+        console.error('Reset error:', e);
+        let errorMessage = 'Network error. Please try again.';
+        
+        if (e.message === 'Failed to fetch') {
+          errorMessage = 'Unable to connect to server. Please check your internet connection.';
+        } else if (e.message) {
+          errorMessage = e.message;
+        }
+        
+        show(errorMessage);
+        $btn.disabled = false;
+      }
+    });
+
+    // Alternative click handler for legacy support
+    $btn.addEventListener('click', async (e) => {
+      if (e.target.form) return; // Let form handler take over
+      $form.dispatchEvent(new Event('submit'));
+    });
+  </script>
+</body>
+</html>

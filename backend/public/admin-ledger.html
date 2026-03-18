@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ledger & Transactions - Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      color: #4ECDC4;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .admin-name {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #4ECDC4;
+      color: #1a1a2e;
+    }
+
+    .btn-primary:hover {
+      background: #45b8b0;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #FF6B6B;
+      color: white;
+    }
+
+    .btn-success {
+      background: #51CF66;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #FFD43B;
+      color: #1a1a2e;
+    }
+
+    .btn-secondary {
+      background: #6C757D;
+      color: white;
+    }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-card h3 {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4ECDC4;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .filters {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 14px;
+    }
+
+    .ledger-table {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-size: 13px;
+      color: #4ECDC4;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .entry-type-badge {
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .type-deposit { background: #51CF66; color: white; }
+    .type-withdrawal { background: #FF6B6B; color: white; }
+    .type-bet { background: #FFD43B; color: #1a1a2e; }
+    .type-win { background: #51CF66; color: white; }
+    .type-refund { background: #74C0FC; color: #1a1a2e; }
+    .type-admin_credit { background: #845EF7; color: white; }
+    .type-admin_debit { background: #FF6B6B; color: white; }
+    .type-bonus { background: #FFD43B; color: #1a1a2e; }
+    .type-correction { background: #6C757D; color: white; }
+
+    .amount-positive {
+      color: #51CF66;
+      font-weight: 600;
+    }
+
+    .amount-negative {
+      color: #FF6B6B;
+      font-weight: 600;
+    }
+
+    .balance-cell {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 2px solid rgba(78, 205, 196, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header h2 {
+      color: #4ECDC4;
+      font-size: 24px;
+    }
+
+    .close-modal {
+      font-size: 28px;
+      cursor: pointer;
+      color: #aaa;
+      background: none;
+      border: none;
+    }
+
+    .reconciliation-result {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .mismatch-item {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid #FF6B6B;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 16px;
+      color: #4ECDC4;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 20px;
+    }
+
+    .pagination button {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .warning-box {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid #FF6B6B;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #FFB3B3;
+    }
+
+    .success-box {
+      background: rgba(81, 207, 102, 0.1);
+      border: 1px solid #51CF66;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #9BF0AA;
+    }
+
+    .info-box {
+      background: rgba(116, 192, 252, 0.1);
+      border: 1px solid #74C0FC;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #A5D8FF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Ledger & Transactions</h1>
+      <div class="header-actions">
+        <span class="admin-name" id="adminName">Loading...</span>
+        <a href="/admin" class="btn btn-secondary">← Back to Admin</a>
+        <button class="btn btn-danger" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-cards" id="statsCards">
+      <div class="stat-card">
+        <h3>Total Entries</h3>
+        <div class="value" id="statTotal">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>Unique Users</h3>
+        <div class="value" id="statUsers">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Credits</h3>
+        <div class="value" id="statCredits" style="color: #51CF66;">$0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Debits</h3>
+        <div class="value" id="statDebits" style="color: #FF6B6B;">$0</div>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="btn btn-warning" onclick="openReconcileModal()">🔍 Run Reconciliation</button>
+      <button class="btn btn-success" onclick="createSnapshot()">📸 Create Balance Snapshot</button>
+      <button class="btn btn-primary" onclick="exportLedger()">📥 Export CSV</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <label>User ID</label>
+        <input type="number" id="filterUserId" placeholder="Enter user ID" onchange="loadLedger()">
+      </div>
+      <div class="filter-group">
+        <label>Entry Type</label>
+        <select id="filterEntryType" onchange="loadLedger()">
+          <option value="">All</option>
+          <option value="deposit">Deposit</option>
+          <option value="withdrawal">Withdrawal</option>
+          <option value="bet">Bet</option>
+          <option value="win">Win</option>
+          <option value="refund">Refund</option>
+          <option value="admin_credit">Admin Credit</option>
+          <option value="admin_debit">Admin Debit</option>
+          <option value="bonus">Bonus</option>
+          <option value="correction">Correction</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Start Date</label>
+        <input type="date" id="filterStartDate" onchange="loadLedger()">
+      </div>
+      <div class="filter-group">
+        <label>End Date</label>
+        <input type="date" id="filterEndDate" onchange="loadLedger()">
+      </div>
+      <div class="filter-group">
+        <label>Min Amount</label>
+        <input type="number" id="filterMinAmount" placeholder="0" step="0.01" onchange="loadLedger()">
+      </div>
+      <div class="filter-group">
+        <label>Max Amount</label>
+        <input type="number" id="filterMaxAmount" placeholder="∞" step="0.01" onchange="loadLedger()">
+      </div>
+    </div>
+
+    <!-- Ledger Table -->
+    <div class="ledger-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>User</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Balance Before</th>
+            <th>Balance After</th>
+            <th>Reference</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerTableBody">
+          <tr>
+            <td colspan="9" class="loading">Loading ledger entries...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display:none;">
+      <button id="prevBtn" onclick="prevPage()">← Previous</button>
+      <span id="pageInfo">Page 1</span>
+      <button id="nextBtn" onclick="nextPage()">Next →</button>
+    </div>
+  </div>
+
+  <!-- Reconcile Modal -->
+  <div class="modal" id="reconcileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Reconciliation Check</h2>
+        <button class="close-modal" onclick="closeModal('reconcileModal')">×</button>
+      </div>
+      <div id="reconcileContent">
+        <div class="info-box">
+          This will check all user balances against their ledger entries to find any mismatches.
+        </div>
+        <div style="margin: 20px 0;">
+          <label style="display: block; margin-bottom: 10px; color: #aaa;">Check Specific User (optional)</label>
+          <input type="number" id="reconcileUserId" placeholder="Leave empty to check all users" 
+                 style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); 
+                        border: 1px solid rgba(255,255,255,0.1); color: white;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn btn-warning" onclick="runReconciliation()">Run Check</button>
+          <button class="btn btn-secondary" onclick="closeModal('reconcileModal')">Cancel</button>
+        </div>
+        <div id="reconcileResults" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+    const TOKEN_KEY = 'accessToken';
+    const LOGIN_PAGE = '/admin-login';
+
+    let currentPage = 0;
+    const pageSize = 100;
+
+    // Auth check
+    function checkAuth() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        window.location.href = LOGIN_PAGE;
+        return false;
+      }
+      return token;
+    }
+
+    // API call helper
+    async function apiCall(endpoint, method = 'GET', body = null) {
+      const token = checkAuth();
+      if (!token) return null;
+
+      const options = {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+
+      const response = await fetch(`${API_URL}${endpoint}`, options);
+      
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem(TOKEN_KEY);
+        window.location.href = LOGIN_PAGE;
+        return null;
+      }
+
+      return response.json();
+    }
+
+    // Load admin name
+    async function loadAdminName() {
+      const data = await apiCall('/api/admin/me');
+      if (data && data.username) {
+        document.getElementById('adminName').textContent = `Admin: ${data.username}`;
+      }
+    }
+
+    // Load stats
+    async function loadStats() {
+      const data = await apiCall('/api/admin/ledger/entries/stats/summary');
+      if (data && data.success) {
+        const overall = data.overall;
+        document.getElementById('statTotal').textContent = overall.total_entries || 0;
+        document.getElementById('statUsers').textContent = overall.unique_users || 0;
+        document.getElementById('statCredits').textContent = `$${parseFloat(overall.total_credits || 0).toFixed(2)}`;
+        document.getElementById('statDebits').textContent = `$${parseFloat(overall.total_debits || 0).toFixed(2)}`;
+      }
+    }
+
+    // Load ledger
+    async function loadLedger() {
+      const userId = document.getElementById('filterUserId').value;
+      const entryType = document.getElementById('filterEntryType').value;
+      const startDate = document.getElementById('filterStartDate').value;
+      const endDate = document.getElementById('filterEndDate').value;
+      const minAmount = document.getElementById('filterMinAmount').value;
+      const maxAmount = document.getElementById('filterMaxAmount').value;
+
+      let query = `?limit=${pageSize}&offset=${currentPage * pageSize}`;
+      if (userId) query += `&userId=${userId}`;
+      if (entryType) query += `&entryType=${entryType}`;
+      if (startDate) query += `&startDate=${startDate}`;
+      if (endDate) query += `&endDate=${endDate}`;
+      if (minAmount) query += `&minAmount=${minAmount}`;
+      if (maxAmount) query += `&maxAmount=${maxAmount}`;
+
+      const data = await apiCall(`/api/admin/ledger/entries${query}`);
+      
+      if (data && data.success) {
+        renderLedger(data.entries);
+        updatePagination(data.pagination);
+      }
+    }
+
+    // Render ledger table
+    function renderLedger(entries) {
+      const tbody = document.getElementById('ledgerTableBody');
+      
+      if (entries.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="empty-state">
+              <div>No ledger entries found</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = entries.map(entry => {
+        const amount = parseFloat(entry.amount);
+        const amountClass = amount >= 0 ? 'amount-positive' : 'amount-negative';
+        const amountDisplay = amount >= 0 ? `+$${amount.toFixed(2)}` : `-$${Math.abs(amount).toFixed(2)}`;
+        
+        return `
+          <tr>
+            <td>#${entry.id}</td>
+            <td>${new Date(entry.created_at).toLocaleString()}</td>
+            <td>${entry.username} (#${entry.user_id})</td>
+            <td><span class="entry-type-badge type-${entry.entry_type}">${entry.entry_type.toUpperCase().replace('_', ' ')}</span></td>
+            <td class="${amountClass}">${amountDisplay}</td>
+            <td class="balance-cell">$${parseFloat(entry.balance_before).toFixed(2)}</td>
+            <td class="balance-cell">$${parseFloat(entry.balance_after).toFixed(2)}</td>
+            <td>${entry.reference_type || 'N/A'} ${entry.reference_id ? `#${entry.reference_id}` : ''}</td>
+            <td>${entry.description || ''}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Run reconciliation
+    async function runReconciliation() {
+      const userId = document.getElementById('reconcileUserId').value;
+      const resultsDiv = document.getElementById('reconcileResults');
+      
+      resultsDiv.innerHTML = '<div class="loading">Running reconciliation...</div>';
+
+      const data = await apiCall('/api/admin/ledger/reconcile', 'POST', { userId: userId || null });
+      
+      if (data && data.success) {
+        const { summary, mismatches } = data;
+        
+        let html = `
+          <div class="success-box">
+            <strong>Reconciliation Complete</strong><br>
+            Checked ${summary.usersChecked} users<br>
+            Found ${summary.mismatchesFound} mismatches
+          </div>
+        `;
+
+        if (mismatches.length > 0) {
+          html += '<div class="warning-box"><strong>⚠️ Balance Mismatches Found:</strong></div>';
+          mismatches.forEach(m => {
+            html += `
+              <div class="mismatch-item">
+                <strong>${m.username} (ID: ${m.userId})</strong><br>
+                Actual Balance: $${m.actualBalance.toFixed(2)}<br>
+                Expected Balance: $${m.expectedBalance.toFixed(2)}<br>
+                Difference: $${m.difference.toFixed(2)}<br>
+                Last Ledger Entry: ${m.lastLedgerEntry ? new Date(m.lastLedgerEntry).toLocaleString() : 'None'}
+              </div>
+            `;
+          });
+        }
+
+        resultsDiv.innerHTML = html;
+      } else {
+        resultsDiv.innerHTML = `<div class="warning-box">Failed to run reconciliation: ${data?.error || 'Unknown error'}</div>`;
+      }
+    }
+
+    // Create snapshot
+    async function createSnapshot() {
+      if (!confirm('Create a balance snapshot for all users?')) {
+        return;
+      }
+
+      const data = await apiCall('/api/admin/ledger/snapshot', 'POST');
+      
+      if (data && data.success) {
+        alert(`Snapshot created successfully!\n\nTotal Balance: $${data.snapshot.totalBalance.toFixed(2)}\nUser Count: ${data.snapshot.userCount}`);
+      } else {
+        alert(`Failed to create snapshot: ${data?.error || 'Unknown error'}`);
+      }
+    }
+
+    // Export ledger
+    function exportLedger() {
+      const userId = document.getElementById('filterUserId').value;
+      const startDate = document.getElementById('filterStartDate').value;
+      const endDate = document.getElementById('filterEndDate').value;
+
+      let query = '?';
+      if (userId) query += `userId=${userId}&`;
+      if (startDate) query += `startDate=${startDate}&`;
+      if (endDate) query += `endDate=${endDate}&`;
+
+      const token = checkAuth();
+      window.open(`${API_URL}/api/admin/ledger/export${query}`, '_blank');
+    }
+
+    // Open reconcile modal
+    function openReconcileModal() {
+      document.getElementById('reconcileUserId').value = '';
+      document.getElementById('reconcileResults').innerHTML = '';
+      document.getElementById('reconcileModal').classList.add('active');
+    }
+
+    // Close modal
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Pagination
+    function updatePagination(pagination) {
+      const paginationDiv = document.getElementById('pagination');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const pageInfo = document.getElementById('pageInfo');
+
+      paginationDiv.style.display = 'flex';
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = !pagination || !pagination.limit;
+      pageInfo.textContent = `Page ${currentPage + 1}`;
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        loadLedger();
+      }
+    }
+
+    function nextPage() {
+      currentPage++;
+      loadLedger();
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem(TOKEN_KEY);
+      window.location.href = LOGIN_PAGE;
+    }
+
+    // Initialize
+    window.onload = () => {
+      checkAuth();
+      loadAdminName();
+      loadStats();
+      loadLedger();
+    };
+  </script>
+</body>
+</html>

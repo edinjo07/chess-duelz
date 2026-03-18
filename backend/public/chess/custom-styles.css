@@ -1,0 +1,46 @@
+/* Custom Layout - Horizontal: [Captured Pieces] [Name] [Clock] */
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+/* Player info container - flatten to horizontal layout */
+.player-info {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Player name - show inline */
+.player-info strong {
+  order: 2; /* Name in middle */
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Captured pieces container - Left side */
+.captured-pieces-container {
+  order: 1; /* Pieces on left */
+  display: flex !important; /* Show it */
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Hide rating and debug info to keep layout clean */
+.player-info span[id*="Rating"],
+.player-info #debugInfo {
+  display: none !important;
+}
+
+/* Clock - Far right */
+.clock {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}

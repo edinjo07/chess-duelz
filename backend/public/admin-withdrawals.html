@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin — Withdrawal Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e232d; --text:#e9eef5;
+    --muted:#9aa4b2; --accent:#2bb1ff; --border:#2a3140;
+    --success:#2ecc71; --warn:#ffb020; --danger:#ff5c5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 'Inter',system-ui,sans-serif}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px}
+  h1{margin:0 0 8px 0;font-size:24px;font-weight:700}
+  .subtitle{color:var(--muted);margin-bottom:20px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+  .stat-box{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .stat-value{font-size:28px;font-weight:700}
+  .stat-value.success{color:var(--success)}
+  .stat-value.warn{color:var(--warn)}
+  .stat-value.danger{color:var(--danger)}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;padding:12px;border-bottom:2px solid var(--border);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+  td{padding:12px;border-bottom:1px solid rgba(42,49,64,.5)}
+  tr:hover{background:rgba(255,255,255,.02)}
+  .badge{display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+  .badge-pending{background:rgba(255,176,32,.15);color:var(--warn)}
+  .badge-approved{background:rgba(43,177,255,.15);color:var(--accent)}
+  .badge-sent{background:rgba(46,204,113,.15);color:var(--success)}
+  .badge-failed{background:rgba(255,92,92,.15);color:var(--danger)}
+  .badge-rejected{background:rgba(255,92,92,.2);color:var(--danger)}
+  .btn{background:#11151c;border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{border-color:#3a4254}
+  .btn:disabled{opacity:0.5;cursor:not-allowed}
+  .btn-success{background:var(--success);border-color:var(--success);color:#001f0d}
+  .btn-success:hover{background:#26a65b}
+  .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+  .btn-danger:hover{background:#e04747}
+  .btn-group{display:flex;gap:6px}
+  .mono{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
+  .user-info{display:flex;flex-direction:column;gap:2px}
+  .user-name{font-weight:600}
+  .user-email{font-size:12px;color:var(--muted)}
+  .amount-box{display:flex;flex-direction:column;align-items:flex-end}
+  .amount-crypto{font-weight:700;font-size:15px}
+  .amount-usd{font-size:12px;color:var(--muted)}
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center}
+  .modal.show{display:flex}
+  .modal-content{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:500px;width:90%}
+  .modal-title{font-size:18px;font-weight:700;margin:0 0 12px 0}
+  .modal-text{color:var(--muted);margin-bottom:16px}
+  .input{background:#0e1218;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;width:100%;font-family:inherit}
+  .input:focus{outline:0;border-color:var(--accent)}
+  .textarea{resize:vertical;min-height:80px;font-family:inherit}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty-icon{font-size:48px;margin-bottom:12px;opacity:0.3}
+  .refresh-btn{position:fixed;bottom:24px;right:24px;background:var(--accent);border:none;color:#00121e;width:56px;height:56px;border-radius:50%;cursor:pointer;box-shadow:0 4px 20px rgba(43,177,255,.3);transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .refresh-btn:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(43,177,255,.5)}
+  .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter-btn{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s}
+  .filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(43,177,255,.08)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔐 Withdrawal Management</h1>
+  <div class="subtitle">Approve or reject pending cryptocurrency withdrawals</div>
+
+  <!-- Stats -->
+  <div class="stats" id="stats">
+    <div class="stat-box">
+      <div class="stat-label">Pending</div>
+      <div class="stat-value warn" id="stat-pending">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Total Value (USD)</div>
+      <div class="stat-value" id="stat-total">$0.00</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Auto-Send</div>
+      <div class="stat-value success" id="stat-auto">Active</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-status="pending">Pending</button>
+    <button class="filter-btn" data-status="approved">Approved</button>
+    <button class="filter-btn" data-status="sent">Sent</button>
+    <button class="filter-btn" data-status="failed">Failed</button>
+    <button class="filter-btn" data-status="rejected">Rejected</button>
+  </div>
+
+  <!-- Withdrawals table -->
+  <div class="card">
+    <table id="withdrawals-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Asset</th>
+          <th>Amount</th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="withdrawals-body">
+        <tr>
+          <td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">
+            <div class="spinner"></div> Loading withdrawals...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="empty-state" style="display:none" class="empty">
+      <div class="empty-icon">📭</div>
+      <div>No withdrawals found</div>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal" id="reject-modal">
+  <div class="modal-content">
+    <div class="modal-title">Reject Withdrawal</div>
+    <div class="modal-text">Please provide a reason for rejecting this withdrawal. This will be shown to the user.</div>
+    <textarea class="input textarea" id="reject-reason" placeholder="e.g., Invalid address, Suspicious activity, etc."></textarea>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn" onclick="closeRejectModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmReject()">Reject Withdrawal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Refresh button -->
+<button class="refresh-btn" onclick="loadWithdrawals()" title="Refresh">
+  🔄
+</button>
+
+<script>
+const API_URL = window.location.origin;
+let currentFilter = 'pending';
+let currentRejectId = null;
+
+// Check authentication - check both accessToken (OAuth) and token (regular login)
+const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+if (!token) {
+  window.location.href = '/login.html';
+}
+
+// Load withdrawals on page load
+loadWithdrawals();
+
+// Auto-refresh every 30 seconds
+setInterval(loadWithdrawals, 30000);
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.status;
+    loadWithdrawals();
+  });
+});
+
+async function loadWithdrawals() {
+  try {
+    // Use status-based filtering via API query parameter
+    const statusParam = currentFilter === 'all' ? '' : `?status=${currentFilter}`;
+    const res = await fetch(`${API_URL}/api/admin/withdrawals${statusParam}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      if (res.status === 403) {
+        alert('Admin access required');
+        window.location.href = '/login.html';
+        return;
+      }
+      throw new Error('Failed to load withdrawals');
+    }
+
+    const data = await res.json();
+    const withdrawals = data.withdrawals || [];
+
+    renderWithdrawals(withdrawals);
+    updateStats(withdrawals);
+
+  } catch (err) {
+    console.error('Load error:', err);
+    document.getElementById('withdrawals-body').innerHTML = `
+      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--danger)">
+        Failed to load withdrawals. Please refresh.
+      </td></tr>
+    `;
+  }
+}
+
+function renderWithdrawals(withdrawals) {
+  const tbody = document.getElementById('withdrawals-body');
+  const emptyState = document.getElementById('empty-state');
+
+  // Filter by status
+  const filtered = withdrawals.filter(w => w.status === currentFilter);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(w => `
+    <tr>
+      <td><span class="mono">#${w.id}</span></td>
+      <td>
+        <div class="user-info">
+          <div class="user-name">${escapeHtml(w.username || 'Unknown')}</div>
+          <div class="user-email">${escapeHtml(w.email || '')}</div>
+        </div>
+      </td>
+      <td><strong>${w.coin}</strong></td>
+      <td>
+        <div class="amount-box">
+          <div class="amount-crypto">${parseFloat(w.amount_crypto).toFixed(8)} ${w.coin}</div>
+          <div class="amount-usd">$${parseFloat(w.amount_usd).toFixed(2)}</div>
+        </div>
+      </td>
+      <td><span class="mono">${truncateAddress(w.address)}</span></td>
+      <td><span class="badge badge-${w.status}">${w.status}</span></td>
+      <td><span class="mono">${formatDate(w.created_at)}</span></td>
+      <td>
+        ${renderActions(w)}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderActions(w) {
+  if (w.status === 'pending') {
+    return `
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="approveWithdrawal(${w.id})">✓ Approve</button>
+        <button class="btn btn-danger" onclick="openRejectModal(${w.id})">✗ Reject</button>
+      </div>
+    `;
+  } else if (w.status === 'sent' && w.txid) {
+    const explorerUrl = getExplorerUrl(w.coin, w.txid);
+    return `<a href="${explorerUrl}" target="_blank" class="btn" style="text-decoration:none">View TX</a>`;
+  } else if (w.status === 'failed') {
+    return `<button class="btn" onclick="retryWithdrawal(${w.id})">🔄 Retry</button>`;
+  } else {
+    return `<span class="mono" style="color:var(--muted)">—</span>`;
+  }
+}
+
+function updateStats(withdrawals) {
+  const pending = withdrawals.filter(w => w.status === 'pending');
+  const totalValue = pending.reduce((sum, w) => sum + parseFloat(w.amount_usd), 0);
+
+  document.getElementById('stat-pending').textContent = pending.length;
+  document.getElementById('stat-total').textContent = `$${totalValue.toFixed(2)}`;
+}
+
+async function approveWithdrawal(id) {
+  if (!confirm('Approve this withdrawal? Funds will be sent automatically if auto-send is enabled.')) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/withdraw/approve/${id}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert('✅ Withdrawal approved! It will be processed automatically.');
+      loadWithdrawals();
+    } else {
+      alert(`❌ Error: ${data.error}`);
+    }
+
+  } catch (err) {
+    console.error('Approve error:', err);
+    alert('❌ Failed to approve withdrawal');
+  }
+}
+
+function openRejectModal(id) {
+  currentRejectId = id;
+  document.getElementById('reject-reason').value = '';
+  document.getElementById('reject-modal').classList.add('show');
+}
+
+function closeRejectModal() {
+  currentRejectId = null;
+  document.getElementById('reject-modal').classList.remove('show');
+}
+
+async function confirmReject() {
+  const reason = document.getElementById('reject-reason').value.trim();
+
+  if (!reason) {
+    alert('Please provide a rejection reason');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/withdraw/reject/${currentRejectId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ reason })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert('✅ Withdrawal rejected. User balance has been restored.');
+      closeRejectModal();
+      loadWithdrawals();
+    } else {
+      alert(`❌ Error: ${data.error}`);
+    }
+
+  } catch (err) {
+    console.error('Reject error:', err);
+    alert('❌ Failed to reject withdrawal');
+  }
+}
+
+function truncateAddress(addr) {
+  if (addr.length <= 20) return addr;
+  return addr.substring(0, 10) + '...' + addr.substring(addr.length - 8);
+}
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return date.toLocaleDateString();
+}
+
+function getExplorerUrl(coin, txid) {
+  switch (coin) {
+    case 'BTC':
+      return `https://mempool.space/tx/${txid}`;
+    case 'ETH':
+    case 'USDT':
+    case 'USDC':
+      return `https://etherscan.io/tx/${txid}`;
+    default:
+      return '#';
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Close modal on background click
+document.getElementById('reject-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'reject-modal') {
+    closeRejectModal();
+  }
+});
+</script>
+</body>
+</html>

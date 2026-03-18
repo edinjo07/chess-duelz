@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Chess Duelz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      color: #667eea;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .logo p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success {
+      background: #efe;
+      color: #3c3;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .security-badge {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .security-badge span {
+      color: #667eea;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>🔐 Admin Access</h1>
+      <p>Secure Administrator Portal</p>
+    </div>
+
+    <div id="error-msg" class="error"></div>
+    <div id="success-msg" class="success"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Username or Email</label>
+        <input type="text" id="username" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn" id="login-btn">
+        Login to Admin Panel
+      </button>
+    </form>
+
+    <div class="security-badge">
+      🛡️ IP-restricted access • <span>Encrypted connection</span>
+    </div>
+
+    <div class="footer">
+      Chess Duelz Admin Panel © 2026
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error-msg');
+      const successDiv = document.getElementById('success-msg');
+      successDiv.style.display = 'none';
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    function showSuccess(message) {
+      const errorDiv = document.getElementById('error-msg');
+      const successDiv = document.getElementById('success-msg');
+      errorDiv.style.display = 'none';
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('login-btn');
+
+      if (!username || !password) {
+        showError('Please enter both username and password');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Authenticating...';
+
+      try {
+        const response = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            identifier: username, 
+            password: password 
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        // Check if user is admin
+        if (!data.user || data.user.isAdmin !== true) {
+          throw new Error('Access denied: Admin privileges required');
+        }
+
+        // Store tokens with admin prefix to avoid conflict with player sessions
+        localStorage.setItem('admin_accessToken', data.accessToken || data.token);
+        localStorage.setItem('accessToken', data.accessToken || data.token); // Keep for backward compatibility
+        if (data.refreshToken) {
+          localStorage.setItem('admin_refreshToken', data.refreshToken);
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
+
+        showSuccess('Login successful! Redirecting to admin panel...');
+
+        // Redirect to admin panel
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 1000);
+
+      } catch (error) {
+        console.error('Login error:', error);
+        showError(error.message || 'Login failed. Please check your credentials.');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login to Admin Panel';
+      }
+    });
+
+    // Check if already logged in
+    window.addEventListener('load', async () => {
+      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+      
+      if (token) {
+        try {
+          const response = await fetch(`${API_URL}/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            // If already logged in as admin, redirect
+            if (userData.isAdmin) {
+              window.location.href = '/admin';
+            }
+          }
+        } catch (error) {
+          // Ignore errors, just show login form
+        }
+      }
+    });
+  </script>
+</body>
+</html>

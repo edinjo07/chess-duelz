@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chess Duelz - 1v1 Competitive Chess Platform | Challenge Real Opponents</title>
+  <meta name="description" content="Chess Duelz is the premier 1v1 chess platform. Challenge real players worldwide, climb the ELO ladder, and compete for real money. Skill-based. Instant payouts. 18+ only.">
+  <meta name="keywords" content="1v1 chess platform, chess duels online, competitive chess, play chess against people, chess matchmaking, chess ladder, real money chess, chess ranking">
+  <meta name="author" content="Chess Duelz">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://chessduelz.com/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Chess Duelz - Compete in Real-Money Chess Duels">
+  <meta property="og:description" content="Challenge real opponents worldwide. Win cash based on pure chess skill. Instant payouts, provably fair, 18+ only.">
+  <meta property="og:site_name" content="Chess Duelz">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Chess Duelz - Real-Money Chess Duels">
+  <meta name="twitter:creator" content="@ChessDuelz">
+
+  <meta name="theme-color" content="#c9a84c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Chess Duelz">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Chess Duelz - 1v1 Competitive Chess Platform">
+  <meta property="og:description" content="Challenge real players, climb the ELO ladder, and compete for real money. Pure skill, zero luck.">
+  <meta property="og:site_name" content="Chess Duelz">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Chess Duelz - 1v1 Competitive Chess">
+  <meta name="twitter:creator" content="@ChessDuelz">
+
+  <meta name="theme-color" content="#c9a84c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Chess Duelz">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Chess Duelz",
+    "url": "https://chessduelz.com/",
+    "description": "Chess Duelz is the premier 1v1 competitive chess platform.",
+    "contactPoint": { "@type": "ContactPoint", "contactType": "Customer Support", "email": "support@chessduelz.com" }
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary:    #080b10;
+      --bg-secondary:  #0e1219;
+      --bg-tertiary:   #161c28;
+      --bg-card:       #111620;
+
+      --gold:          #c9a84c;
+      --gold-light:    #e6c76a;
+      --gold-dim:      #a8873c;
+      --gold-glow:     rgba(201,168,76,0.32);
+      --gold-subtle:   rgba(201,168,76,0.07);
+
+      --green:         #22c55e;
+      --red:           #ef4444;
+
+      --text-primary:  #ede8dd;
+      --text-secondary:#8a9ab0;
+      --text-muted:    #4e5a6a;
+
+      --border:        rgba(201,168,76,0.11);
+      --border-subtle: rgba(255,255,255,0.055);
+      --shadow-card:   0 8px 40px rgba(0,0,0,0.55);
+      --shadow-glow:   0 0 48px rgba(201,168,76,0.22);
+      --radius:        18px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(18px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .header-inner {
+      max-width: 1380px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 66px;
+    }
+    .logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-mark {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px; flex-shrink: 0;
+      box-shadow: 0 3px 14px var(--gold-glow);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .logo:hover .logo-mark { transform: rotate(-10deg) scale(1.1); box-shadow: 0 6px 22px rgba(201,168,76,0.52); }
+    .logo-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.3px; }
+    .logo-tagline { font-size: 9.5px; color: var(--gold); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+    .nav { display: flex; gap: 2px; align-items: center; }
+    .nav-link { padding: 7px 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 13.5px; border-radius: 6px; transition: all 0.2s; white-space: nowrap; }
+    .nav-link:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .header-actions { display: flex; gap: 9px; align-items: center; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 10px 21px; border-radius: 7px; font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: all 0.22s; border: none;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      position: relative; overflow: hidden;
+    }
+    .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border-subtle); }
+    .btn-ghost:hover { border-color: rgba(201,168,76,0.35); color: var(--gold); background: var(--gold-subtle); }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: #06090e; font-weight: 700;
+      box-shadow: 0 4px 18px var(--gold-glow);
+    }
+    .btn-gold::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.22s;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.52); }
+    .btn-gold:hover::after { opacity: 1; }
+    .btn-gold:active { transform: translateY(0); }
+    .btn-lg { padding: 15px 34px; font-size: 15.5px; border-radius: 10px; }
+    .btn-outline-gold { background: transparent; color: var(--gold); border: 1.5px solid var(--gold); }
+    .btn-outline-gold:hover { background: var(--gold); color: #06090e; box-shadow: 0 4px 18px var(--gold-glow); }
+
+    /* ── MOBILE MENU ── */
+    .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; border: none; background: transparent; z-index: 1010; }
+    .menu-toggle span { width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: all 0.3s; }
+
+    /* ── TICKER ── */
+    .ticker-bar {
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+      padding: 0; overflow: hidden; height: 34px; display: flex; align-items: center;
+    }
+    .ticker-label {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #06090e; font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; padding: 0 18px; height: 100%;
+      display: flex; align-items: center; white-space: nowrap; flex-shrink: 0;
+    }
+    .ticker-track { overflow: hidden; flex: 1; }
+    .ticker-inner { display: flex; gap: 0; animation: ticker 40s linear infinite; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 32px; white-space: nowrap; font-size: 12px; color: var(--text-secondary);
+      border-right: 1px solid var(--border-subtle);
+    }
+    .ticker-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .ticker-dot.win { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.7); }
+    .ticker-dot.duel { background: var(--gold); box-shadow: 0 0 6px var(--gold-glow); }
+    .ticker-name { color: var(--text-primary); font-weight: 600; }
+    .ticker-amount { color: var(--gold); font-weight: 700; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: calc(100vh - 100px);
+      display: flex; align-items: center;
+      overflow: hidden; padding: 100px 28px 120px;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* Chessboard pattern background */
+    .hero-bg-board {
+      position: absolute; inset: 0;
+      background-image: repeating-conic-gradient(rgba(201,168,76,0.025) 0% 25%, transparent 0% 50%);
+      background-size: 72px 72px;
+    }
+    .hero-bg-radial {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 60% 50%, rgba(201,168,76,0.09) 0%, transparent 65%),
+                  radial-gradient(ellipse 50% 60% at 10% 80%, rgba(80,110,200,0.06) 0%, transparent 60%);
+    }
+    .hero-bg-vignette {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(8,11,16,0.5) 0%, transparent 25%, transparent 75%, rgba(8,11,16,0.98) 100%),
+        linear-gradient(to right, rgba(8,11,16,0.7) 0%, transparent 50%);
+    }
+
+    .hero-inner {
+      max-width: 1380px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1.05fr; gap: 64px; align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 7px 16px;
+      background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.22);
+      border-radius: 50px; color: var(--green);
+      font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 26px;
+    }
+    .live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 0 0 rgba(34,197,94,0.6); animation: livepulse 1.8s ease-in-out infinite; flex-shrink: 0; }
+    @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 70% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px; font-weight: 900; line-height: 1.0;
+      margin-bottom: 22px; color: var(--text-primary);
+      letter-spacing: -1px;
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, #f5e09a 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-title em { font-style: italic; }
+
+    .hero-subtitle {
+      font-size: 18px; color: var(--text-secondary);
+      line-height: 1.78; margin-bottom: 38px; max-width: 500px;
+    }
+
+    .hero-cta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 48px; }
+
+    .hero-trust { display: flex; gap: 24px; flex-wrap: wrap; }
+    .trust-pill { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-secondary); }
+    .trust-pill-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gold-subtle); border: 1px solid rgba(201,168,76,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+    }
+
+    /* ── HERO VISUAL: CSS CHESS BOARD ── */
+    .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+
+    .board-scene {
+      position: relative;
+      width: 440px; height: 440px;
+      flex-shrink: 0;
+    }
+
+    /* Outer glow ring */
+    .board-glow-ring {
+      position: absolute; inset: -28px; border-radius: 28px;
+      background: radial-gradient(circle at center, rgba(201,168,76,0.2) 0%, transparent 70%);
+      animation: glow-breathe 4s ease-in-out infinite;
+    }
+    @keyframes glow-breathe { 0%,100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+    .board-border {
+      position: absolute; inset: -3px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--gold) 0%, rgba(201,168,76,0.3) 50%, var(--gold-light) 100%);
+      z-index: 0;
+    }
+
+    .chess-board {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      border-radius: 12px; overflow: hidden;
+      display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* Chess squares */
+    .sq { position: relative; }
+    .sq.light { background: #e8d5b0; }
+    .sq.dark  { background: #8b6336; }
+
+    /* Subtle coordinate labels */
+    .sq.file-a.rank-1 { font-size: 0; }
+
+    /* Pieces as Unicode on the board */
+    .piece {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(18px, 3vw, 32px);
+      line-height: 1; user-select: none;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      transition: transform 0.3s;
+    }
+    .piece.white { color: #fff; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7)); }
+    .piece.black { color: #1a1a1a; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+
+    /* Highlight squares */
+    .sq.hl-last { background-color: rgba(255,221,87,0.55) !important; }
+    .sq.hl-check { background-color: rgba(239,68,68,0.5) !important; }
+
+    /* Floating info cards */
+    .f-card {
+      position: absolute;
+      background: rgba(8,11,16,0.94);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 13px; padding: 12px 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+      z-index: 20; min-width: 140px;
+    }
+    .f-card-tr { top: -16px; right: -32px; animation: float-a 5s ease-in-out infinite; }
+    .f-card-bl { bottom: -16px; left: -32px; animation: float-b 6s ease-in-out infinite; }
+    .f-card-mid-r { right: -44px; top: 50%; transform: translateY(-50%); animation: float-a 7s ease-in-out infinite 1s; }
+    @keyframes float-a { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes float-b { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+    .f-card-mid-r { animation: float-side 6s ease-in-out infinite; }
+    @keyframes float-side { 0%,100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(-6px); } }
+
+    .fc-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .fc-val { font-size: 20px; font-weight: 800; color: var(--gold); font-family: 'Playfair Display', serif; }
+    .fc-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+    .match-card {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .match-vs {
+      font-size: 10px; color: var(--text-muted); text-align: center;
+      flex-shrink: 0; width: 24px;
+    }
+    .match-player { display: flex; flex-direction: column; gap: 1px; }
+    .match-pname { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .match-pelo { font-size: 10px; color: var(--text-muted); }
+    .match-stake { font-size: 13px; font-weight: 800; color: var(--gold); text-align: center; }
+    .match-stake-label { font-size: 9px; color: var(--text-muted); text-align: center; }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 40px 28px;
+    }
+    .stats-inner {
+      max-width: 1380px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); text-align: center;
+    }
+    .stat-item { padding: 0 20px; position: relative; }
+    .stat-item:not(:last-child)::after { content:''; position:absolute; right:0; top:10%; height:80%; width:1px; background:var(--border); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 800; color: var(--gold); line-height: 1; margin-bottom: 7px; }
+    .stat-desc { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── SECTION SHARED ── */
+    .section-inner { max-width: 1380px; margin: 0 auto; }
+    .section-label { display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: var(--gold); margin-bottom: 12px; }
+    .section-heading { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 800; color: var(--text-primary); margin-bottom: 16px; line-height: 1.12; }
+    .section-sub { font-size: 16.5px; color: var(--text-secondary); max-width: 540px; line-height: 1.72; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { padding: 96px 28px; background: var(--bg-primary); }
+    .steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-top: 56px; position: relative; }
+    .steps-connector {
+      position: absolute; top: 44px; left: calc(12.5% + 26px); right: calc(12.5% + 26px); height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), var(--gold-dim), var(--border), transparent);
+    }
+    .step-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); padding: 36px 26px; text-align: center;
+      transition: all 0.35s cubic-bezier(0.23,1,0.32,1); position: relative; overflow: hidden;
+    }
+    .step-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(145deg, var(--gold-subtle) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .step-card:hover { border-color: rgba(201,168,76,0.28); transform: translateY(-8px); box-shadow: var(--shadow-glow); }
+    .step-card:hover::before { opacity: 1; }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: #06090e; font-weight: 900; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; box-shadow: 0 4px 16px var(--gold-glow); position: relative; z-index: 1;
+    }
+    .step-icon { font-size: 26px; margin-bottom: 12px; display: block; position: relative; z-index: 1; }
+    .step-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 9px; position: relative; z-index: 1; }
+    .step-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; position: relative; z-index: 1; }
+
+    /* ── PvP MATCHUP PROMO ── */
+    .pvp-section { padding: 0 28px 96px; background: var(--bg-primary); }
+    .pvp-inner {
+      max-width: 1380px; margin: 0 auto;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+    .pvp-left {
+      padding: 64px 60px;
+      background-image: repeating-conic-gradient(rgba(201,168,76,0.02) 0% 25%, transparent 0% 50%);
+      background-size: 40px 40px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .pvp-right {
+      padding: 52px 44px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(8,11,16,0.8) 100%);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 16px; justify-content: center;
+    }
+    .pvp-right-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* Live match card */
+    .live-match {
+      background: var(--bg-secondary); border: 1px solid var(--border-subtle);
+      border-radius: 14px; padding: 20px 22px;
+      display: flex; align-items: center; gap: 20px;
+      transition: all 0.25s; cursor: default;
+    }
+    .live-match:hover { border-color: rgba(201,168,76,0.25); transform: translateX(4px); }
+
+    .lm-player { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .lm-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--bg-tertiary); border: 2px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .lm-avatar.gold-border { border-color: rgba(201,168,76,0.5); }
+    .lm-name { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+    .lm-elo { font-size: 11px; color: var(--text-muted); }
+    .lm-vs {
+      width: 48px; height: 48px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #06090e;
+      letter-spacing: 0.5px; box-shadow: 0 4px 14px var(--gold-glow);
+    }
+    .lm-stake { text-align: right; }
+    .lm-stake-val { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800; color: var(--gold); }
+    .lm-stake-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .lm-mode-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 50px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      background: rgba(34,197,94,0.12); color: var(--green);
+      border: 1px solid rgba(34,197,94,0.2); margin-top: 4px;
+    }
+
+    /* ── GAME MODES ── */
+    .modes-section { padding: 96px 28px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+    .modes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 52px; }
+    .mode-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); overflow: hidden;
+      cursor: pointer; transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+      text-decoration: none; display: block; position: relative;
+    }
+    .mode-card:hover { border-color: rgba(201,168,76,0.38); transform: translateY(-7px); box-shadow: 0 22px 60px rgba(0,0,0,0.5), var(--shadow-glow); }
+
+    .mode-header {
+      padding: 34px 30px 28px;
+      position: relative; overflow: hidden;
+    }
+    .mode-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--gold-subtle) 0%, transparent 60%);
+    }
+    .mode-header-bg {
+      position: absolute; inset: 0; opacity: 0.08;
+      background: repeating-conic-gradient(rgba(201,168,76,0.5) 0% 25%, transparent 0% 50%);
+      background-size: 28px 28px;
+    }
+    .mode-icon { font-size: 40px; margin-bottom: 14px; display: block; position: relative; z-index: 1; }
+    .mode-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: var(--text-primary); position: relative; z-index: 1; }
+    .mode-tagline { font-size: 13px; color: var(--text-secondary); margin-top: 4px; position: relative; z-index: 1; }
+
+    .mode-badge {
+      position: absolute; top: 16px; right: 16px; z-index: 2;
+      padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .badge-live { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 3px 10px rgba(34,197,94,0.35); }
+    .badge-popular { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #06090e; box-shadow: 0 3px 10px var(--gold-glow); }
+
+    .mode-body { padding: 24px 30px 28px; border-top: 1px solid var(--border-subtle); }
+    .mode-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.68; margin-bottom: 20px; }
+    .mode-meta { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .mode-meta-item { }
+    .mode-meta-label { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .mode-meta-val { font-size: 15px; font-weight: 700; color: var(--gold); }
+
+    /* ── FEATURES ── */
+    .features-section { padding: 96px 28px; background: var(--bg-primary); }
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 52px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); padding: 36px 32px;
+      transition: all 0.35s; position: relative; overflow: hidden;
+    }
+    .feature-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--gold), var(--gold-light));
+      transform: scaleX(0); transition: transform 0.35s; transform-origin: left;
+    }
+    .feature-card:hover { border-color: rgba(201,168,76,0.22); transform: translateY(-5px); box-shadow: var(--shadow-card); }
+    .feature-card:hover::after { transform: scaleX(1); }
+    .feature-icon-wrap {
+      width: 50px; height: 50px; border-radius: 13px;
+      background: var(--gold-subtle); border: 1px solid rgba(201,168,76,0.18);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .feature-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 9px; }
+    .feature-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* ── LEADERBOARD ── */
+    .leaders-section { padding: 96px 28px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+    .leaders-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
+    .leaders-list { display: flex; flex-direction: column; gap: 10px; margin-top: 36px; }
+    .leader-row {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 14px 18px; transition: all 0.24s; position: relative; overflow: hidden;
+    }
+    .leader-row::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: transparent; transition: background 0.24s;
+    }
+    .leader-row:hover { border-color: rgba(201,168,76,0.22); transform: translateX(4px); }
+    .leader-row:hover::before { background: var(--gold); }
+    .leader-row.top1::before { background: linear-gradient(to bottom, #ffd700, #c9a84c); }
+
+    .rank-badge {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .rank-badge.r1 { background: linear-gradient(135deg, #ffd700, #c9a84c); color: #06090e; box-shadow: 0 3px 10px rgba(255,215,0,0.4); }
+    .rank-badge.r2 { background: linear-gradient(135deg, #d0d0d0, #a0a0a0); color: #06090e; }
+    .rank-badge.r3 { background: linear-gradient(135deg, #cd7f32, #9e5c1a); color: #fff; }
+    .rank-badge.rn { background: var(--bg-tertiary); color: var(--text-muted); border: 1px solid var(--border-subtle); }
+
+    .leader-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid var(--border-subtle); object-fit: cover; flex-shrink: 0;
+    }
+    .leader-info { flex: 1; }
+    .leader-name { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+    .leader-elo { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .leader-winnings { font-weight: 800; color: var(--gold); font-size: 16px; font-family: 'Playfair Display', serif; flex-shrink: 0; }
+    .leader-win-rate { font-size: 10px; color: var(--green); font-weight: 600; text-align: right; }
+
+    .leaders-cta-card {
+      background: var(--bg-card); border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 24px; padding: 48px 44px; position: sticky; top: 88px;
+      background-image:
+        radial-gradient(circle at 80% 15%, rgba(201,168,76,0.09) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(80,110,200,0.06) 0%, transparent 50%);
+      overflow: hidden;
+    }
+    .leaders-cta-card::before {
+      content: ''; position: absolute; top: -1px; left: 16px; right: 16px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .cta-king { font-size: 52px; margin-bottom: 20px; display: block; }
+    .cta-heading { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; line-height: 1.2; }
+    .cta-text { font-size: 14.5px; color: var(--text-secondary); line-height: 1.72; margin-bottom: 28px; }
+    .cta-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+    .cta-mini-stat { background: var(--bg-secondary); border-radius: 10px; padding: 14px; text-align: center; }
+    .cta-mini-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: var(--gold); }
+    .cta-mini-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+    /* ── REVIEWS ── */
+    .reviews-section { padding: 96px 28px; background: var(--bg-primary); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 52px; }
+    .review-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); padding: 32px; transition: all 0.32s; position: relative; overflow: hidden;
+    }
+    .review-card::before {
+      content: '\201C'; position: absolute; top: 14px; right: 22px;
+      font-family: 'Playfair Display', serif; font-size: 80px; color: rgba(201,168,76,0.07);
+      line-height: 1; pointer-events: none;
+    }
+    .review-card:hover { border-color: rgba(201,168,76,0.22); transform: translateY(-5px); box-shadow: var(--shadow-card); }
+    .review-stars { font-size: 13px; margin-bottom: 14px; letter-spacing: 2px; }
+    .review-text { font-size: 14.5px; color: var(--text-secondary); line-height: 1.78; margin-bottom: 22px; font-style: italic; }
+    .review-author { display: flex; align-items: center; gap: 12px; }
+    .review-avatar { width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(201,168,76,0.28); object-fit: cover; }
+    .review-name { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+    .review-role { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── PAYMENT ── */
+    .payment-section {
+      padding: 52px 28px; background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+    }
+    .payment-inner { max-width: 1380px; margin: 0 auto; text-align: center; }
+    .payment-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 26px; }
+    .payment-logos { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .payment-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 50px; padding: 9px 18px;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .payment-chip:hover { border-color: rgba(201,168,76,0.28); color: var(--gold); }
+    .payment-chip-icon { font-size: 16px; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      padding: 80px 28px; background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+    }
+    .cta-banner-inner {
+      max-width: 900px; margin: 0 auto; text-align: center;
+    }
+    .cta-banner-heading {
+      font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900;
+      color: var(--text-primary); line-height: 1.08; margin-bottom: 18px;
+    }
+    .cta-banner-heading .g {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .cta-banner-sub { font-size: 17px; color: var(--text-secondary); margin-bottom: 40px; line-height: 1.7; }
+    .cta-banner-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .cta-banner-note { font-size: 12px; color: var(--text-muted); margin-top: 20px; }
+
+    /* ── FOOTER ── */
+    .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 72px 28px 32px; }
+    .footer-grid { max-width: 1380px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 52px; margin-bottom: 52px; }
+    .footer-brand-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-bottom: 14px; }
+    .footer-brand-mark { width: 34px; height: 34px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800; color: var(--text-primary); }
+    .footer-brand-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.72; margin-bottom: 22px; }
+    .footer-social { display: flex; gap: 9px; }
+    .social-btn { width: 34px; height: 34px; border-radius: 6px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-secondary); font-size: 13px; transition: all 0.2s; }
+    .social-btn:hover { background: var(--gold); color: #06090e; border-color: var(--gold); transform: translateY(-2px); }
+    .footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 16px; }
+    .footer-links { display: flex; flex-direction: column; gap: 9px; }
+    .footer-link { color: var(--text-secondary); text-decoration: none; font-size: 13.5px; transition: color 0.2s; }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-bottom { max-width: 1380px; margin: 0 auto; border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+    .footer-legal { font-size: 11.5px; color: var(--text-muted); line-height: 1.85; max-width: 680px; }
+    .footer-legal strong { color: var(--text-secondary); }
+    .footer-badge { display: flex; align-items: center; gap: 7px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 7px 12px; font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { opacity: 0; animation: fadeUp 0.65s cubic-bezier(0.23,1,0.32,1) forwards; }
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.22s; }
+    .delay-3 { animation-delay: 0.34s; } .delay-4 { animation-delay: 0.46s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) {
+      .hero-title { font-size: 58px; }
+      .board-scene { width: 360px; height: 360px; }
+      .steps-grid { grid-template-columns: repeat(2,1fr); }
+      .steps-connector { display: none; }
+      .pvp-inner { grid-template-columns: 1fr; }
+      .pvp-left { padding: 52px 44px; }
+      .leaders-layout { grid-template-columns: 1fr; }
+      .leaders-cta-card { position: static; }
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 52px; }
+      .hero-visual { order: -1; }
+      .board-scene { width: 300px; height: 300px; }
+      .f-card-mid-r { display: none; }
+      .f-card-tr { right: -12px; }
+      .f-card-bl { left: -12px; }
+      .modes-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: repeat(2,1fr); }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); gap: 24px; }
+      .stat-item::after { display: none; }
+      .footer-grid { grid-template-columns: repeat(2,1fr); gap: 36px; }
+      .footer-brand { grid-column: span 2; }
+      .section-heading { font-size: 36px; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { padding: 0 16px; }
+      .nav { display: none; }
+      .menu-toggle { display: flex; }
+      .hero { padding: 60px 18px 80px; }
+      .hero-title { font-size: 40px; }
+      .hero-subtitle { font-size: 15.5px; }
+      .hero-cta { flex-direction: column; }
+      .btn-lg { width: 100%; justify-content: center; }
+      .hero-trust { gap: 14px; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .section-heading { font-size: 30px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .cta-banner-heading { font-size: 36px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer-brand { grid-column: span 1; }
+      .footer-bottom { flex-direction: column; }
+      .cta-mini-stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="logo" aria-label="Chess Duelz - Home">
+        <div class="logo-mark" aria-hidden="true">&#9823;</div>
+        <div class="logo-text">
+          <span class="logo-name">Chess Duelz</span>
+          <span class="logo-tagline">1v1 &middot; Real Players &middot; Real Stakes</span>
+        </div>
+      </a>
+
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#game-modes" class="nav-link">Game Modes</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="/leaderboard.html" class="nav-link">Leaderboard</a>
+        <a href="/about.html" class="nav-link">About</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="/login.html" class="btn btn-ghost">Log In</a>
+        <a href="/register.html" class="btn btn-gold">Play Now &#9823;</a>
+      </div>
+
+      <button class="menu-toggle" aria-label="Open menu" id="menuToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- LIVE TICKER -->
+  <div class="ticker-bar" role="marquee" aria-live="off" aria-label="Live activity feed">
+    <div class="ticker-label">&#9679; Live</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="tickerInner">
+        <!-- Items duplicated for seamless loop -->
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">GrandMasterK</span> won <span class="ticker-amount">$340</span> vs QueenSlayer99 &mdash; Blitz</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>New duel started: <span class="ticker-name">Sicilian_D</span> vs <span class="ticker-name">EndgameWiz</span> &mdash; $200 Rapid</div>
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">OpeningTrap_A</span> won <span class="ticker-amount">$520</span> vs Petroff_K &mdash; Classical</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>New duel started: <span class="ticker-name">KingsIndian</span> vs <span class="ticker-name">CastarRook</span> &mdash; $50 Blitz</div>
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">NightRider_87</span> won <span class="ticker-amount">$1,200</span> vs BishopX &mdash; Rapid</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>Tournament bracket filling &mdash; 8 spots left</div>
+        <!-- duplicate for loop -->
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">GrandMasterK</span> won <span class="ticker-amount">$340</span> vs QueenSlayer99 &mdash; Blitz</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>New duel started: <span class="ticker-name">Sicilian_D</span> vs <span class="ticker-name">EndgameWiz</span> &mdash; $200 Rapid</div>
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">OpeningTrap_A</span> won <span class="ticker-amount">$520</span> vs Petroff_K &mdash; Classical</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>New duel started: <span class="ticker-name">KingsIndian</span> vs <span class="ticker-name">CastarRook</span> &mdash; $50 Blitz</div>
+        <div class="ticker-item"><span class="ticker-dot win"></span><span class="ticker-name">NightRider_87</span> won <span class="ticker-amount">$1,200</span> vs BishopX &mdash; Rapid</div>
+        <div class="ticker-item"><span class="ticker-dot duel"></span>Tournament bracket filling &mdash; 8 spots left</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" role="region" aria-label="Hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-bg-board"></div>
+      <div class="hero-bg-radial"></div>
+      <div class="hero-bg-vignette"></div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow fade-up">
+          <span class="live-dot" aria-hidden="true"></span>
+          148 Players Online &mdash; Dueling Right Now
+        </div>
+
+        <h1 class="hero-title fade-up delay-1">
+          <em>You</em> vs.<br>
+          The <span class="highlight">World.</span>
+        </h1>
+
+        <p class="hero-subtitle fade-up delay-2">
+          Chess Duelz is the competitive 1v1 chess platform where you challenge real opponents, climb an ELO ladder, and fight for real money &mdash; with nothing but skill deciding the outcome.
+        </p>
+
+        <div class="hero-cta fade-up delay-3">
+          <a href="/register.html" class="btn btn-gold btn-lg" aria-label="Create your free account and start dueling">
+            &#9823;&ensp;Challenge an Opponent
+          </a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">See How It Works</a>
+        </div>
+
+        <div class="hero-trust fade-up delay-4">
+          <div class="trust-pill"><span class="trust-pill-icon" aria-hidden="true">&#9876;</span> Pure 1v1 PvP</div>
+          <div class="trust-pill"><span class="trust-pill-icon" aria-hidden="true">&#127919;</span> ELO Matchmaking</div>
+          <div class="trust-pill"><span class="trust-pill-icon" aria-hidden="true">&#9889;</span> Instant Payouts</div>
+          <div class="trust-pill"><span class="trust-pill-icon" aria-hidden="true">&#128274;</span> SSL Secured</div>
+        </div>
+      </div>
+
+      <!-- CSS Chess Board Visualization -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="board-scene">
+          <div class="board-glow-ring"></div>
+          <div class="board-border"></div>
+
+          <!-- 8x8 board: rows 8→1, columns a→h -->
+          <div class="chess-board" id="cssBoard">
+            <!-- Board squares generated by JS below for brevity -->
+          </div>
+
+          <!-- Floating info cards -->
+          <div class="f-card f-card-tr">
+            <div class="fc-label">Active Duel</div>
+            <div class="match-card">
+              <div class="match-player">
+                <span class="match-pname">GrandMstrK</span>
+                <span class="match-pelo">ELO 2480</span>
+              </div>
+              <div class="match-vs">VS</div>
+              <div class="match-player" style="text-align:right;">
+                <span class="match-pname">QueenSlyr</span>
+                <span class="match-pelo">ELO 2340</span>
+              </div>
+            </div>
+            <div style="text-align:center;margin-top:8px;">
+              <div class="match-stake">$500</div>
+              <div class="match-stake-label">Rapid Duel &middot; 12:44 left</div>
+            </div>
+          </div>
+
+          <div class="f-card f-card-bl">
+            <div class="fc-label">This Month</div>
+            <div class="fc-val">$48,200</div>
+            <div class="fc-sub">paid to winners</div>
+          </div>
+
+          <div class="f-card f-card-mid-r">
+            <div class="fc-label">Your Rating</div>
+            <div class="fc-val" style="font-size:16px;">&#8599; Rising</div>
+            <div class="fc-sub">Win streaks rewarded</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip" role="region" aria-label="Platform statistics">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-num">$48K+</div>
+        <div class="stat-desc">Paid Out Total</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">2,300+</div>
+        <div class="stat-desc">Active Duelists</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-desc">Skill-Based</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">&lt;24h</div>
+        <div class="stat-desc">Withdrawal Time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works" role="region" aria-labelledby="how-heading">
+    <div class="section-inner">
+      <span class="section-label">The Process</span>
+      <h2 id="how-heading" class="section-heading">Four Moves to Your First Win</h2>
+      <p class="section-sub">From signup to checkmate in minutes. No complex setup &mdash; just chess.</p>
+
+      <div class="steps-grid">
+        <div class="steps-connector" aria-hidden="true"></div>
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <span class="step-icon">&#128100;</span>
+          <h3 class="step-title">Create Your Account</h3>
+          <p class="step-desc">Register in under 60 seconds. Verify your identity once and your account is ready for competitive play.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <span class="step-icon">&#128176;</span>
+          <h3 class="step-title">Fund Your Account</h3>
+          <p class="step-desc">Deposit via Bitcoin, Ethereum, USDT or other major cryptocurrencies. Funds reflect instantly.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <span class="step-icon">&#9876;</span>
+          <h3 class="step-title">Find Your Opponent</h3>
+          <p class="step-desc">Set your stake, pick your time control, and our ELO-based system matches you with a real player at your level.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <span class="step-icon">&#127942;</span>
+          <h3 class="step-title">Win &amp; Withdraw</h3>
+          <p class="step-desc">Outplay your opponent. Winnings credit immediately. Withdraw to your crypto wallet any time, no delays.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PvP LIVE MATCHES PROMO -->
+  <section class="pvp-section" id="live-matches" role="region" aria-label="Live player matches">
+    <div class="pvp-inner">
+      <div class="pvp-left">
+        <span class="section-label">Player vs. Player</span>
+        <h2 class="section-heading" style="max-width:420px;">Every Duel is<br>1v1 &mdash; No Bots.</h2>
+        <p class="section-sub" style="margin-bottom:32px;">You are always matched against a real human opponent. The ELO matchmaking system ensures fair, competitive pairings at every stake level. Your skill &mdash; and only your skill &mdash; decides the outcome.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="/register.html" class="btn btn-gold">Start a Duel &#9823;</a>
+          <a href="#game-modes" class="btn btn-outline-gold">Browse Modes</a>
+        </div>
+      </div>
+
+      <div class="pvp-right">
+        <div class="pvp-right-title">&#9679;&ensp;Matches Happening Now</div>
+
+        <div class="live-match">
+          <div class="lm-player">
+            <div class="lm-avatar gold-border">&#9818;</div>
+            <div>
+              <div class="lm-name">GrandMasterK</div>
+              <div class="lm-elo">ELO 2,480</div>
+            </div>
+          </div>
+          <div class="lm-vs">VS</div>
+          <div class="lm-player" style="justify-content:flex-end;">
+            <div style="text-align:right;">
+              <div class="lm-name">QueenSlayer99</div>
+              <div class="lm-elo">ELO 2,340</div>
+            </div>
+            <div class="lm-avatar">&#9820;</div>
+          </div>
+          <div class="lm-stake">
+            <div class="lm-stake-val">$500</div>
+            <div class="lm-stake-label">Rapid</div>
+            <div class="lm-mode-badge">&#9679; Live</div>
+          </div>
+        </div>
+
+        <div class="live-match">
+          <div class="lm-player">
+            <div class="lm-avatar">&#9822;</div>
+            <div>
+              <div class="lm-name">OpeningTrap_A</div>
+              <div class="lm-elo">ELO 2,290</div>
+            </div>
+          </div>
+          <div class="lm-vs">VS</div>
+          <div class="lm-player" style="justify-content:flex-end;">
+            <div style="text-align:right;">
+              <div class="lm-name">Sicilian_D</div>
+              <div class="lm-elo">ELO 2,210</div>
+            </div>
+            <div class="lm-avatar">&#9823;</div>
+          </div>
+          <div class="lm-stake">
+            <div class="lm-stake-val">$200</div>
+            <div class="lm-stake-label">Blitz</div>
+            <div class="lm-mode-badge">&#9679; Live</div>
+          </div>
+        </div>
+
+        <div class="live-match">
+          <div class="lm-player">
+            <div class="lm-avatar">&#9819;</div>
+            <div>
+              <div class="lm-name">EndgameWiz</div>
+              <div class="lm-elo">ELO 2,180</div>
+            </div>
+          </div>
+          <div class="lm-vs">VS</div>
+          <div class="lm-player" style="justify-content:flex-end;">
+            <div style="text-align:right;">
+              <div class="lm-name">NightRider_87</div>
+              <div class="lm-elo">ELO 2,140</div>
+            </div>
+            <div class="lm-avatar">&#9821;</div>
+          </div>
+          <div class="lm-stake">
+            <div class="lm-stake-val">$1,200</div>
+            <div class="lm-stake-label">Classical</div>
+            <div class="lm-mode-badge">&#9679; Live</div>
+          </div>
+        </div>
+
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Showing 3 of 148 active duels &middot; <a href="/register.html" style="color:var(--gold);text-decoration:none;">Join the action &rarr;</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME MODES -->
+  <section class="modes-section" id="game-modes" role="region" aria-labelledby="modes-heading">
+    <div class="section-inner">
+      <span class="section-label">Game Modes</span>
+      <h2 id="modes-heading" class="section-heading">Choose Your Battle Format</h2>
+      <p class="section-sub">Three time controls, one objective &mdash; outplay your opponent and collect the pot.</p>
+
+      <div class="modes-grid">
+
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event,'/chess')">
+          <div class="mode-header">
+            <div class="mode-header-bg" aria-hidden="true"></div>
+            <span class="mode-badge badge-popular">Most Popular</span>
+            <span class="mode-icon">&#9889;</span>
+            <div class="mode-title">Blitz Duel</div>
+            <div class="mode-tagline">3 or 5-minute games</div>
+          </div>
+          <div class="mode-body">
+            <p class="mode-desc">High-speed chess at its most electric. No time to overthink &mdash; only instinct and pattern recognition survive. Most popular format among competitive duelists.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><div class="mode-meta-label">Min Stake</div><div class="mode-meta-val">$1</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Max Stake</div><div class="mode-meta-val">$500</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Status</div><div class="mode-meta-val" style="color:#22c55e;">Live &#9679;</div></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event,'/chess')">
+          <div class="mode-header">
+            <div class="mode-header-bg" aria-hidden="true"></div>
+            <span class="mode-badge badge-live">Live</span>
+            <span class="mode-icon">&#9876;</span>
+            <div class="mode-title">Rapid Duel</div>
+            <div class="mode-tagline">10 or 15-minute games</div>
+          </div>
+          <div class="mode-body">
+            <p class="mode-desc">More time to think, deeper strategy, bigger payouts. The format where preparation separates the great from the very good. Serious stakes for serious players.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><div class="mode-meta-label">Min Stake</div><div class="mode-meta-val">$5</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Max Stake</div><div class="mode-meta-val">$2,000</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Status</div><div class="mode-meta-val" style="color:#22c55e;">Live &#9679;</div></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event,'/chess')">
+          <div class="mode-header">
+            <div class="mode-header-bg" aria-hidden="true"></div>
+            <span class="mode-badge badge-live">Live</span>
+            <span class="mode-icon">&#9819;</span>
+            <div class="mode-title">Classical Duel</div>
+            <div class="mode-tagline">30-minute games</div>
+          </div>
+          <div class="mode-body">
+            <p class="mode-desc">The prestige format &mdash; highest stakes, longest games, the purest expression of chess mastery. For those who have studied and are ready to prove it.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><div class="mode-meta-label">Min Stake</div><div class="mode-meta-val">$20</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Max Stake</div><div class="mode-meta-val">$10,000</div></div>
+              <div class="mode-meta-item"><div class="mode-meta-label">Status</div><div class="mode-meta-val" style="color:#22c55e;">Live &#9679;</div></div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features" role="region" aria-labelledby="features-heading">
+    <div class="section-inner">
+      <span class="section-label">Why Chess Duelz</span>
+      <h2 id="features-heading" class="section-heading">Built for the Competitive Player</h2>
+      <p class="section-sub">Every feature was designed around one thing: rewarding chess mastery. Nothing left to chance.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#9876;</div>
+          <h3 class="feature-title">Always 1v1 &mdash; Never Bots</h3>
+          <p class="feature-desc">Every opponent is a real human being. No AI, no simulations. Every win is earned, every loss is a lesson you can learn from.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#127919;</div>
+          <h3 class="feature-title">ELO-Based Matchmaking</h3>
+          <p class="feature-desc">Our rating system pairs you with opponents at your exact skill level. Beat stronger players to climb. No stomping beginners &mdash; fair competition only.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#9889;</div>
+          <h3 class="feature-title">Real-Time Payouts</h3>
+          <p class="feature-desc">Win a duel and your funds update immediately. Withdraw to your crypto wallet any time &mdash; no holds, no waiting periods, no excuses.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128270;</div>
+          <h3 class="feature-title">Provably Fair Engine</h3>
+          <p class="feature-desc">Every game is recorded and verifiable on our fairness ledger. Your result is determined purely by over-the-board play &mdash; transparent and auditable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128737;</div>
+          <h3 class="feature-title">Bank-Level Security</h3>
+          <p class="feature-desc">End-to-end TLS encryption, two-factor authentication, and multi-layer infrastructure monitor and protect your account and funds around the clock.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128200;</div>
+          <h3 class="feature-title">Deep Game Analysis</h3>
+          <p class="feature-desc">Review every move after the game ends. Track accuracy percentages, blunder rates, opening performance, and endgame conversion &mdash; sharpen your edge every session.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section class="leaders-section" id="leaderboard" role="region" aria-labelledby="leaders-heading">
+    <div class="section-inner">
+      <div class="leaders-layout">
+        <div>
+          <span class="section-label">Hall of Kings</span>
+          <h2 id="leaders-heading" class="section-heading">March 2026<br>Top Duelists</h2>
+          <p class="section-sub">The sharpest minds competing for the biggest pots. Can you claim a spot?</p>
+
+          <div class="leaders-list">
+            <div class="leader-row top1">
+              <div class="rank-badge r1">1</div>
+              <img src="https://i.pravatar.cc/150?img=11" alt="GrandMasterK" class="leader-avatar" loading="lazy" width="42" height="42">
+              <div class="leader-info">
+                <div class="leader-name">GrandMasterK</div>
+                <div class="leader-elo">ELO 2,480 &middot; 94 wins this month</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-winnings">+$4,820</div>
+                <div class="leader-win-rate">&#9650; 87% win rate</div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <div class="rank-badge r2">2</div>
+              <img src="https://i.pravatar.cc/150?img=25" alt="QueenSlayer99" class="leader-avatar" loading="lazy" width="42" height="42">
+              <div class="leader-info">
+                <div class="leader-name">QueenSlayer99</div>
+                <div class="leader-elo">ELO 2,340 &middot; 82 wins</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-winnings">+$3,115</div>
+                <div class="leader-win-rate">&#9650; 81% win rate</div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <div class="rank-badge r3">3</div>
+              <img src="https://i.pravatar.cc/150?img=34" alt="OpeningTrap_A" class="leader-avatar" loading="lazy" width="42" height="42">
+              <div class="leader-info">
+                <div class="leader-name">OpeningTrap_A</div>
+                <div class="leader-elo">ELO 2,290 &middot; 71 wins</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-winnings">+$2,450</div>
+                <div class="leader-win-rate">&#9650; 78% win rate</div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <div class="rank-badge rn">4</div>
+              <img src="https://i.pravatar.cc/150?img=44" alt="Sicilian_D" class="leader-avatar" loading="lazy" width="42" height="42">
+              <div class="leader-info">
+                <div class="leader-name">Sicilian_D</div>
+                <div class="leader-elo">ELO 2,210 &middot; 68 wins</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-winnings">+$1,990</div>
+                <div class="leader-win-rate">&#9650; 74% win rate</div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <div class="rank-badge rn">5</div>
+              <img src="https://i.pravatar.cc/150?img=53" alt="EndgameWiz" class="leader-avatar" loading="lazy" width="42" height="42">
+              <div class="leader-info">
+                <div class="leader-name">EndgameWiz</div>
+                <div class="leader-elo">ELO 2,180 &middot; 61 wins</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-winnings">+$1,640</div>
+                <div class="leader-win-rate">&#9650; 71% win rate</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="/leaderboard.html" class="btn btn-ghost" style="margin-top:24px;display:inline-flex;">View Full Leaderboard &rarr;</a>
+        </div>
+
+        <div class="leaders-cta-card">
+          <span class="cta-king" aria-hidden="true">&#9819;</span>
+          <h3 class="cta-heading">Your Skill Deserves to Pay Off</h3>
+          <p class="cta-text">You've studied openings, practised endgames, and beaten the engine. On Chess Duelz, those hours translate into real earnings. Challenge opponents at your level and let the board decide.</p>
+
+          <div class="cta-mini-stats">
+            <div class="cta-mini-stat">
+              <div class="cta-mini-val">2,300+</div>
+              <div class="cta-mini-label">Active Players</div>
+            </div>
+            <div class="cta-mini-stat">
+              <div class="cta-mini-val">$48K+</div>
+              <div class="cta-mini-label">Total Paid Out</div>
+            </div>
+            <div class="cta-mini-stat">
+              <div class="cta-mini-val">&#60;24h</div>
+              <div class="cta-mini-label">Withdrawal Time</div>
+            </div>
+            <div class="cta-mini-stat">
+              <div class="cta-mini-val">100%</div>
+              <div class="cta-mini-label">Skill-Based</div>
+            </div>
+          </div>
+
+          <a href="/register.html" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">Join the Duelists &#9823;</a>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:14px;text-align:center;">18+ only &middot; Skill-based gaming &middot; Play responsibly</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews-section" role="region" aria-labelledby="reviews-heading">
+    <div class="section-inner">
+      <span class="section-label">Player Stories</span>
+      <h2 id="reviews-heading" class="section-heading">What Duelists Say</h2>
+      <p class="section-sub">Real players. Real earnings. Real feedback.</p>
+
+      <div class="reviews-grid">
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"I've been playing competitive chess for 8 years and Chess Duelz is the first platform that actually rewards skill properly. The ELO matchmaking is near-perfect and withdrawals process faster than anything else I've used."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=12" alt="Marcus C." class="review-avatar" loading="lazy" width="44" height="44">
+            <div><div class="review-name" itemprop="name">Marcus C.</div><div class="review-role">ELO 2,110 &middot; 6 months on platform</div></div>
+          </div>
+        </article>
+
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"Finally something that rewards all my study time. I cleared $800 last month playing Rapid Duels after work. The interface is clean, there's zero lag mid-game, and my payout was in my wallet within hours."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=27" alt="Sofia T." class="review-avatar" loading="lazy" width="44" height="44">
+            <div><div class="review-name" itemprop="name">Sofia T.</div><div class="review-role">ELO 1,870 &middot; 4 months on platform</div></div>
+          </div>
+        </article>
+
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"The blitz format is addictive. Pure pressure, real money on the line &mdash; and when you win it feels earned because you beat an actual person. Solid anti-cheat system too, never once felt out-played by a bot."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=59" alt="Alex R." class="review-avatar" loading="lazy" width="44" height="44">
+            <div><div class="review-name" itemprop="name">Alex R.</div><div class="review-role">ELO 1,990 &middot; 7 months on platform</div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section class="payment-section" role="region" aria-label="Supported payment methods">
+    <div class="payment-inner">
+      <p class="payment-title">Accepted Deposit &amp; Withdrawal Methods</p>
+      <div class="payment-logos">
+        <div class="payment-chip"><span class="payment-chip-icon">&#8383;</span> Bitcoin</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#926;</span> Ethereum</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#8366;</span> USDT</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#9670;</span> Litecoin</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#9670;</span> Solana</div>
+        <div class="payment-chip"><span class="payment-chip-icon">+</span> More Crypto</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner" role="region" aria-label="Call to action">
+    <div class="cta-banner-inner">
+      <h2 class="cta-banner-heading">Ready to <span class="g">Duel?</span></h2>
+      <p class="cta-banner-sub">148 players are competing right now. Join them &mdash; create your free account, deposit, and challenge your first opponent in under three minutes.</p>
+      <div class="cta-banner-actions">
+        <a href="/register.html" class="btn btn-gold btn-lg">&#9823;&ensp;Create Free Account</a>
+        <a href="/login.html" class="btn btn-ghost btn-lg">Log In</a>
+      </div>
+      <p class="cta-banner-note">18+ only &nbsp;&middot;&nbsp; Skill-based gaming &nbsp;&middot;&nbsp; Crypto deposits only &nbsp;&middot;&nbsp; Play responsibly</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="footer-brand-logo" aria-label="Chess Duelz Home">
+          <div class="footer-brand-mark" aria-hidden="true">&#9823;</div>
+          <span class="footer-brand-name">Chess Duelz</span>
+        </a>
+        <p class="footer-brand-desc">The premier destination for competitive 1v1 chess. Real opponents, real stakes &mdash; your skill is the only edge that matters.</p>
+        <div class="footer-social">
+          <a href="/contact.html" class="social-btn" aria-label="Twitter / X">&#120143;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Discord">&#128172;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Telegram">&#9992;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Email Support">&#9993;</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Play</h4>
+        <div class="footer-links">
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Blitz Duel</a>
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Rapid Duel</a>
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Classical Duel</a>
+          <a href="/leaderboard.html" class="footer-link">Leaderboard</a>
+          <a href="/dashboard.html" class="footer-link">Dashboard</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Account</h4>
+        <div class="footer-links">
+          <a href="/login.html" class="footer-link">Log In</a>
+          <a href="/register.html" class="footer-link">Register</a>
+          <a href="/deposit.html" class="footer-link">Deposit</a>
+          <a href="/withdrawal.html" class="footer-link">Withdraw</a>
+          <a href="/profile.html" class="footer-link">My Profile</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Company</h4>
+        <div class="footer-links">
+          <a href="/about.html" class="footer-link">About Us</a>
+          <a href="/fairness.html" class="footer-link">Fairness</a>
+          <a href="/responsible-gaming.html" class="footer-link">Responsible Gaming</a>
+          <a href="/help-center.html" class="footer-link">Help Center</a>
+          <a href="/contact.html" class="footer-link">Contact</a>
+          <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+          <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <p><strong>&copy; 2026 Chess Duelz.</strong> All Rights Reserved. Play responsibly. 18+ only.</p>
+        <p>Chess Duelz is a skill-based gaming platform. Game outcomes are determined solely by player chess ability. This is not a game of chance &mdash; in jurisdictions where skill games are legally classified separately from gambling, Chess Duelz operates accordingly. Please verify local regulations before participating.</p>
+        <p style="margin-top:5px;"><strong>Operator:</strong> Chess Duelz Gaming LLC &middot; Delaware, United States &middot; Crypto deposits and withdrawals only.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;align-items:flex-end;">
+        <div class="footer-badge">&#9876; Skill-Based Gaming</div>
+        <div class="footer-badge">&#128274; SSL Encrypted</div>
+        <div class="footer-badge">&#9989; 18+ Only</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Auth utilities ── */
+    function isUserLoggedIn() {
+      try {
+        const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+        if (!token) return false;
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          localStorage.removeItem('token'); localStorage.removeItem('accessToken'); return false;
+        }
+        return true;
+      } catch { return false; }
+    }
+
+    function handleGameClick(event, gameUrl) {
+      event.preventDefault();
+      if (!isUserLoggedIn()) { sessionStorage.setItem('redirectAfterLogin', gameUrl); window.location.href = '/login.html'; return false; }
+      window.location.href = gameUrl; return true;
+    }
+
+    function handleChessClick(event) {
+      event.preventDefault();
+      if (!isUserLoggedIn()) { sessionStorage.setItem('redirectAfterLogin', '/chess'); window.location.href = '/login.html'; return false; }
+      window.location.href = '/chess'; return true;
+    }
+
+    function updateHeader() {
+      if (!isUserLoggedIn()) return;
+      const actions = document.querySelector('.header-actions');
+      if (actions) actions.innerHTML = '<a href="/dashboard.html" class="btn btn-gold">&#9823;&ensp;My Dashboard</a>';
+    }
+
+    /* ── CSS Chess Board Builder ── */
+    function buildChessBoard() {
+      const board = document.getElementById('cssBoard');
+      if (!board) return;
+
+      // Starting position piece map [rank 8→1][file a→h]
+      const pieces = [
+        ['&#9820;','&#9822;','&#9821;','&#9819;','&#9818;','&#9821;','&#9822;','&#9820;'], // rank 8 black
+        ['&#9823;','&#9823;','&#9823;','&#9823;','&#9823;','&#9823;','&#9823;','&#9823;'], // rank 7 black pawns
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,'&#9822;',null,null,null], // a mid-game white knight
+        [null,null,null,null,null,null,null,null],
+        [null,null,'&#9821;',null,null,null,null,null], // white bishop mid-board
+        ['&#9817;','&#9817;','&#9817;','&#9817;','&#9817;','&#9817;','&#9817;','&#9817;'], // rank 2 white pawns
+        ['&#9814;','&#9816;','&#9815;','&#9813;','&#9812;','&#9815;','&#9816;','&#9814;']  // rank 1 white
+      ];
+      const pColors = [
+        ['b','b','b','b','b','b','b','b'],
+        ['b','b','b','b','b','b','b','b'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,'w',null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,'w',null,null,null,null,null],
+        ['w','w','w','w','w','w','w','w'],
+        ['w','w','w','w','w','w','w','w']
+      ];
+
+      // Highlight squares for visual interest (last move e2-e4)
+      const hlSquares = new Set(['e2','e4']);
+
+      board.innerHTML = '';
+      for (let r = 0; r < 8; r++) {
+        for (let f = 0; f < 8; f++) {
+          const fileChar = String.fromCharCode(97 + f); // a-h
+          const rankNum = 8 - r;                        // 8-1
+          const key = fileChar + rankNum;
+
+          const sq = document.createElement('div');
+          const isLight = (r + f) % 2 === 0;
+          sq.className = 'sq ' + (isLight ? 'light' : 'dark');
+          if (hlSquares.has(key)) sq.classList.add('hl-last');
+
+          if (pieces[r][f]) {
+            const p = document.createElement('div');
+            p.className = 'piece ' + (pColors[r][f] === 'w' ? 'white' : 'black');
+            p.innerHTML = pieces[r][f];
+            sq.appendChild(p);
+          }
+          board.appendChild(sq);
+        }
+      }
+    }
+
+    /* ── Scroll animations ── */
+    function initScrollAnimations() {
+      if (!window.IntersectionObserver) return;
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '';
+            entry.target.classList.add('fade-up');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.09, rootMargin: '0px 0px -36px 0px' });
+      document.querySelectorAll('.step-card,.mode-card,.feature-card,.review-card,.leader-row,.live-match').forEach(el => {
+        el.style.opacity = '0'; obs.observe(el);
+      });
+    }
+
+    /* ── Smooth scroll ── */
+    function initSmoothScroll() {
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    }
+
+    /* ── Mobile menu ── */
+    function initMobileMenu() {
+      const toggle = document.getElementById('menuToggle');
+      const nav = document.querySelector('.nav');
+      if (!toggle || !nav) return;
+      let open = false;
+      toggle.addEventListener('click', () => {
+        open = !open;
+        nav.style.cssText = open
+          ? 'display:flex;flex-direction:column;position:absolute;top:66px;left:0;right:0;background:rgba(8,11,16,0.98);padding:16px 22px 22px;border-bottom:1px solid rgba(201,168,76,0.12);backdrop-filter:blur(18px);z-index:999;'
+          : '';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      buildChessBoard();
+      updateHeader();
+      initSmoothScroll();
+      initScrollAnimations();
+      initMobileMenu();
+    });
+  </script>
+</body>
+</html>
+
+    /* HEADER */
+    .header {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(10,13,18,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 16px var(--gold-glow);
+      transition: transform 0.3s, box-shadow 0.3s;
+      flex-shrink: 0;
+    }
+    .logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); box-shadow: 0 6px 24px rgba(201,168,76,0.55); }
+    .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    .logo-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px; }
+    .logo-tagline { font-size: 10px; color: var(--gold); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+    .nav { display: flex; gap: 4px; align-items: center; }
+    .nav-link { padding: 8px 14px; color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 14px; border-radius: 6px; transition: all 0.2s; white-space: nowrap; }
+    .nav-link:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* BUTTONS */
+    .btn {
+      padding: 10px 22px; border-radius: 6px; font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: all 0.2s; border: none;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border-subtle); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-subtle); }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #0a0a0a; font-weight: 700; box-shadow: 0 4px 16px var(--gold-glow); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.55); filter: brightness(1.08); }
+    .btn-gold:active { transform: translateY(0); }
+    .btn-lg { padding: 16px 36px; font-size: 16px; border-radius: 12px; }
+
+    /* MOBILE MENU */
+    .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; border: none; background: transparent; }
+    .menu-toggle span { width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: all 0.3s; }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center;
+      overflow: hidden; padding: 80px 28px 120px;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .hero-bg-board {
+      position: absolute; inset: 0;
+      background-image: repeating-conic-gradient(from 0deg, rgba(201,168,76,0.03) 0% 25%, transparent 0% 50%);
+      background-size: 80px 80px; background-position: center;
+    }
+    .hero-bg-glow-l { position: absolute; top: 10%; left: -15%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%); border-radius: 50%; }
+    .hero-bg-glow-r { position: absolute; bottom: -10%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(100,120,200,0.08) 0%, transparent 65%); border-radius: 50%; }
+    .hero-bg-vignette { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,13,18,0.4) 0%, transparent 20%, transparent 80%, rgba(10,13,18,0.95) 100%), linear-gradient(to right, rgba(10,13,18,0.6) 0%, transparent 40%); }
+    .hero-inner {
+      max-width: 1400px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px;
+      background: var(--gold-subtle); border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 50px; color: var(--gold);
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 28px;
+    }
+    .live-dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 0 rgba(34,197,94,0.6); animation: livepulse 1.8s ease-in-out infinite; }
+    @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: 68px; font-weight: 900; line-height: 1.0; margin-bottom: 24px; color: var(--text-primary); }
+    .hero-title .highlight { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, #f5e09a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-subtitle { font-size: 19px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 40px; max-width: 520px; }
+    .hero-cta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 52px; }
+    .hero-trust { display: flex; gap: 28px; flex-wrap: wrap; }
+    .trust-pill { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-secondary); }
+    .trust-pill-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--gold-subtle); border: 1px solid rgba(201,168,76,0.25); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+
+    /* HERO VISUAL */
+    .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+    .chess-board-wrap { position: relative; width: 460px; height: 460px; flex-shrink: 0; }
+    .cb-ring { position: absolute; inset: -20px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.15); animation: cbrotate 30s linear infinite; }
+    .cb-ring2 { position: absolute; inset: -44px; border-radius: 50%; border: 1px dashed rgba(201,168,76,0.08); animation: cbrotate 50s linear infinite reverse; }
+    @keyframes cbrotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .cb-glow { position: absolute; inset: -30px; border-radius: 30px; background: radial-gradient(circle at center, rgba(201,168,76,0.18) 0%, transparent 70%); animation: breathe 4s ease-in-out infinite; }
+    @keyframes breathe { 0%,100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); } }
+    .cb-img { width: 100%; height: 100%; border-radius: 20px; object-fit: cover; position: relative; z-index: 1; box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.2); }
+    .float-card { position: absolute; background: rgba(10,13,18,0.92); backdrop-filter: blur(20px); border: 1px solid rgba(201,168,76,0.22); border-radius: 14px; padding: 14px 20px; box-shadow: var(--shadow-card); z-index: 10; }
+    .float-card-top { top: -18px; right: -28px; }
+    .float-card-bottom { bottom: -18px; left: -28px; }
+    .fc-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .fc-val { font-size: 22px; font-weight: 800; color: var(--gold); font-family: 'Playfair Display', serif; }
+    .fc-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 36px 28px; }
+    .stats-inner { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); text-align: center; }
+    .stat-item { padding: 0 24px; position: relative; }
+    .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 10%; height: 80%; width: 1px; background: var(--border); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 800; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+    .stat-desc { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+
+    /* SECTIONS */
+    .section-inner { max-width: 1400px; margin: 0 auto; }
+    .section-label { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: var(--gold); margin-bottom: 14px; }
+    .section-heading { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 800; color: var(--text-primary); margin-bottom: 16px; line-height: 1.15; }
+    .section-sub { font-size: 17px; color: var(--text-secondary); max-width: 560px; line-height: 1.7; margin-bottom: 60px; }
+
+    /* HOW IT WORKS */
+    .how-section { padding: 96px 28px; background: var(--bg-primary); }
+    .steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; position: relative; }
+    .steps-grid::before { content: ''; position: absolute; top: 38px; left: 12%; right: 12%; height: 1px; background: linear-gradient(to right, transparent, var(--border), var(--gold), var(--border), transparent); }
+    .step-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 36px 28px; text-align: center; transition: all 0.35s cubic-bezier(0.23,1,0.32,1); position: relative; overflow: hidden; }
+    .step-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--gold-subtle) 0%, transparent 60%); opacity: 0; transition: opacity 0.35s; }
+    .step-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-8px); box-shadow: var(--shadow-glow); }
+    .step-card:hover::before { opacity: 1; }
+    .step-num { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #0a0a0a; font-weight: 900; font-size: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 4px 16px var(--gold-glow); position: relative; z-index: 1; }
+    .step-icon { font-size: 28px; margin-bottom: 14px; display: block; position: relative; z-index: 1; }
+    .step-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; position: relative; z-index: 1; }
+    .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.65; position: relative; z-index: 1; }
+
+    /* GAME MODES */
+    .modes-section { padding: 96px 28px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+    .modes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .mode-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.35s cubic-bezier(0.23,1,0.32,1); text-decoration: none; display: block; position: relative; }
+    .mode-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.5), var(--shadow-glow); }
+    .mode-img-wrap { aspect-ratio: 16/10; overflow: hidden; position: relative; background: var(--bg-tertiary); }
+    .mode-img-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,13,18,0.9) 0%, transparent 60%); }
+    .mode-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .mode-card:hover .mode-img { transform: scale(1.06); }
+    .mode-badge { position: absolute; top: 14px; right: 14px; z-index: 2; padding: 5px 14px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    .badge-live { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 4px 12px rgba(34,197,94,0.4); }
+    .badge-popular { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #0a0a0a; box-shadow: 0 4px 12px var(--gold-glow); }
+    .mode-body { padding: 24px 24px 28px; }
+    .mode-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .mode-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 18px; }
+    .mode-meta { display: flex; gap: 20px; }
+    .mode-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .mode-meta-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    .mode-meta-val { font-size: 15px; font-weight: 700; color: var(--gold); }
+
+    /* FEATURES */
+    .features-section { padding: 96px 28px; background: var(--bg-primary); }
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .feature-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 36px 32px; transition: all 0.35s; position: relative; overflow: hidden; }
+    .feature-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, var(--gold), var(--gold-light)); transform: scaleX(0); transition: transform 0.35s; transform-origin: left; }
+    .feature-card:hover { border-color: rgba(201,168,76,0.25); transform: translateY(-5px); box-shadow: var(--shadow-card); }
+    .feature-card:hover::after { transform: scaleX(1); }
+    .feature-icon-wrap { width: 52px; height: 52px; border-radius: 14px; background: var(--gold-subtle); border: 1px solid rgba(201,168,76,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 22px; }
+    .feature-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* LEADERBOARD */
+    .leaders-section { padding: 96px 28px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+    .leaders-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+    .leaders-list { display: flex; flex-direction: column; gap: 12px; }
+    .leader-row { display: flex; align-items: center; gap: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 20px; transition: all 0.25s; }
+    .leader-row:hover { border-color: rgba(201,168,76,0.25); transform: translateX(4px); }
+    .leader-rank { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--text-muted); width: 28px; text-align: center; flex-shrink: 0; }
+    .leader-rank.gold { color: #ffd700; } .leader-rank.silver { color: #c0c0c0; } .leader-rank.bronze { color: #cd7f32; }
+    .leader-avatar { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border); object-fit: cover; flex-shrink: 0; }
+    .leader-info { flex: 1; }
+    .leader-name { font-weight: 700; font-size: 15px; color: var(--text-primary); margin-bottom: 2px; }
+    .leader-elo { font-size: 12px; color: var(--text-muted); }
+    .leader-winnings { font-weight: 800; color: var(--gold); font-size: 16px; font-family: 'Playfair Display', serif; }
+    .leaders-promo { background: var(--bg-card); border: 1px solid rgba(201,168,76,0.2); border-radius: 28px; padding: 48px 44px; position: sticky; top: 88px; background-image: radial-gradient(circle at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(100,120,200,0.06) 0%, transparent 50%); }
+    .leaders-promo-icon { font-size: 52px; margin-bottom: 24px; display: block; }
+    .leaders-promo-heading { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 800; color: var(--text-primary); margin-bottom: 14px; line-height: 1.2; }
+    .leaders-promo-text { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px; }
+
+    /* REVIEWS */
+    .reviews-section { padding: 96px 28px; background: var(--bg-primary); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .review-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; transition: all 0.35s; }
+    .review-card:hover { border-color: rgba(201,168,76,0.25); transform: translateY(-4px); box-shadow: var(--shadow-card); }
+    .review-stars { font-size: 15px; margin-bottom: 16px; letter-spacing: 2px; }
+    .review-text { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 24px; font-style: italic; }
+    .review-author { display: flex; align-items: center; gap: 12px; }
+    .review-avatar { width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(201,168,76,0.3); object-fit: cover; }
+    .review-name { font-weight: 700; font-size: 15px; color: var(--text-primary); }
+    .review-role { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* PAYMENT */
+    .payment-section { padding: 48px 28px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+    .payment-inner { max-width: 1400px; margin: 0 auto; text-align: center; }
+    .payment-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 28px; }
+    .payment-logos { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .payment-chip { display: flex; align-items: center; gap: 9px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 50px; padding: 10px 20px; font-size: 14px; font-weight: 600; color: var(--text-secondary); transition: all 0.2s; }
+    .payment-chip:hover { border-color: rgba(201,168,76,0.3); color: var(--gold); }
+    .payment-chip-icon { font-size: 18px; }
+
+    /* FOOTER */
+    .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 72px 28px 32px; }
+    .footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 52px; margin-bottom: 52px; }
+    .footer-brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 16px; }
+    .footer-brand-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--text-primary); }
+    .footer-brand-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+    .footer-social { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 6px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-secondary); font-size: 14px; transition: all 0.2s; }
+    .social-btn:hover { background: var(--gold); color: #0a0a0a; border-color: var(--gold); transform: translateY(-2px); }
+    .footer-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 18px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-bottom { max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+    .footer-legal { font-size: 12px; color: var(--text-muted); line-height: 1.8; max-width: 700px; }
+    .footer-legal strong { color: var(--text-secondary); }
+    .footer-badge { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.23,1,0.32,1) forwards; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.22s; }
+    .delay-3 { animation-delay: 0.34s; }
+    .delay-4 { animation-delay: 0.46s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .hero-title { font-size: 56px; }
+      .chess-board-wrap { width: 380px; height: 380px; }
+      .steps-grid { grid-template-columns: repeat(2,1fr); }
+      .steps-grid::before { display: none; }
+      .leaders-layout { grid-template-columns: 1fr; }
+      .leaders-promo { position: static; }
+    }
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { order: -1; }
+      .chess-board-wrap { width: 300px; height: 300px; }
+      .float-card-top { right: -8px; }
+      .float-card-bottom { left: -8px; }
+      .modes-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: repeat(2,1fr); }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); gap: 24px; }
+      .stat-item::after { display: none; }
+      .footer-grid { grid-template-columns: repeat(2,1fr); gap: 36px; }
+      .footer-brand { grid-column: span 2; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { padding: 0 18px; }
+      .nav { display: none; }
+      .menu-toggle { display: flex; }
+      .hero { padding: 60px 18px 80px; }
+      .hero-title { font-size: 40px; }
+      .hero-subtitle { font-size: 16px; }
+      .hero-cta { flex-direction: column; }
+      .btn-lg { width: 100%; justify-content: center; }
+      .hero-trust { gap: 16px; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .section-heading { font-size: 32px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer-brand { grid-column: span 1; }
+      .footer-bottom { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="logo" aria-label="Chess Duelz - Home">
+        <div class="logo-mark" aria-hidden="true">&#9823;</div>
+        <div class="logo-text">
+          <span class="logo-name">Chess Duelz</span>
+          <span class="logo-tagline">Real Money &middot; Real Skill</span>
+        </div>
+      </a>
+
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#game-modes" class="nav-link">Game Modes</a>
+        <a href="/leaderboard.html" class="nav-link">Leaderboard</a>
+        <a href="/about.html" class="nav-link">About</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="/login.html" class="btn btn-ghost">Log In</a>
+        <a href="/register.html" class="btn btn-gold">Start Playing</a>
+      </div>
+
+      <button class="menu-toggle" aria-label="Open menu" id="menuToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" role="region" aria-label="Hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-bg-board"></div>
+      <div class="hero-bg-glow-l"></div>
+      <div class="hero-bg-glow-r"></div>
+      <div class="hero-bg-vignette"></div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow fade-up">
+          <span class="live-dot" aria-hidden="true"></span>
+          Live Now &mdash; Real Players, Real Money
+        </div>
+
+        <h1 class="hero-title fade-up delay-1">
+          Every Move<br>Has a <span class="highlight">Price.</span>
+        </h1>
+
+        <p class="hero-subtitle fade-up delay-2">
+          Chess Duelz is the competitive arena where your chess mastery earns real cash. Challenge opponents, dominate the board, and get paid &mdash; instantly.
+        </p>
+
+        <div class="hero-cta fade-up delay-3">
+          <a href="/register.html" class="btn btn-gold btn-lg" aria-label="Create your free account">
+            &#9823; Challenge Someone Now
+          </a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">How It Works</a>
+        </div>
+
+        <div class="hero-trust fade-up delay-4">
+          <div class="trust-pill">
+            <span class="trust-pill-icon" aria-hidden="true">&#128274;</span>
+            Secure Crypto Payouts
+          </div>
+          <div class="trust-pill">
+            <span class="trust-pill-icon" aria-hidden="true">&#9878;</span>
+            100% Skill-Based
+          </div>
+          <div class="trust-pill">
+            <span class="trust-pill-icon" aria-hidden="true">&#9889;</span>
+            Instant Withdrawals
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="chess-board-wrap">
+          <div class="cb-ring"></div>
+          <div class="cb-ring2"></div>
+          <div class="cb-glow"></div>
+          <img
+            src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=900&h=900&fit=crop&q=90"
+            alt="Chess board with pieces in competitive play"
+            class="cb-img"
+            loading="eager"
+            width="460"
+            height="460"
+          >
+          <div class="float-card float-card-top">
+            <div class="fc-label">Top Prize Today</div>
+            <div class="fc-val">$2,400</div>
+            <div class="fc-sub">Grand Duel &mdash; Live</div>
+          </div>
+          <div class="float-card float-card-bottom">
+            <div class="fc-label">Matches Played</div>
+            <div class="fc-val">12,840</div>
+            <div class="fc-sub">This month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip" role="region" aria-label="Platform statistics">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-num">$48K+</div>
+        <div class="stat-desc">Paid Out Total</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">2,300+</div>
+        <div class="stat-desc">Active Players</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-desc">Skill-Based</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">&lt;24h</div>
+        <div class="stat-desc">Withdrawal Time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works" role="region" aria-labelledby="how-heading">
+    <div class="section-inner">
+      <span class="section-label">The Process</span>
+      <h2 id="how-heading" class="section-heading">Four Moves to Victory</h2>
+      <p class="section-sub">Getting started is as simple as your opening gambit. No experience with online gaming platforms required.</p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <span class="step-icon">&#128100;</span>
+          <h3 class="step-title">Create Your Account</h3>
+          <p class="step-desc">Sign up free in under a minute. Verify your identity and you're ready to enter the arena.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <span class="step-icon">&#128176;</span>
+          <h3 class="step-title">Deposit Funds</h3>
+          <p class="step-desc">Fund your account with Bitcoin, Ethereum, USDT or other major cryptocurrencies. Fast and secure.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <span class="step-icon">&#9876;</span>
+          <h3 class="step-title">Choose Your Duel</h3>
+          <p class="step-desc">Pick a game mode, set your stake, and get matched against a player of your caliber. No luck &mdash; pure strategy.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <span class="step-icon">&#127942;</span>
+          <h3 class="step-title">Win &amp; Withdraw</h3>
+          <p class="step-desc">Checkmate your opponent and collect your winnings. Withdraw to your crypto wallet anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME MODES -->
+  <section class="modes-section" id="game-modes" role="region" aria-labelledby="modes-heading">
+    <div class="section-inner">
+      <span class="section-label">Game Modes</span>
+      <h2 id="modes-heading" class="section-heading">Pick Your Battle</h2>
+      <p class="section-sub">Three formats to match your style &mdash; whether you're a blitz demon, a classical tactician, or a tournament regular.</p>
+
+      <div class="modes-grid">
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event, '/chess')">
+          <div class="mode-img-wrap">
+            <img src="https://images.unsplash.com/photo-1560174038-da43ac74f01b?w=800&h=500&fit=crop&q=80" alt="Blitz Chess Duel" class="mode-img" loading="lazy">
+            <span class="mode-badge badge-popular">Most Popular</span>
+          </div>
+          <div class="mode-body">
+            <div class="mode-title">Blitz Duel</div>
+            <p class="mode-desc">3 or 5-minute games. High intensity, rapid decisions, instant results. Chess at its most electric.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><span class="mode-meta-label">Min Stake</span><span class="mode-meta-val">$1</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Max Stake</span><span class="mode-meta-val">$500</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Status</span><span class="mode-meta-val" style="color:#22c55e;">Live &#9679;</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event, '/chess')">
+          <div class="mode-img-wrap">
+            <img src="https://images.unsplash.com/photo-1586165368502-1bad197a6461?w=800&h=500&fit=crop&q=80" alt="Rapid Chess Duel" class="mode-img" loading="lazy">
+            <span class="mode-badge badge-live">Live</span>
+          </div>
+          <div class="mode-body">
+            <div class="mode-title">Rapid Duel</div>
+            <p class="mode-desc">10 or 15-minute games. More time to think, deeper strategy, bigger payouts. For the serious competitor.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><span class="mode-meta-label">Min Stake</span><span class="mode-meta-val">$5</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Max Stake</span><span class="mode-meta-val">$2,000</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Status</span><span class="mode-meta-val" style="color:#22c55e;">Live &#9679;</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="/chess" class="mode-card" onclick="return handleGameClick(event, '/chess')">
+          <div class="mode-img-wrap">
+            <img src="https://images.unsplash.com/photo-1509559159670-cfd91abba84b?w=800&h=500&fit=crop&q=80" alt="Classical Chess Duel" class="mode-img" loading="lazy">
+            <span class="mode-badge badge-live">Live</span>
+          </div>
+          <div class="mode-body">
+            <div class="mode-title">Classical Duel</div>
+            <p class="mode-desc">30-minute games with the highest stakes. Prove your mastery in true chess at its purest.</p>
+            <div class="mode-meta">
+              <div class="mode-meta-item"><span class="mode-meta-label">Min Stake</span><span class="mode-meta-val">$20</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Max Stake</span><span class="mode-meta-val">$10,000</span></div>
+              <div class="mode-meta-item"><span class="mode-meta-label">Status</span><span class="mode-meta-val" style="color:#22c55e;">Live &#9679;</span></div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features" role="region" aria-labelledby="features-heading">
+    <div class="section-inner">
+      <span class="section-label">Why Chess Duelz</span>
+      <h2 id="features-heading" class="section-heading">Built for Serious Players</h2>
+      <p class="section-sub">Every element of Chess Duelz was crafted with the competitive player in mind. Nothing left to chance.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#9876;</div>
+          <h3 class="feature-title">1v1 Real Opponents</h3>
+          <p class="feature-desc">Always against a real human. No bots, no simulations. Every win is earned, every loss is a lesson.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#127919;</div>
+          <h3 class="feature-title">ELO-Based Matchmaking</h3>
+          <p class="feature-desc">Our rating system pairs you with players at your skill level. Climb the ladder one game at a time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#9889;</div>
+          <h3 class="feature-title">Instant Payouts</h3>
+          <p class="feature-desc">Win your duel and your funds credit immediately. Withdraw to your wallet whenever &mdash; no holds or delays.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128270;</div>
+          <h3 class="feature-title">Provably Fair Engine</h3>
+          <p class="feature-desc">Certified chess engine. Results independently verifiable. Your skill is the only variable that matters.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128737;</div>
+          <h3 class="feature-title">Bank-Level Security</h3>
+          <p class="feature-desc">End-to-end encryption, 2FA, and military-grade infrastructure protect your account and funds at all times.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap" aria-hidden="true">&#128200;</div>
+          <h3 class="feature-title">Deep Game Analysis</h3>
+          <p class="feature-desc">Review every game. Track accuracy, blunder rates, opening performance and sharpen your edge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section class="leaders-section" id="leaderboard" role="region" aria-labelledby="leaders-heading">
+    <div class="section-inner">
+      <div class="leaders-layout">
+        <div>
+          <span class="section-label">Hall of Kings</span>
+          <h2 id="leaders-heading" class="section-heading">This Month's<br>Top Duelists</h2>
+          <p class="section-sub" style="margin-bottom:36px;">The sharpest minds, the biggest winnings. Could you claim a spot?</p>
+
+          <div class="leaders-list">
+            <div class="leader-row">
+              <span class="leader-rank gold">1</span>
+              <img src="https://i.pravatar.cc/150?img=11" alt="GrandMasterK" class="leader-avatar" loading="lazy" width="44" height="44">
+              <div class="leader-info"><div class="leader-name">GrandMasterK</div><div class="leader-elo">ELO 2,480 &middot; 94 wins</div></div>
+              <div class="leader-winnings">+$4,820</div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank silver">2</span>
+              <img src="https://i.pravatar.cc/150?img=25" alt="QueenSlayer99" class="leader-avatar" loading="lazy" width="44" height="44">
+              <div class="leader-info"><div class="leader-name">QueenSlayer99</div><div class="leader-elo">ELO 2,340 &middot; 82 wins</div></div>
+              <div class="leader-winnings">+$3,115</div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank bronze">3</span>
+              <img src="https://i.pravatar.cc/150?img=34" alt="OpeningTrap_A" class="leader-avatar" loading="lazy" width="44" height="44">
+              <div class="leader-info"><div class="leader-name">OpeningTrap_A</div><div class="leader-elo">ELO 2,290 &middot; 71 wins</div></div>
+              <div class="leader-winnings">+$2,450</div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank">4</span>
+              <img src="https://i.pravatar.cc/150?img=44" alt="Sicilian_D" class="leader-avatar" loading="lazy" width="44" height="44">
+              <div class="leader-info"><div class="leader-name">Sicilian_D</div><div class="leader-elo">ELO 2,210 &middot; 68 wins</div></div>
+              <div class="leader-winnings">+$1,990</div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank">5</span>
+              <img src="https://i.pravatar.cc/150?img=53" alt="EndgameWiz" class="leader-avatar" loading="lazy" width="44" height="44">
+              <div class="leader-info"><div class="leader-name">EndgameWiz</div><div class="leader-elo">ELO 2,180 &middot; 61 wins</div></div>
+              <div class="leader-winnings">+$1,640</div>
+            </div>
+          </div>
+
+          <a href="/leaderboard.html" class="btn btn-ghost" style="margin-top:24px;display:inline-flex;">View Full Leaderboard &rarr;</a>
+        </div>
+
+        <div class="leaders-promo">
+          <span class="leaders-promo-icon" aria-hidden="true">&#9819;</span>
+          <h3 class="leaders-promo-heading">Your Skill Is Worth Real Money</h3>
+          <p class="leaders-promo-text">Stop playing free chess. Start getting rewarded for every hour you've invested in mastering this game. On Chess Duelz, your rating translates directly into earnings.</p>
+          <a href="/register.html" class="btn btn-gold btn-lg">Join the Duelists</a>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:16px;">18+ only &middot; Skill-based gaming &middot; Play responsibly</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews-section" role="region" aria-labelledby="reviews-heading">
+    <div class="section-inner">
+      <span class="section-label">Player Stories</span>
+      <h2 id="reviews-heading" class="section-heading">What Duelists Say</h2>
+      <p class="section-sub">Real players. Real winnings. Real feedback.</p>
+
+      <div class="reviews-grid">
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"I've been playing competitive chess for 8 years and Chess Duelz is the first platform that actually rewards skill properly. The matchmaking is spot-on and withdrawals hit fast."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=12" alt="Marcus C." class="review-avatar" loading="lazy" width="46" height="46">
+            <div><div class="review-name" itemprop="name">Marcus C.</div><div class="review-role">ELO 2,100 &middot; 6 months on platform</div></div>
+          </div>
+        </article>
+
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"Finally something that puts my study sessions to work. I cleared $800 last month playing Rapid Duels after work. Clean interface, zero lag, and my payout was in my wallet within hours."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=27" alt="Sofia T." class="review-avatar" loading="lazy" width="46" height="46">
+            <div><div class="review-name" itemprop="name">Sofia T.</div><div class="review-role">ELO 1,860 &middot; 4 months on platform</div></div>
+          </div>
+        </article>
+
+        <article class="review-card" itemscope itemtype="https://schema.org/Review">
+          <div class="review-stars" aria-label="5 out of 5 stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text" itemprop="reviewBody">"The blitz mode is addictive. Pure pressure, pure skill — and when you win you feel it because real money is on the line. Solid anti-cheat too, never felt gamed."</p>
+          <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <img src="https://i.pravatar.cc/150?img=59" alt="Alex R." class="review-avatar" loading="lazy" width="46" height="46">
+            <div><div class="review-name" itemprop="name">Alex R.</div><div class="review-role">ELO 1,990 &middot; 7 months on platform</div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section class="payment-section" role="region" aria-label="Supported payment methods">
+    <div class="payment-inner">
+      <p class="payment-title">Accepted Deposit &amp; Withdrawal Methods</p>
+      <div class="payment-logos">
+        <div class="payment-chip"><span class="payment-chip-icon">&#8383;</span> Bitcoin</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#926;</span> Ethereum</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#8366;</span> USDT</div>
+        <div class="payment-chip"><span class="payment-chip-icon">&#9670;</span> Litecoin</div>
+        <div class="payment-chip"><span class="payment-chip-icon">+</span> More Crypto</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="footer-brand-logo" aria-label="Chess Duelz Home">
+          <div class="footer-brand-mark" aria-hidden="true">&#9823;</div>
+          <span class="footer-brand-name">Chess Duelz</span>
+        </a>
+        <p class="footer-brand-desc">The premier destination for competitive real-money chess. Skill is the only edge that matters here.</p>
+        <div class="footer-social">
+          <a href="/contact.html" class="social-btn" aria-label="Twitter / X">&#120143;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Discord">&#128172;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Telegram">&#9992;</a>
+          <a href="/contact.html" class="social-btn" aria-label="Email Support">&#9993;</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Play</h4>
+        <div class="footer-links">
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Blitz Duel</a>
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Rapid Duel</a>
+          <a href="/chess" class="footer-link" onclick="return handleChessClick(event)">Classical Duel</a>
+          <a href="/leaderboard.html" class="footer-link">Leaderboard</a>
+          <a href="/dashboard.html" class="footer-link">Dashboard</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Account</h4>
+        <div class="footer-links">
+          <a href="/login.html" class="footer-link">Log In</a>
+          <a href="/register.html" class="footer-link">Register</a>
+          <a href="/deposit.html" class="footer-link">Deposit</a>
+          <a href="/withdrawal.html" class="footer-link">Withdraw</a>
+          <a href="/profile.html" class="footer-link">My Profile</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Company</h4>
+        <div class="footer-links">
+          <a href="/about.html" class="footer-link">About Us</a>
+          <a href="/fairness.html" class="footer-link">Fairness</a>
+          <a href="/responsible-gaming.html" class="footer-link">Responsible Gaming</a>
+          <a href="/help-center.html" class="footer-link">Help Center</a>
+          <a href="/contact.html" class="footer-link">Contact</a>
+          <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+          <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <p><strong>&copy; 2026 Chess Duelz.</strong> All Rights Reserved. Play responsibly. 18+ only.</p>
+        <p>Chess Duelz is a skill-based gaming platform. Game outcomes are determined solely by player ability. This is not gambling where skill-games are legally classified separately from games of chance. Check your local regulations before participating.</p>
+        <p style="margin-top:6px;"><strong>Operator:</strong> Chess Duelz Gaming LLC &middot; Delaware, United States &middot; Crypto deposits/withdrawals only.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <div class="footer-badge">&#9876; Skill-Based Gaming</div>
+        <div class="footer-badge">&#128274; SSL Encrypted</div>
+        <div class="footer-badge">&#9989; 18+ Only</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function isUserLoggedIn() {
+      try {
+        const token = localStorage.getItem('accessToken')
+          || sessionStorage.getItem('accessToken')
+          || localStorage.getItem('token');
+        if (!token) return false;
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('accessToken');
+          return false;
+        }
+        return true;
+      } catch { return false; }
+    }
+
+    function handleGameClick(event, gameUrl) {
+      event.preventDefault();
+      if (!isUserLoggedIn()) {
+        sessionStorage.setItem('redirectAfterLogin', gameUrl);
+        window.location.href = '/login.html';
+        return false;
+      }
+      window.location.href = gameUrl;
+      return true;
+    }
+
+    function handleChessClick(event) {
+      event.preventDefault();
+      if (!isUserLoggedIn()) {
+        sessionStorage.setItem('redirectAfterLogin', '/chess');
+        window.location.href = '/login.html';
+        return false;
+      }
+      window.location.href = '/chess';
+      return true;
+    }
+
+    function updateHeader() {
+      if (!isUserLoggedIn()) return;
+      const actions = document.querySelector('.header-actions');
+      if (actions) actions.innerHTML = '<a href="/dashboard.html" class="btn btn-gold">My Dashboard</a>';
+    }
+
+    function initSmoothScroll() {
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    }
+
+    function initScrollAnimations() {
+      if (!window.IntersectionObserver) return;
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '';
+            entry.target.classList.add('fade-up');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.step-card, .mode-card, .feature-card, .review-card, .leader-row').forEach(el => {
+        el.style.opacity = '0';
+        obs.observe(el);
+      });
+    }
+
+    function initMobileMenu() {
+      const toggle = document.getElementById('menuToggle');
+      const nav = document.querySelector('.nav');
+      if (!toggle || !nav) return;
+      let open = false;
+      toggle.addEventListener('click', () => {
+        open = !open;
+        if (open) {
+          nav.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:rgba(10,13,18,0.98);padding:16px 28px 24px;border-bottom:1px solid rgba(201,168,76,0.12);backdrop-filter:blur(16px);z-index:999;';
+        } else {
+          nav.style.cssText = '';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateHeader();
+      initSmoothScroll();
+      initScrollAnimations();
+      initMobileMenu();
+    });
+  </script>
+</body>
+</html>

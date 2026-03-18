@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database files
+*.sqlite
+*.db
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Build outputs
+dist/
+build/
+
+# Backup files
+*.backup.*
+*backup*
+*.bak
+
+# Large chess engine files
+**/weights.pb.gz
+**/lc0/weights.*

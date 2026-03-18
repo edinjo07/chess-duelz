@@ -1,0 +1,2617 @@
+{
+  "800-1200": {
+    "statistics": {
+      "games": 519,
+      "avg_game_length": 53.84007707129094
+    },
+    "middlegame": {
+      "common_moves": [
+        {
+          "move": "O-O",
+          "count": 233,
+          "frequency": 0.4489402697495183
+        },
+        {
+          "move": "Nc3",
+          "count": 118,
+          "frequency": 0.22736030828516376
+        },
+        {
+          "move": "Nc6",
+          "count": 98,
+          "frequency": 0.18882466281310212
+        },
+        {
+          "move": "Nf3",
+          "count": 90,
+          "frequency": 0.17341040462427745
+        },
+        {
+          "move": "Nf6",
+          "count": 90,
+          "frequency": 0.17341040462427745
+        },
+        {
+          "move": "d5",
+          "count": 83,
+          "frequency": 0.1599229287090559
+        },
+        {
+          "move": "e5",
+          "count": 76,
+          "frequency": 0.1464354527938343
+        },
+        {
+          "move": "Nxe5",
+          "count": 74,
+          "frequency": 0.14258188824662812
+        },
+        {
+          "move": "c6",
+          "count": 71,
+          "frequency": 0.13680154142581888
+        },
+        {
+          "move": "Bg5",
+          "count": 70,
+          "frequency": 0.1348747591522158
+        },
+        {
+          "move": "c3",
+          "count": 68,
+          "frequency": 0.13102119460500963
+        },
+        {
+          "move": "d4",
+          "count": 68,
+          "frequency": 0.13102119460500963
+        },
+        {
+          "move": "b4",
+          "count": 64,
+          "frequency": 0.1233140655105973
+        },
+        {
+          "move": "e4",
+          "count": 63,
+          "frequency": 0.12138728323699421
+        },
+        {
+          "move": "h6",
+          "count": 61,
+          "frequency": 0.11753371868978806
+        },
+        {
+          "move": "d6",
+          "count": 60,
+          "frequency": 0.11560693641618497
+        },
+        {
+          "move": "b5",
+          "count": 60,
+          "frequency": 0.11560693641618497
+        },
+        {
+          "move": "a3",
+          "count": 58,
+          "frequency": 0.11175337186897881
+        },
+        {
+          "move": "O-O-O",
+          "count": 58,
+          "frequency": 0.11175337186897881
+        },
+        {
+          "move": "Nxd4",
+          "count": 58,
+          "frequency": 0.11175337186897881
+        },
+        {
+          "move": "dxe5",
+          "count": 57,
+          "frequency": 0.10982658959537572
+        },
+        {
+          "move": "exd5",
+          "count": 56,
+          "frequency": 0.10789980732177264
+        },
+        {
+          "move": "a6",
+          "count": 55,
+          "frequency": 0.10597302504816955
+        },
+        {
+          "move": "d3",
+          "count": 54,
+          "frequency": 0.10404624277456648
+        },
+        {
+          "move": "f4",
+          "count": 54,
+          "frequency": 0.10404624277456648
+        },
+        {
+          "move": "Be7",
+          "count": 53,
+          "frequency": 0.10211946050096339
+        },
+        {
+          "move": "Ne5",
+          "count": 53,
+          "frequency": 0.10211946050096339
+        },
+        {
+          "move": "Nxd5",
+          "count": 52,
+          "frequency": 0.1001926782273603
+        },
+        {
+          "move": "Bd2",
+          "count": 52,
+          "frequency": 0.1001926782273603
+        },
+        {
+          "move": "Nd5",
+          "count": 51,
+          "frequency": 0.09826589595375723
+        },
+        {
+          "move": "h3",
+          "count": 51,
+          "frequency": 0.09826589595375723
+        },
+        {
+          "move": "c5",
+          "count": 51,
+          "frequency": 0.09826589595375723
+        },
+        {
+          "move": "Bd3",
+          "count": 51,
+          "frequency": 0.09826589595375723
+        },
+        {
+          "move": "Nxe4",
+          "count": 51,
+          "frequency": 0.09826589595375723
+        },
+        {
+          "move": "Bd7",
+          "count": 50,
+          "frequency": 0.09633911368015415
+        },
+        {
+          "move": "c4",
+          "count": 49,
+          "frequency": 0.09441233140655106
+        },
+        {
+          "move": "f6",
+          "count": 49,
+          "frequency": 0.09441233140655106
+        },
+        {
+          "move": "Nd4",
+          "count": 48,
+          "frequency": 0.09248554913294797
+        },
+        {
+          "move": "b3",
+          "count": 48,
+          "frequency": 0.09248554913294797
+        },
+        {
+          "move": "g4",
+          "count": 47,
+          "frequency": 0.0905587668593449
+        },
+        {
+          "move": "e6",
+          "count": 47,
+          "frequency": 0.0905587668593449
+        },
+        {
+          "move": "Ng5",
+          "count": 47,
+          "frequency": 0.0905587668593449
+        },
+        {
+          "move": "Ng4",
+          "count": 46,
+          "frequency": 0.08863198458574181
+        },
+        {
+          "move": "g6",
+          "count": 46,
+          "frequency": 0.08863198458574181
+        },
+        {
+          "move": "g5",
+          "count": 44,
+          "frequency": 0.08477842003853564
+        },
+        {
+          "move": "Bb5",
+          "count": 44,
+          "frequency": 0.08477842003853564
+        },
+        {
+          "move": "Bf4",
+          "count": 43,
+          "frequency": 0.08285163776493257
+        },
+        {
+          "move": "dxe4",
+          "count": 43,
+          "frequency": 0.08285163776493257
+        },
+        {
+          "move": "Be2",
+          "count": 43,
+          "frequency": 0.08285163776493257
+        },
+        {
+          "move": "f3",
+          "count": 42,
+          "frequency": 0.08092485549132948
+        }
+      ],
+      "piece_activity": {
+        "N": 2006,
+        "B": 1892,
+        "Q": 1453,
+        "R": 439,
+        "K": 382,
+        "O": 312
+      }
+    },
+    "endgame": {
+      "common_moves": [
+        {
+          "move": "Kf1",
+          "count": 44,
+          "frequency": 0.08477842003853564
+        },
+        {
+          "move": "Ke7",
+          "count": 44,
+          "frequency": 0.08477842003853564
+        },
+        {
+          "move": "h4",
+          "count": 43,
+          "frequency": 0.08285163776493257
+        },
+        {
+          "move": "Ke3",
+          "count": 39,
+          "frequency": 0.07514450867052024
+        },
+        {
+          "move": "Kd3",
+          "count": 36,
+          "frequency": 0.06936416184971098
+        },
+        {
+          "move": "a5",
+          "count": 34,
+          "frequency": 0.06551059730250482
+        },
+        {
+          "move": "Kf7",
+          "count": 34,
+          "frequency": 0.06551059730250482
+        },
+        {
+          "move": "b5",
+          "count": 34,
+          "frequency": 0.06551059730250482
+        },
+        {
+          "move": "Kd7",
+          "count": 34,
+          "frequency": 0.06551059730250482
+        },
+        {
+          "move": "h5",
+          "count": 33,
+          "frequency": 0.06358381502890173
+        },
+        {
+          "move": "Ke6",
+          "count": 33,
+          "frequency": 0.06358381502890173
+        },
+        {
+          "move": "Kd6",
+          "count": 33,
+          "frequency": 0.06358381502890173
+        },
+        {
+          "move": "Kf8",
+          "count": 32,
+          "frequency": 0.06165703275529865
+        },
+        {
+          "move": "Kc3",
+          "count": 31,
+          "frequency": 0.05973025048169557
+        },
+        {
+          "move": "Kc5",
+          "count": 31,
+          "frequency": 0.05973025048169557
+        },
+        {
+          "move": "Kg2",
+          "count": 31,
+          "frequency": 0.05973025048169557
+        },
+        {
+          "move": "Kc7",
+          "count": 31,
+          "frequency": 0.05973025048169557
+        },
+        {
+          "move": "Kd2",
+          "count": 30,
+          "frequency": 0.057803468208092484
+        },
+        {
+          "move": "Kg7",
+          "count": 30,
+          "frequency": 0.057803468208092484
+        },
+        {
+          "move": "c5",
+          "count": 30,
+          "frequency": 0.057803468208092484
+        },
+        {
+          "move": "a4",
+          "count": 30,
+          "frequency": 0.057803468208092484
+        },
+        {
+          "move": "Kg6",
+          "count": 30,
+          "frequency": 0.057803468208092484
+        },
+        {
+          "move": "Rd1",
+          "count": 29,
+          "frequency": 0.055876685934489405
+        },
+        {
+          "move": "Kf6",
+          "count": 29,
+          "frequency": 0.055876685934489405
+        },
+        {
+          "move": "b4",
+          "count": 28,
+          "frequency": 0.05394990366088632
+        },
+        {
+          "move": "Kc2",
+          "count": 28,
+          "frequency": 0.05394990366088632
+        },
+        {
+          "move": "Ke2",
+          "count": 28,
+          "frequency": 0.05394990366088632
+        },
+        {
+          "move": "c4",
+          "count": 28,
+          "frequency": 0.05394990366088632
+        },
+        {
+          "move": "Kf2",
+          "count": 27,
+          "frequency": 0.05202312138728324
+        },
+        {
+          "move": "Kd8",
+          "count": 27,
+          "frequency": 0.05202312138728324
+        },
+        {
+          "move": "Kg1",
+          "count": 26,
+          "frequency": 0.05009633911368015
+        },
+        {
+          "move": "Ke8",
+          "count": 26,
+          "frequency": 0.05009633911368015
+        },
+        {
+          "move": "g5",
+          "count": 25,
+          "frequency": 0.04816955684007707
+        },
+        {
+          "move": "Rc8",
+          "count": 24,
+          "frequency": 0.046242774566473986
+        },
+        {
+          "move": "Kd1",
+          "count": 23,
+          "frequency": 0.04431599229287091
+        },
+        {
+          "move": "Kf4",
+          "count": 23,
+          "frequency": 0.04431599229287091
+        },
+        {
+          "move": "Kf5",
+          "count": 23,
+          "frequency": 0.04431599229287091
+        },
+        {
+          "move": "f5",
+          "count": 23,
+          "frequency": 0.04431599229287091
+        },
+        {
+          "move": "Kf3",
+          "count": 23,
+          "frequency": 0.04431599229287091
+        },
+        {
+          "move": "d5",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Kh3",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Kh2",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Kh7",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Kb4",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Rd8",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Re8",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "h3",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "Kb7",
+          "count": 22,
+          "frequency": 0.04238921001926782
+        },
+        {
+          "move": "g6",
+          "count": 21,
+          "frequency": 0.04046242774566474
+        },
+        {
+          "move": "Kg3",
+          "count": 21,
+          "frequency": 0.04046242774566474
+        }
+      ],
+      "king_moves": 1604
+    }
+  },
+  "1200-1600": {
+    "statistics": {
+      "games": 8563,
+      "avg_game_length": 59.90669158005372
+    },
+    "middlegame": {
+      "common_moves": [
+        {
+          "move": "O-O",
+          "count": 6768,
+          "frequency": 0.7903772042508467
+        },
+        {
+          "move": "Nc3",
+          "count": 2117,
+          "frequency": 0.2472264393320098
+        },
+        {
+          "move": "Nf6",
+          "count": 2019,
+          "frequency": 0.23578185215461872
+        },
+        {
+          "move": "Nc6",
+          "count": 1854,
+          "frequency": 0.21651290435595003
+        },
+        {
+          "move": "Nf3",
+          "count": 1707,
+          "frequency": 0.19934602358986336
+        },
+        {
+          "move": "e5",
+          "count": 1625,
+          "frequency": 0.18976994044143408
+        },
+        {
+          "move": "d5",
+          "count": 1602,
+          "frequency": 0.18708396589980147
+        },
+        {
+          "move": "Be7",
+          "count": 1529,
+          "frequency": 0.1785589162676632
+        },
+        {
+          "move": "Bg5",
+          "count": 1451,
+          "frequency": 0.16944995912647437
+        },
+        {
+          "move": "d4",
+          "count": 1381,
+          "frequency": 0.16127525399976644
+        },
+        {
+          "move": "O-O-O",
+          "count": 1345,
+          "frequency": 0.15707111993460235
+        },
+        {
+          "move": "a6",
+          "count": 1338,
+          "frequency": 0.15625364942193157
+        },
+        {
+          "move": "h3",
+          "count": 1316,
+          "frequency": 0.15368445638210906
+        },
+        {
+          "move": "Be3",
+          "count": 1283,
+          "frequency": 0.14983066682237534
+        },
+        {
+          "move": "Bd3",
+          "count": 1257,
+          "frequency": 0.1467943477753124
+        },
+        {
+          "move": "Nxe5",
+          "count": 1243,
+          "frequency": 0.1451594067499708
+        },
+        {
+          "move": "b5",
+          "count": 1230,
+          "frequency": 0.14364124722643934
+        },
+        {
+          "move": "a3",
+          "count": 1223,
+          "frequency": 0.14282377671376853
+        },
+        {
+          "move": "c3",
+          "count": 1209,
+          "frequency": 0.14118883568842697
+        },
+        {
+          "move": "h6",
+          "count": 1208,
+          "frequency": 0.14107205418661684
+        },
+        {
+          "move": "c6",
+          "count": 1181,
+          "frequency": 0.13791895363774379
+        },
+        {
+          "move": "Be2",
+          "count": 1146,
+          "frequency": 0.13383160107438982
+        },
+        {
+          "move": "b4",
+          "count": 1084,
+          "frequency": 0.12659114796216278
+        },
+        {
+          "move": "Bg4",
+          "count": 1062,
+          "frequency": 0.1240219549223403
+        },
+        {
+          "move": "c5",
+          "count": 1049,
+          "frequency": 0.12250379539880883
+        },
+        {
+          "move": "Nd5",
+          "count": 1044,
+          "frequency": 0.12191988788975826
+        },
+        {
+          "move": "Ne5",
+          "count": 1024,
+          "frequency": 0.119584257853556
+        },
+        {
+          "move": "Bd7",
+          "count": 1022,
+          "frequency": 0.11935069484993577
+        },
+        {
+          "move": "Nxe4",
+          "count": 1012,
+          "frequency": 0.11818287983183463
+        },
+        {
+          "move": "Bxf6",
+          "count": 1006,
+          "frequency": 0.11748219082097396
+        },
+        {
+          "move": "exd5",
+          "count": 1000,
+          "frequency": 0.11678150181011328
+        },
+        {
+          "move": "d3",
+          "count": 981,
+          "frequency": 0.11456265327572113
+        },
+        {
+          "move": "Bd6",
+          "count": 975,
+          "frequency": 0.11386196426486045
+        },
+        {
+          "move": "dxe5",
+          "count": 970,
+          "frequency": 0.11327805675580987
+        },
+        {
+          "move": "d6",
+          "count": 961,
+          "frequency": 0.11222702323951886
+        },
+        {
+          "move": "Bd2",
+          "count": 958,
+          "frequency": 0.11187667873408852
+        },
+        {
+          "move": "c4",
+          "count": 951,
+          "frequency": 0.11105920822141772
+        },
+        {
+          "move": "Nxd4",
+          "count": 935,
+          "frequency": 0.10919070419245591
+        },
+        {
+          "move": "Ne4",
+          "count": 907,
+          "frequency": 0.10592082214177274
+        },
+        {
+          "move": "Re1",
+          "count": 895,
+          "frequency": 0.10451944412005139
+        },
+        {
+          "move": "Nxd5",
+          "count": 888,
+          "frequency": 0.1037019736073806
+        },
+        {
+          "move": "Be6",
+          "count": 881,
+          "frequency": 0.1028845030947098
+        },
+        {
+          "move": "e6",
+          "count": 877,
+          "frequency": 0.10241737708746934
+        },
+        {
+          "move": "e4",
+          "count": 870,
+          "frequency": 0.10159990657479855
+        },
+        {
+          "move": "Nd4",
+          "count": 856,
+          "frequency": 0.09996496554945697
+        },
+        {
+          "move": "Bxf3",
+          "count": 848,
+          "frequency": 0.09903071353497606
+        },
+        {
+          "move": "g6",
+          "count": 831,
+          "frequency": 0.09704542800420414
+        },
+        {
+          "move": "b6",
+          "count": 820,
+          "frequency": 0.09576083148429289
+        },
+        {
+          "move": "f6",
+          "count": 778,
+          "frequency": 0.09085600840826813
+        },
+        {
+          "move": "Qe2",
+          "count": 758,
+          "frequency": 0.08852037837206586
+        }
+      ],
+      "piece_activity": {
+        "B": 35836,
+        "N": 35298,
+        "Q": 22384,
+        "O": 8497,
+        "R": 7238,
+        "K": 4575
+      }
+    },
+    "endgame": {
+      "common_moves": [
+        {
+          "move": "h5",
+          "count": 684,
+          "frequency": 0.07987854723811748
+        },
+        {
+          "move": "Kg2",
+          "count": 671,
+          "frequency": 0.078360387714586
+        },
+        {
+          "move": "a5",
+          "count": 669,
+          "frequency": 0.07812682471096578
+        },
+        {
+          "move": "h4",
+          "count": 662,
+          "frequency": 0.07730935419829499
+        },
+        {
+          "move": "Kg7",
+          "count": 659,
+          "frequency": 0.07695900969286465
+        },
+        {
+          "move": "f4",
+          "count": 646,
+          "frequency": 0.07544085016933318
+        },
+        {
+          "move": "g4",
+          "count": 618,
+          "frequency": 0.07217096811865001
+        },
+        {
+          "move": "Kf2",
+          "count": 607,
+          "frequency": 0.07088637159873876
+        },
+        {
+          "move": "a4",
+          "count": 596,
+          "frequency": 0.06960177507882752
+        },
+        {
+          "move": "Ke7",
+          "count": 595,
+          "frequency": 0.0694849935770174
+        },
+        {
+          "move": "g5",
+          "count": 595,
+          "frequency": 0.0694849935770174
+        },
+        {
+          "move": "Ke2",
+          "count": 585,
+          "frequency": 0.06831717855891627
+        },
+        {
+          "move": "f5",
+          "count": 573,
+          "frequency": 0.06691580053719491
+        },
+        {
+          "move": "Kf1",
+          "count": 564,
+          "frequency": 0.0658647670209039
+        },
+        {
+          "move": "Kf7",
+          "count": 562,
+          "frequency": 0.06563120401728366
+        },
+        {
+          "move": "Kf3",
+          "count": 543,
+          "frequency": 0.06341235548289151
+        },
+        {
+          "move": "b4",
+          "count": 533,
+          "frequency": 0.062244540464790374
+        },
+        {
+          "move": "Kd7",
+          "count": 511,
+          "frequency": 0.059675347424967884
+        },
+        {
+          "move": "Kf6",
+          "count": 505,
+          "frequency": 0.058974658414107206
+        },
+        {
+          "move": "Kg3",
+          "count": 505,
+          "frequency": 0.058974658414107206
+        },
+        {
+          "move": "c4",
+          "count": 500,
+          "frequency": 0.05839075090505664
+        },
+        {
+          "move": "b5",
+          "count": 496,
+          "frequency": 0.05792362489781618
+        },
+        {
+          "move": "Re1",
+          "count": 488,
+          "frequency": 0.056989372883335276
+        },
+        {
+          "move": "Kd2",
+          "count": 486,
+          "frequency": 0.056755809879715055
+        },
+        {
+          "move": "Kh8",
+          "count": 486,
+          "frequency": 0.056755809879715055
+        },
+        {
+          "move": "Kh2",
+          "count": 481,
+          "frequency": 0.05617190237066449
+        },
+        {
+          "move": "c5",
+          "count": 480,
+          "frequency": 0.05605512086885437
+        },
+        {
+          "move": "Ke6",
+          "count": 480,
+          "frequency": 0.05605512086885437
+        },
+        {
+          "move": "g3",
+          "count": 479,
+          "frequency": 0.05593833936704426
+        },
+        {
+          "move": "Kg1",
+          "count": 475,
+          "frequency": 0.05547121335980381
+        },
+        {
+          "move": "Kf8",
+          "count": 469,
+          "frequency": 0.054770524348943125
+        },
+        {
+          "move": "Kh7",
+          "count": 469,
+          "frequency": 0.054770524348943125
+        },
+        {
+          "move": "Re8",
+          "count": 468,
+          "frequency": 0.054653742847133015
+        },
+        {
+          "move": "Kg8",
+          "count": 459,
+          "frequency": 0.053602709330842
+        },
+        {
+          "move": "Kg6",
+          "count": 456,
+          "frequency": 0.05325236482541165
+        },
+        {
+          "move": "Kh1",
+          "count": 444,
+          "frequency": 0.0518509868036903
+        },
+        {
+          "move": "Kg5",
+          "count": 443,
+          "frequency": 0.05173420530188018
+        },
+        {
+          "move": "h6",
+          "count": 443,
+          "frequency": 0.05173420530188018
+        },
+        {
+          "move": "Rd8",
+          "count": 437,
+          "frequency": 0.0510335162910195
+        },
+        {
+          "move": "Ke3",
+          "count": 435,
+          "frequency": 0.05079995328739927
+        },
+        {
+          "move": "Kc7",
+          "count": 426,
+          "frequency": 0.049748919771108256
+        },
+        {
+          "move": "Kg4",
+          "count": 423,
+          "frequency": 0.04939857526567792
+        },
+        {
+          "move": "f3",
+          "count": 421,
+          "frequency": 0.04916501226205769
+        },
+        {
+          "move": "h3",
+          "count": 418,
+          "frequency": 0.04881466775662735
+        },
+        {
+          "move": "Kf4",
+          "count": 418,
+          "frequency": 0.04881466775662735
+        },
+        {
+          "move": "Rd1",
+          "count": 417,
+          "frequency": 0.04869788625481724
+        },
+        {
+          "move": "Kd3",
+          "count": 413,
+          "frequency": 0.04823076024757678
+        },
+        {
+          "move": "f6",
+          "count": 393,
+          "frequency": 0.04589513021137452
+        },
+        {
+          "move": "Kf5",
+          "count": 392,
+          "frequency": 0.045778348709564404
+        },
+        {
+          "move": "Kc2",
+          "count": 381,
+          "frequency": 0.04449375218965316
+        }
+      ],
+      "king_moves": 26934
+    }
+  },
+  "1600-2000": {
+    "statistics": {
+      "games": 15663,
+      "avg_game_length": 68.49134903913682
+    },
+    "middlegame": {
+      "common_moves": [
+        {
+          "move": "O-O",
+          "count": 17190,
+          "frequency": 1.0974909021260295
+        },
+        {
+          "move": "Nf6",
+          "count": 4033,
+          "frequency": 0.2574857945476601
+        },
+        {
+          "move": "Be7",
+          "count": 3944,
+          "frequency": 0.25180361361169634
+        },
+        {
+          "move": "Nc3",
+          "count": 3903,
+          "frequency": 0.249185979697376
+        },
+        {
+          "move": "e5",
+          "count": 3745,
+          "frequency": 0.23909851241779992
+        },
+        {
+          "move": "Nf3",
+          "count": 3682,
+          "frequency": 0.235076294451893
+        },
+        {
+          "move": "Nc6",
+          "count": 3577,
+          "frequency": 0.22837259784204814
+        },
+        {
+          "move": "Bd3",
+          "count": 3476,
+          "frequency": 0.22192428015067356
+        },
+        {
+          "move": "d5",
+          "count": 3234,
+          "frequency": 0.2064738555832216
+        },
+        {
+          "move": "Be3",
+          "count": 3133,
+          "frequency": 0.20002553789184702
+        },
+        {
+          "move": "h3",
+          "count": 3121,
+          "frequency": 0.1992594011364362
+        },
+        {
+          "move": "Bg5",
+          "count": 3016,
+          "frequency": 0.19255570452659132
+        },
+        {
+          "move": "a6",
+          "count": 2909,
+          "frequency": 0.18572431845751133
+        },
+        {
+          "move": "Be2",
+          "count": 2844,
+          "frequency": 0.18157441103236927
+        },
+        {
+          "move": "h6",
+          "count": 2773,
+          "frequency": 0.17704143522952182
+        },
+        {
+          "move": "a3",
+          "count": 2589,
+          "frequency": 0.16529400497988891
+        },
+        {
+          "move": "O-O-O",
+          "count": 2532,
+          "frequency": 0.16165485539168742
+        },
+        {
+          "move": "d4",
+          "count": 2430,
+          "frequency": 0.15514269297069527
+        },
+        {
+          "move": "Ne5",
+          "count": 2423,
+          "frequency": 0.15469577986337227
+        },
+        {
+          "move": "b5",
+          "count": 2411,
+          "frequency": 0.15392964310796145
+        },
+        {
+          "move": "c5",
+          "count": 2365,
+          "frequency": 0.1509927855455532
+        },
+        {
+          "move": "c3",
+          "count": 2347,
+          "frequency": 0.14984358041243695
+        },
+        {
+          "move": "Nxe5",
+          "count": 2240,
+          "frequency": 0.14301219434335696
+        },
+        {
+          "move": "Bd6",
+          "count": 2224,
+          "frequency": 0.14199067866947584
+        },
+        {
+          "move": "Bg4",
+          "count": 2158,
+          "frequency": 0.1377769265147162
+        },
+        {
+          "move": "e6",
+          "count": 2122,
+          "frequency": 0.1354785162484837
+        },
+        {
+          "move": "e4",
+          "count": 2112,
+          "frequency": 0.134840068952308
+        },
+        {
+          "move": "dxe5",
+          "count": 2108,
+          "frequency": 0.13458469003383772
+        },
+        {
+          "move": "Re1",
+          "count": 2037,
+          "frequency": 0.13005171423099024
+        },
+        {
+          "move": "cxd4",
+          "count": 2015,
+          "frequency": 0.12864713017940368
+        },
+        {
+          "move": "exd5",
+          "count": 1994,
+          "frequency": 0.12730639085743473
+        },
+        {
+          "move": "Bd7",
+          "count": 1968,
+          "frequency": 0.1256464278873779
+        },
+        {
+          "move": "Nbd7",
+          "count": 1951,
+          "frequency": 0.12456106748387921
+        },
+        {
+          "move": "c6",
+          "count": 1949,
+          "frequency": 0.12443337802464406
+        },
+        {
+          "move": "c4",
+          "count": 1931,
+          "frequency": 0.12328417289152781
+        },
+        {
+          "move": "Nd7",
+          "count": 1930,
+          "frequency": 0.12322032816191024
+        },
+        {
+          "move": "b4",
+          "count": 1891,
+          "frequency": 0.120730383706825
+        },
+        {
+          "move": "Bxf6",
+          "count": 1886,
+          "frequency": 0.12041116005873716
+        },
+        {
+          "move": "Bb7",
+          "count": 1865,
+          "frequency": 0.11907042073676818
+        },
+        {
+          "move": "Nxe4",
+          "count": 1832,
+          "frequency": 0.11696354465938837
+        },
+        {
+          "move": "Ne4",
+          "count": 1832,
+          "frequency": 0.11696354465938837
+        },
+        {
+          "move": "Nxd4",
+          "count": 1820,
+          "frequency": 0.11619740790397752
+        },
+        {
+          "move": "f4",
+          "count": 1807,
+          "frequency": 0.11536742641894912
+        },
+        {
+          "move": "d6",
+          "count": 1806,
+          "frequency": 0.11530358168933155
+        },
+        {
+          "move": "Qc7",
+          "count": 1779,
+          "frequency": 0.11357977398965716
+        },
+        {
+          "move": "Be6",
+          "count": 1759,
+          "frequency": 0.11230287939730575
+        },
+        {
+          "move": "cxd5",
+          "count": 1722,
+          "frequency": 0.10994062440145566
+        },
+        {
+          "move": "Qd2",
+          "count": 1698,
+          "frequency": 0.10840835089063398
+        },
+        {
+          "move": "Bxf3",
+          "count": 1695,
+          "frequency": 0.10821681670178127
+        },
+        {
+          "move": "Nxd5",
+          "count": 1688,
+          "frequency": 0.10776990359445827
+        }
+      ],
+      "piece_activity": {
+        "B": 69125,
+        "N": 68599,
+        "Q": 34449,
+        "O": 20209,
+        "R": 14467,
+        "K": 6067
+      }
+    },
+    "endgame": {
+      "common_moves": [
+        {
+          "move": "h4",
+          "count": 1552,
+          "frequency": 0.09908702036646874
+        },
+        {
+          "move": "h5",
+          "count": 1543,
+          "frequency": 0.09851241779991061
+        },
+        {
+          "move": "Kg7",
+          "count": 1496,
+          "frequency": 0.09551171550788483
+        },
+        {
+          "move": "Kg2",
+          "count": 1423,
+          "frequency": 0.09085105024580221
+        },
+        {
+          "move": "g4",
+          "count": 1391,
+          "frequency": 0.08880801889803996
+        },
+        {
+          "move": "Kf7",
+          "count": 1359,
+          "frequency": 0.08676498755027773
+        },
+        {
+          "move": "f5",
+          "count": 1346,
+          "frequency": 0.08593500606524931
+        },
+        {
+          "move": "a5",
+          "count": 1338,
+          "frequency": 0.08542424822830876
+        },
+        {
+          "move": "g5",
+          "count": 1336,
+          "frequency": 0.08529655876907362
+        },
+        {
+          "move": "a4",
+          "count": 1320,
+          "frequency": 0.08427504309519249
+        },
+        {
+          "move": "Kf2",
+          "count": 1283,
+          "frequency": 0.0819127880993424
+        },
+        {
+          "move": "f4",
+          "count": 1277,
+          "frequency": 0.08152971972163697
+        },
+        {
+          "move": "Ke7",
+          "count": 1184,
+          "frequency": 0.07559215986720297
+        },
+        {
+          "move": "Kf3",
+          "count": 1173,
+          "frequency": 0.07488986784140969
+        },
+        {
+          "move": "Kf6",
+          "count": 1168,
+          "frequency": 0.07457064419332184
+        },
+        {
+          "move": "b4",
+          "count": 1166,
+          "frequency": 0.0744429547340867
+        },
+        {
+          "move": "Kg3",
+          "count": 1141,
+          "frequency": 0.07284683649364745
+        },
+        {
+          "move": "Kh2",
+          "count": 1115,
+          "frequency": 0.07118687352359063
+        },
+        {
+          "move": "b5",
+          "count": 1105,
+          "frequency": 0.07054842622741493
+        },
+        {
+          "move": "Ke3",
+          "count": 1096,
+          "frequency": 0.06997382366085679
+        },
+        {
+          "move": "Ke2",
+          "count": 1087,
+          "frequency": 0.06939922109429866
+        },
+        {
+          "move": "Kh1",
+          "count": 1073,
+          "frequency": 0.06850539487965268
+        },
+        {
+          "move": "Kh8",
+          "count": 1057,
+          "frequency": 0.06748387920577156
+        },
+        {
+          "move": "Kg8",
+          "count": 1047,
+          "frequency": 0.06684543190959587
+        },
+        {
+          "move": "Kh7",
+          "count": 1035,
+          "frequency": 0.06607929515418502
+        },
+        {
+          "move": "Kg6",
+          "count": 1024,
+          "frequency": 0.06537700312839174
+        },
+        {
+          "move": "Kf8",
+          "count": 1009,
+          "frequency": 0.0644193321841282
+        },
+        {
+          "move": "Kg1",
+          "count": 993,
+          "frequency": 0.06339781651024708
+        },
+        {
+          "move": "Re1",
+          "count": 970,
+          "frequency": 0.06192938772904297
+        },
+        {
+          "move": "c4",
+          "count": 968,
+          "frequency": 0.061801698269807824
+        },
+        {
+          "move": "g6",
+          "count": 967,
+          "frequency": 0.061737853540190256
+        },
+        {
+          "move": "h6",
+          "count": 957,
+          "frequency": 0.061099406244014554
+        },
+        {
+          "move": "Ke6",
+          "count": 956,
+          "frequency": 0.061035561514396985
+        },
+        {
+          "move": "Kd2",
+          "count": 948,
+          "frequency": 0.060524803677456426
+        },
+        {
+          "move": "Kf4",
+          "count": 941,
+          "frequency": 0.060077890570133435
+        },
+        {
+          "move": "Kd3",
+          "count": 936,
+          "frequency": 0.05975866692204559
+        },
+        {
+          "move": "Kf1",
+          "count": 936,
+          "frequency": 0.05975866692204559
+        },
+        {
+          "move": "g3",
+          "count": 931,
+          "frequency": 0.05943944327395773
+        },
+        {
+          "move": "Kd6",
+          "count": 931,
+          "frequency": 0.05943944327395773
+        },
+        {
+          "move": "Kd7",
+          "count": 923,
+          "frequency": 0.058928685437017174
+        },
+        {
+          "move": "h3",
+          "count": 897,
+          "frequency": 0.05726872246696035
+        },
+        {
+          "move": "Re8",
+          "count": 886,
+          "frequency": 0.05656643044116708
+        },
+        {
+          "move": "c5",
+          "count": 884,
+          "frequency": 0.05643874098193194
+        },
+        {
+          "move": "Kf5",
+          "count": 873,
+          "frequency": 0.05573644895613867
+        },
+        {
+          "move": "Ne4",
+          "count": 864,
+          "frequency": 0.05516184638958054
+        },
+        {
+          "move": "f6",
+          "count": 853,
+          "frequency": 0.05445955436378727
+        },
+        {
+          "move": "Ke5",
+          "count": 847,
+          "frequency": 0.05407648598608185
+        },
+        {
+          "move": "Ne5",
+          "count": 843,
+          "frequency": 0.05382110706761157
+        },
+        {
+          "move": "e5",
+          "count": 840,
+          "frequency": 0.05362957287875886
+        },
+        {
+          "move": "Kg4",
+          "count": 840,
+          "frequency": 0.05362957287875886
+        }
+      ],
+      "king_moves": 56015
+    }
+  },
+  "2000-2400": {
+    "statistics": {
+      "games": 4965,
+      "avg_game_length": 76.05720040281973
+    },
+    "middlegame": {
+      "common_moves": [
+        {
+          "move": "O-O",
+          "count": 5649,
+          "frequency": 1.1377643504531723
+        },
+        {
+          "move": "Nc6",
+          "count": 1420,
+          "frequency": 0.28600201409869086
+        },
+        {
+          "move": "e5",
+          "count": 1418,
+          "frequency": 0.28559919436052367
+        },
+        {
+          "move": "Nc3",
+          "count": 1308,
+          "frequency": 0.2634441087613293
+        },
+        {
+          "move": "Be7",
+          "count": 1244,
+          "frequency": 0.25055387713997984
+        },
+        {
+          "move": "Bd3",
+          "count": 1200,
+          "frequency": 0.24169184290030213
+        },
+        {
+          "move": "Nf3",
+          "count": 1160,
+          "frequency": 0.23363544813695872
+        },
+        {
+          "move": "Nf6",
+          "count": 1137,
+          "frequency": 0.22900302114803625
+        },
+        {
+          "move": "d5",
+          "count": 1078,
+          "frequency": 0.21711983887210473
+        },
+        {
+          "move": "Be3",
+          "count": 1056,
+          "frequency": 0.21268882175226586
+        },
+        {
+          "move": "h3",
+          "count": 1038,
+          "frequency": 0.20906344410876132
+        },
+        {
+          "move": "e4",
+          "count": 952,
+          "frequency": 0.191742195367573
+        },
+        {
+          "move": "c5",
+          "count": 946,
+          "frequency": 0.1905337361530715
+        },
+        {
+          "move": "Be2",
+          "count": 939,
+          "frequency": 0.18912386706948642
+        },
+        {
+          "move": "a6",
+          "count": 927,
+          "frequency": 0.18670694864048337
+        },
+        {
+          "move": "Ne5",
+          "count": 925,
+          "frequency": 0.1863041289023162
+        },
+        {
+          "move": "Bg5",
+          "count": 905,
+          "frequency": 0.1822759315206445
+        },
+        {
+          "move": "Nbd7",
+          "count": 904,
+          "frequency": 0.18207452165156093
+        },
+        {
+          "move": "c4",
+          "count": 855,
+          "frequency": 0.17220543806646527
+        },
+        {
+          "move": "cxd4",
+          "count": 850,
+          "frequency": 0.17119838872104734
+        },
+        {
+          "move": "e6",
+          "count": 843,
+          "frequency": 0.16978851963746225
+        },
+        {
+          "move": "c3",
+          "count": 836,
+          "frequency": 0.16837865055387713
+        },
+        {
+          "move": "h6",
+          "count": 829,
+          "frequency": 0.16696878147029204
+        },
+        {
+          "move": "d4",
+          "count": 803,
+          "frequency": 0.16173212487411884
+        },
+        {
+          "move": "Re1",
+          "count": 798,
+          "frequency": 0.1607250755287009
+        },
+        {
+          "move": "b5",
+          "count": 795,
+          "frequency": 0.16012084592145015
+        },
+        {
+          "move": "Bd6",
+          "count": 761,
+          "frequency": 0.15327291037260826
+        },
+        {
+          "move": "Qc7",
+          "count": 760,
+          "frequency": 0.15307150050352467
+        },
+        {
+          "move": "dxe5",
+          "count": 754,
+          "frequency": 0.15186304128902317
+        },
+        {
+          "move": "O-O-O",
+          "count": 744,
+          "frequency": 0.14984894259818732
+        },
+        {
+          "move": "cxd5",
+          "count": 738,
+          "frequency": 0.1486404833836858
+        },
+        {
+          "move": "Nxe5",
+          "count": 734,
+          "frequency": 0.14783484390735147
+        },
+        {
+          "move": "a3",
+          "count": 715,
+          "frequency": 0.14400805639476336
+        },
+        {
+          "move": "Bg4",
+          "count": 710,
+          "frequency": 0.14300100704934543
+        },
+        {
+          "move": "Nd7",
+          "count": 702,
+          "frequency": 0.14138972809667674
+        },
+        {
+          "move": "Ne4",
+          "count": 692,
+          "frequency": 0.1393756294058409
+        },
+        {
+          "move": "f4",
+          "count": 673,
+          "frequency": 0.13554884189325278
+        },
+        {
+          "move": "Nbd2",
+          "count": 650,
+          "frequency": 0.1309164149043303
+        },
+        {
+          "move": "Bd7",
+          "count": 638,
+          "frequency": 0.1284994964753273
+        },
+        {
+          "move": "Bb7",
+          "count": 618,
+          "frequency": 0.12447129909365559
+        },
+        {
+          "move": "f5",
+          "count": 609,
+          "frequency": 0.12265861027190332
+        },
+        {
+          "move": "Qd2",
+          "count": 603,
+          "frequency": 0.12145015105740181
+        },
+        {
+          "move": "Nxe4",
+          "count": 600,
+          "frequency": 0.12084592145015106
+        },
+        {
+          "move": "c6",
+          "count": 598,
+          "frequency": 0.12044310171198389
+        },
+        {
+          "move": "Bxf6",
+          "count": 591,
+          "frequency": 0.1190332326283988
+        },
+        {
+          "move": "Be6",
+          "count": 591,
+          "frequency": 0.1190332326283988
+        },
+        {
+          "move": "Re8",
+          "count": 590,
+          "frequency": 0.11883182275931521
+        },
+        {
+          "move": "Qe2",
+          "count": 590,
+          "frequency": 0.11883182275931521
+        },
+        {
+          "move": "exd5",
+          "count": 579,
+          "frequency": 0.11661631419939578
+        },
+        {
+          "move": "Nxd4",
+          "count": 553,
+          "frequency": 0.11137965760322256
+        }
+      ],
+      "piece_activity": {
+        "N": 22743,
+        "B": 21291,
+        "Q": 10059,
+        "O": 6501,
+        "R": 5329,
+        "K": 1804
+      }
+    },
+    "endgame": {
+      "common_moves": [
+        {
+          "move": "h5",
+          "count": 620,
+          "frequency": 0.12487411883182276
+        },
+        {
+          "move": "h4",
+          "count": 618,
+          "frequency": 0.12447129909365559
+        },
+        {
+          "move": "Kg7",
+          "count": 582,
+          "frequency": 0.11722054380664652
+        },
+        {
+          "move": "Kg2",
+          "count": 557,
+          "frequency": 0.11218529707955689
+        },
+        {
+          "move": "Kf7",
+          "count": 536,
+          "frequency": 0.10795568982880162
+        },
+        {
+          "move": "g4",
+          "count": 519,
+          "frequency": 0.10453172205438066
+        },
+        {
+          "move": "g5",
+          "count": 500,
+          "frequency": 0.10070493454179255
+        },
+        {
+          "move": "f5",
+          "count": 496,
+          "frequency": 0.09989929506545821
+        },
+        {
+          "move": "f4",
+          "count": 493,
+          "frequency": 0.09929506545820745
+        },
+        {
+          "move": "Kf2",
+          "count": 471,
+          "frequency": 0.09486404833836858
+        },
+        {
+          "move": "Kf6",
+          "count": 461,
+          "frequency": 0.09284994964753272
+        },
+        {
+          "move": "Kh2",
+          "count": 455,
+          "frequency": 0.09164149043303121
+        },
+        {
+          "move": "a4",
+          "count": 455,
+          "frequency": 0.09164149043303121
+        },
+        {
+          "move": "Ke7",
+          "count": 452,
+          "frequency": 0.09103726082578047
+        },
+        {
+          "move": "Kf3",
+          "count": 449,
+          "frequency": 0.0904330312185297
+        },
+        {
+          "move": "a5",
+          "count": 448,
+          "frequency": 0.09023162134944612
+        },
+        {
+          "move": "Kg6",
+          "count": 432,
+          "frequency": 0.08700906344410876
+        },
+        {
+          "move": "Ke3",
+          "count": 418,
+          "frequency": 0.08418932527693856
+        },
+        {
+          "move": "Kg3",
+          "count": 415,
+          "frequency": 0.08358509566968782
+        },
+        {
+          "move": "Kh7",
+          "count": 414,
+          "frequency": 0.08338368580060423
+        },
+        {
+          "move": "Ke6",
+          "count": 398,
+          "frequency": 0.08016112789526687
+        },
+        {
+          "move": "Kg8",
+          "count": 395,
+          "frequency": 0.07955689828801611
+        },
+        {
+          "move": "b4",
+          "count": 392,
+          "frequency": 0.07895266868076536
+        },
+        {
+          "move": "Kf8",
+          "count": 392,
+          "frequency": 0.07895266868076536
+        },
+        {
+          "move": "Kg4",
+          "count": 378,
+          "frequency": 0.07613293051359517
+        },
+        {
+          "move": "b5",
+          "count": 377,
+          "frequency": 0.07593152064451159
+        },
+        {
+          "move": "Ke2",
+          "count": 360,
+          "frequency": 0.07250755287009064
+        },
+        {
+          "move": "Kg1",
+          "count": 356,
+          "frequency": 0.0717019133937563
+        },
+        {
+          "move": "Kf4",
+          "count": 353,
+          "frequency": 0.07109768378650554
+        },
+        {
+          "move": "Kd6",
+          "count": 346,
+          "frequency": 0.06968781470292044
+        },
+        {
+          "move": "g6",
+          "count": 341,
+          "frequency": 0.06868076535750252
+        },
+        {
+          "move": "h3",
+          "count": 339,
+          "frequency": 0.06827794561933535
+        },
+        {
+          "move": "Kh1",
+          "count": 339,
+          "frequency": 0.06827794561933535
+        },
+        {
+          "move": "Kf1",
+          "count": 339,
+          "frequency": 0.06827794561933535
+        },
+        {
+          "move": "Kd7",
+          "count": 331,
+          "frequency": 0.06666666666666667
+        },
+        {
+          "move": "h6",
+          "count": 330,
+          "frequency": 0.06646525679758308
+        },
+        {
+          "move": "Kf5",
+          "count": 328,
+          "frequency": 0.06606243705941592
+        },
+        {
+          "move": "Kh8",
+          "count": 327,
+          "frequency": 0.06586102719033232
+        },
+        {
+          "move": "Ke4",
+          "count": 325,
+          "frequency": 0.06545820745216516
+        },
+        {
+          "move": "f6",
+          "count": 322,
+          "frequency": 0.0648539778449144
+        },
+        {
+          "move": "Kg5",
+          "count": 321,
+          "frequency": 0.06465256797583081
+        },
+        {
+          "move": "Kd3",
+          "count": 320,
+          "frequency": 0.06445115810674723
+        },
+        {
+          "move": "Re1",
+          "count": 319,
+          "frequency": 0.06424974823766365
+        },
+        {
+          "move": "c4",
+          "count": 309,
+          "frequency": 0.062235649546827795
+        },
+        {
+          "move": "Kh6",
+          "count": 308,
+          "frequency": 0.06203423967774421
+        },
+        {
+          "move": "Ke5",
+          "count": 308,
+          "frequency": 0.06203423967774421
+        },
+        {
+          "move": "Re8",
+          "count": 302,
+          "frequency": 0.0608257804632427
+        },
+        {
+          "move": "g3",
+          "count": 301,
+          "frequency": 0.060624370594159115
+        },
+        {
+          "move": "Kd5",
+          "count": 298,
+          "frequency": 0.06002014098690836
+        },
+        {
+          "move": "Kd2",
+          "count": 297,
+          "frequency": 0.05981873111782477
+        }
+      ],
+      "king_moves": 20468
+    }
+  },
+  "2400+": {
+    "statistics": {
+      "games": 290,
+      "avg_game_length": 83.63103448275862
+    },
+    "middlegame": {
+      "common_moves": [
+        {
+          "move": "O-O",
+          "count": 294,
+          "frequency": 1.013793103448276
+        },
+        {
+          "move": "Nc3",
+          "count": 107,
+          "frequency": 0.3689655172413793
+        },
+        {
+          "move": "Nc6",
+          "count": 106,
+          "frequency": 0.36551724137931035
+        },
+        {
+          "move": "e5",
+          "count": 105,
+          "frequency": 0.3620689655172414
+        },
+        {
+          "move": "e4",
+          "count": 83,
+          "frequency": 0.28620689655172415
+        },
+        {
+          "move": "Be3",
+          "count": 74,
+          "frequency": 0.25517241379310346
+        },
+        {
+          "move": "Be7",
+          "count": 71,
+          "frequency": 0.24482758620689654
+        },
+        {
+          "move": "d5",
+          "count": 65,
+          "frequency": 0.22413793103448276
+        },
+        {
+          "move": "d4",
+          "count": 64,
+          "frequency": 0.2206896551724138
+        },
+        {
+          "move": "Nf6",
+          "count": 61,
+          "frequency": 0.2103448275862069
+        },
+        {
+          "move": "Re1",
+          "count": 61,
+          "frequency": 0.2103448275862069
+        },
+        {
+          "move": "c4",
+          "count": 61,
+          "frequency": 0.2103448275862069
+        },
+        {
+          "move": "h3",
+          "count": 59,
+          "frequency": 0.20344827586206896
+        },
+        {
+          "move": "a6",
+          "count": 58,
+          "frequency": 0.2
+        },
+        {
+          "move": "Bg5",
+          "count": 56,
+          "frequency": 0.19310344827586207
+        },
+        {
+          "move": "Ne5",
+          "count": 56,
+          "frequency": 0.19310344827586207
+        },
+        {
+          "move": "e6",
+          "count": 53,
+          "frequency": 0.18275862068965518
+        },
+        {
+          "move": "Nbd7",
+          "count": 53,
+          "frequency": 0.18275862068965518
+        },
+        {
+          "move": "Nf3",
+          "count": 53,
+          "frequency": 0.18275862068965518
+        },
+        {
+          "move": "cxd5",
+          "count": 51,
+          "frequency": 0.17586206896551723
+        },
+        {
+          "move": "Bd3",
+          "count": 50,
+          "frequency": 0.1724137931034483
+        },
+        {
+          "move": "Re8",
+          "count": 48,
+          "frequency": 0.16551724137931034
+        },
+        {
+          "move": "c5",
+          "count": 48,
+          "frequency": 0.16551724137931034
+        },
+        {
+          "move": "Be6",
+          "count": 47,
+          "frequency": 0.16206896551724137
+        },
+        {
+          "move": "b5",
+          "count": 44,
+          "frequency": 0.15172413793103448
+        },
+        {
+          "move": "Qc7",
+          "count": 43,
+          "frequency": 0.1482758620689655
+        },
+        {
+          "move": "dxe5",
+          "count": 43,
+          "frequency": 0.1482758620689655
+        },
+        {
+          "move": "Bd6",
+          "count": 42,
+          "frequency": 0.14482758620689656
+        },
+        {
+          "move": "a4",
+          "count": 42,
+          "frequency": 0.14482758620689656
+        },
+        {
+          "move": "Nxe5",
+          "count": 41,
+          "frequency": 0.1413793103448276
+        },
+        {
+          "move": "f4",
+          "count": 41,
+          "frequency": 0.1413793103448276
+        },
+        {
+          "move": "Nxe4",
+          "count": 39,
+          "frequency": 0.13448275862068965
+        },
+        {
+          "move": "c6",
+          "count": 39,
+          "frequency": 0.13448275862068965
+        },
+        {
+          "move": "c3",
+          "count": 39,
+          "frequency": 0.13448275862068965
+        },
+        {
+          "move": "Be2",
+          "count": 38,
+          "frequency": 0.1310344827586207
+        },
+        {
+          "move": "Nd7",
+          "count": 38,
+          "frequency": 0.1310344827586207
+        },
+        {
+          "move": "O-O-O",
+          "count": 38,
+          "frequency": 0.1310344827586207
+        },
+        {
+          "move": "b4",
+          "count": 37,
+          "frequency": 0.12758620689655173
+        },
+        {
+          "move": "Qe2",
+          "count": 37,
+          "frequency": 0.12758620689655173
+        },
+        {
+          "move": "Bxf6",
+          "count": 37,
+          "frequency": 0.12758620689655173
+        },
+        {
+          "move": "h4",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "Bf4",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "h6",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "cxd4",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "d3",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "b6",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "a3",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "exd5",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "Bg4",
+          "count": 34,
+          "frequency": 0.11724137931034483
+        },
+        {
+          "move": "dxe4",
+          "count": 33,
+          "frequency": 0.11379310344827587
+        }
+      ],
+      "piece_activity": {
+        "N": 1411,
+        "B": 1152,
+        "Q": 546,
+        "R": 361,
+        "O": 338,
+        "K": 88
+      }
+    },
+    "endgame": {
+      "common_moves": [
+        {
+          "move": "f5",
+          "count": 48,
+          "frequency": 0.16551724137931034
+        },
+        {
+          "move": "h4",
+          "count": 40,
+          "frequency": 0.13793103448275862
+        },
+        {
+          "move": "Kf3",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "Kg2",
+          "count": 36,
+          "frequency": 0.12413793103448276
+        },
+        {
+          "move": "Kg7",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "g5",
+          "count": 35,
+          "frequency": 0.1206896551724138
+        },
+        {
+          "move": "Kg3",
+          "count": 34,
+          "frequency": 0.11724137931034483
+        },
+        {
+          "move": "g4",
+          "count": 33,
+          "frequency": 0.11379310344827587
+        },
+        {
+          "move": "Kf8",
+          "count": 33,
+          "frequency": 0.11379310344827587
+        },
+        {
+          "move": "Kg8",
+          "count": 31,
+          "frequency": 0.10689655172413794
+        },
+        {
+          "move": "Kg6",
+          "count": 29,
+          "frequency": 0.1
+        },
+        {
+          "move": "Kh3",
+          "count": 29,
+          "frequency": 0.1
+        },
+        {
+          "move": "Kd3",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "a5",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "h5",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "Ke7",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "Kg4",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "b4",
+          "count": 27,
+          "frequency": 0.09310344827586207
+        },
+        {
+          "move": "Kf2",
+          "count": 26,
+          "frequency": 0.0896551724137931
+        },
+        {
+          "move": "Kg5",
+          "count": 26,
+          "frequency": 0.0896551724137931
+        },
+        {
+          "move": "a4",
+          "count": 26,
+          "frequency": 0.0896551724137931
+        },
+        {
+          "move": "Kf7",
+          "count": 26,
+          "frequency": 0.0896551724137931
+        },
+        {
+          "move": "Ke3",
+          "count": 26,
+          "frequency": 0.0896551724137931
+        },
+        {
+          "move": "Kh2",
+          "count": 25,
+          "frequency": 0.08620689655172414
+        },
+        {
+          "move": "Kh7",
+          "count": 25,
+          "frequency": 0.08620689655172414
+        },
+        {
+          "move": "Kh8",
+          "count": 24,
+          "frequency": 0.08275862068965517
+        },
+        {
+          "move": "f6",
+          "count": 24,
+          "frequency": 0.08275862068965517
+        },
+        {
+          "move": "f4",
+          "count": 23,
+          "frequency": 0.07931034482758621
+        },
+        {
+          "move": "Kd5",
+          "count": 23,
+          "frequency": 0.07931034482758621
+        },
+        {
+          "move": "Ke2",
+          "count": 22,
+          "frequency": 0.07586206896551724
+        },
+        {
+          "move": "Kf5",
+          "count": 22,
+          "frequency": 0.07586206896551724
+        },
+        {
+          "move": "Kb4",
+          "count": 22,
+          "frequency": 0.07586206896551724
+        },
+        {
+          "move": "b5",
+          "count": 22,
+          "frequency": 0.07586206896551724
+        },
+        {
+          "move": "Kb6",
+          "count": 22,
+          "frequency": 0.07586206896551724
+        },
+        {
+          "move": "Ke5",
+          "count": 21,
+          "frequency": 0.07241379310344828
+        },
+        {
+          "move": "Kd4",
+          "count": 21,
+          "frequency": 0.07241379310344828
+        },
+        {
+          "move": "Kf1",
+          "count": 21,
+          "frequency": 0.07241379310344828
+        },
+        {
+          "move": "Kh6",
+          "count": 21,
+          "frequency": 0.07241379310344828
+        },
+        {
+          "move": "Nd5",
+          "count": 21,
+          "frequency": 0.07241379310344828
+        },
+        {
+          "move": "Kc4",
+          "count": 20,
+          "frequency": 0.06896551724137931
+        },
+        {
+          "move": "Ke6",
+          "count": 20,
+          "frequency": 0.06896551724137931
+        },
+        {
+          "move": "Kc5",
+          "count": 20,
+          "frequency": 0.06896551724137931
+        },
+        {
+          "move": "Kf6",
+          "count": 19,
+          "frequency": 0.06551724137931035
+        },
+        {
+          "move": "Re8",
+          "count": 19,
+          "frequency": 0.06551724137931035
+        },
+        {
+          "move": "g6",
+          "count": 19,
+          "frequency": 0.06551724137931035
+        },
+        {
+          "move": "Kh5",
+          "count": 18,
+          "frequency": 0.06206896551724138
+        },
+        {
+          "move": "Ka5",
+          "count": 18,
+          "frequency": 0.06206896551724138
+        },
+        {
+          "move": "Kd6",
+          "count": 18,
+          "frequency": 0.06206896551724138
+        },
+        {
+          "move": "Rd1",
+          "count": 17,
+          "frequency": 0.05862068965517241
+        },
+        {
+          "move": "Kd2",
+          "count": 17,
+          "frequency": 0.05862068965517241
+        }
+      ],
+      "king_moves": 1366
+    }
+  }
+}

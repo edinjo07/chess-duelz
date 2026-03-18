@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chess Visual Editor - Drag & Drop</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #2a2a2a;
+      border-bottom: 2px solid #3a3a3a;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 10000;
+    }
+
+    .toolbar button {
+      padding: 8px 16px;
+      background: #3a3a3a;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .toolbar button:hover {
+      background: #4a4a4a;
+    }
+
+    .toolbar button.active {
+      background: #22ff99;
+      color: #000;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 30px;
+      background: #444;
+    }
+
+    /* Main Container */
+    .main-container {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 350px;
+      bottom: 0;
+      overflow: auto;
+      background: #0d0d0d;
+    }
+
+    /* Chess Game Wrapper */
+    .game-wrapper {
+      position: relative;
+      min-height: 100%;
+      padding: 20px;
+    }
+
+    .game-wrapper.edit-mode * {
+      cursor: move !important;
+      transition: all 0.2s;
+    }
+
+    .game-wrapper.edit-mode *:hover {
+      outline: 2px dashed #22ff99;
+      outline-offset: 2px;
+    }
+
+    .game-wrapper.edit-mode .draggable {
+      position: relative !important;
+    }
+
+    /* Side Panel */
+    .side-panel {
+      position: fixed;
+      right: 0;
+      top: 60px;
+      bottom: 0;
+      width: 350px;
+      background: #2a2a2a;
+      border-left: 2px solid #3a3a3a;
+      overflow-y: auto;
+      z-index: 9999;
+    }
+
+    .panel-section {
+      padding: 20px;
+      border-bottom: 1px solid #3a3a3a;
+    }
+
+    .panel-section h3 {
+      margin-bottom: 15px;
+      color: #22ff99;
+      font-size: 16px;
+    }
+
+    .property-group {
+      margin-bottom: 15px;
+    }
+
+    .property-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .property-group input,
+    .property-group select {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .property-group input[type="color"] {
+      height: 40px;
+      cursor: pointer;
+    }
+
+    .property-group input[type="range"] {
+      cursor: pointer;
+    }
+
+    /* Element Highlight */
+    .element-highlight {
+      position: fixed;
+      pointer-events: none;
+      border: 2px solid #22ff99;
+      background: rgba(34, 255, 153, 0.1);
+      z-index: 9998;
+      display: none;
+    }
+
+    .element-highlight.active {
+      display: block;
+    }
+
+    .element-label {
+      position: absolute;
+      top: -25px;
+      left: 0;
+      background: #22ff99;
+      color: #000;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22ff99;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Generated CSS Display */
+    .css-output {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow: auto;
+    }
+
+    .css-output pre {
+      margin: 0;
+      color: #22ff99;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+
+    .element-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .element-item {
+      padding: 10px;
+      background: #1a1a1a;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .element-item:hover {
+      background: #252525;
+    }
+
+    .element-item.selected {
+      background: #22ff99;
+      color: #000;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 12px;
+      background: #22ff99;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .save-btn:hover {
+      background: #1aee88;
+    }
+  </style>
+</head>
+<body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button id="editModeBtn" class="active">🎨 Edit Mode</button>
+    <button id="previewModeBtn">👁️ Preview Mode</button>
+    <div class="toolbar-divider"></div>
+    <button id="undoBtn">↶ Undo</button>
+    <button id="redoBtn">↷ Redo</button>
+    <div class="toolbar-divider"></div>
+    <button id="exportBtn">💾 Export CSS</button>
+    <button id="saveBtn">✓ Save Changes</button>
+  </div>
+
+  <!-- Main Container with Chess Game -->
+  <div class="main-container">
+    <div class="game-wrapper edit-mode" id="gameWrapper">
+      <!-- Chess game will be loaded here via fetch -->
+      <div style="text-align: center; padding: 100px; color: #666;">
+        Loading chess game...
+      </div>
+    </div>
+  </div>
+
+  <!-- Side Panel -->
+  <div class="side-panel">
+    <!-- Selected Element Info -->
+    <div class="panel-section">
+      <h3>📋 Selected Element</h3>
+      <div id="selectedInfo">
+        <p style="color: #888;">Click on any element to edit it</p>
+      </div>
+    </div>
+
+    <!-- Properties -->
+    <div class="panel-section" id="propertiesPanel" style="display: none;">
+      <h3>🎨 Properties</h3>
+      
+      <div class="property-group">
+        <label>Width</label>
+        <input type="text" id="propWidth" onchange="updateStyle('width', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Height</label>
+        <input type="text" id="propHeight" onchange="updateStyle('height', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Background Color</label>
+        <input type="color" id="propBgColor" onchange="updateStyle('backgroundColor', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Text Color</label>
+        <input type="color" id="propColor" onchange="updateStyle('color', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Font Size</label>
+        <input type="text" id="propFontSize" onchange="updateStyle('fontSize', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Padding</label>
+        <input type="text" id="propPadding" onchange="updateStyle('padding', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Margin</label>
+        <input type="text" id="propMargin" onchange="updateStyle('margin', this.value)">
+      </div>
+      
+      <div class="property-group">
+        <label>Border Radius</label>
+        <input type="text" id="propBorderRadius" onchange="updateStyle('borderRadius', this.value)">
+      </div>
+
+      <div class="property-group">
+        <label>Opacity</label>
+        <input type="range" id="propOpacity" min="0" max="1" step="0.1" value="1" onchange="updateStyle('opacity', this.value)">
+      </div>
+    </div>
+
+    <!-- Element List -->
+    <div class="panel-section">
+      <h3>📦 Elements</h3>
+      <div class="element-list" id="elementList">
+        <!-- Will be populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Generated CSS -->
+    <div class="panel-section">
+      <h3>📝 Generated CSS</h3>
+      <div class="css-output">
+        <pre id="cssOutput">/* Click elements to generate CSS */</pre>
+      </div>
+      <button class="save-btn" onclick="downloadCSS()">Download CSS File</button>
+    </div>
+  </div>
+
+  <!-- Element Highlight -->
+  <div class="element-highlight" id="elementHighlight">
+    <div class="element-label" id="elementLabel"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let selectedElement = null;
+    let editMode = true;
+    let cssChanges = {};
+    let draggedElement = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // Load chess game HTML
+    async function loadChessGame() {
+      try {
+        const response = await fetch('index.html');
+        const html = await response.text();
+        
+        // Parse HTML and extract body content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Get all styles and scripts
+        const styles = Array.from(doc.querySelectorAll('link[rel="stylesheet"], style'));
+        
+        // Insert styles into head
+        styles.forEach(style => {
+          document.head.appendChild(style.cloneNode(true));
+        });
+        
+        // Insert body content
+        const wrapper = document.getElementById('gameWrapper');
+        wrapper.innerHTML = doc.body.innerHTML;
+        
+        // Wait a bit for styles to load
+        setTimeout(() => {
+          makeElementsInteractive();
+          buildElementList();
+          showToast('✓ Chess game loaded! Click elements to edit.');
+        }, 500);
+      } catch (error) {
+        console.error('Error loading chess game:', error);
+        document.getElementById('gameWrapper').innerHTML = 
+          '<div style="text-align: center; padding: 100px; color: #ff5555;">Error loading chess game. Please refresh.</div>';
+      }
+    }
+
+    // Make elements interactive
+    function makeElementsInteractive() {
+      const wrapper = document.getElementById('gameWrapper');
+      const elements = wrapper.querySelectorAll('*');
+      
+      elements.forEach(element => {
+        // Skip script and style tags
+        if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') return;
+        
+        // Click to select
+        element.addEventListener('click', (e) => {
+          if (editMode) {
+            e.preventDefault();
+            e.stopPropagation();
+            selectElement(element);
+          }
+        });
+        
+        // Hover to highlight
+        element.addEventListener('mouseenter', (e) => {
+          if (editMode && element !== selectedElement) {
+            highlightElement(element);
+          }
+        });
+        
+        // Drag to move
+        element.addEventListener('mousedown', (e) => {
+          if (editMode && e.button === 0) { // Left click only
+            e.preventDefault();
+            e.stopPropagation();
+            draggedElement = element;
+            const rect = element.getBoundingClientRect();
+            const wrapper = document.getElementById('gameWrapper');
+            const wrapperRect = wrapper.getBoundingClientRect();
+            
+            // Calculate offset relative to wrapper
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            
+            // Store original position
+            const computed = getComputedStyle(element);
+            if (computed.position === 'static') {
+              element.style.position = 'relative';
+              element.style.left = '0px';
+              element.style.top = '0px';
+            }
+            
+            // Add dragging class
+            element.style.cursor = 'grabbing';
+            element.style.zIndex = '9999';
+          }
+        });
+      });
+      
+      // Global mouse move
+      document.addEventListener('mousemove', (e) => {
+        if (draggedElement && editMode) {
+          e.preventDefault();
+          
+          const wrapper = document.getElementById('gameWrapper');
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const parentRect = draggedElement.parentElement.getBoundingClientRect();
+          
+          // Calculate position relative to parent
+          let newLeft = e.clientX - parentRect.left - offsetX;
+          let newTop = e.clientY - parentRect.top - offsetY;
+          
+          // Apply position
+          draggedElement.style.left = newLeft + 'px';
+          draggedElement.style.top = newTop + 'px';
+          
+          // Track changes
+          const selector = getElementSelector(draggedElement);
+          if (!cssChanges[selector]) cssChanges[selector] = {};
+          cssChanges[selector].left = draggedElement.style.left;
+          cssChanges[selector].top = draggedElement.style.top;
+          cssChanges[selector].position = 'relative';
+          
+          updateCSSOutput();
+        }
+      });
+      
+      // Global mouse up
+      document.addEventListener('mouseup', () => {
+        if (draggedElement) {
+          draggedElement.style.cursor = 'move';
+          draggedElement.style.zIndex = '';
+          showToast('Element moved!');
+          draggedElement = null;
+        }
+      });
+    }
+
+    // Select element
+    function selectElement(element) {
+      selectedElement = element;
+      highlightElement(element);
+      updatePropertiesPanel(element);
+      
+      // Highlight in element list
+      document.querySelectorAll('.element-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      showToast('Selected: ' + getElementLabel(element));
+    }
+
+    // Highlight element
+    function highlightElement(element) {
+      const rect = element.getBoundingClientRect();
+      const highlight = document.getElementById('elementHighlight');
+      const label = document.getElementById('elementLabel');
+      
+      highlight.style.left = rect.left + 'px';
+      highlight.style.top = rect.top + 'px';
+      highlight.style.width = rect.width + 'px';
+      highlight.style.height = rect.height + 'px';
+      highlight.classList.add('active');
+      
+      label.textContent = getElementLabel(element);
+    }
+
+    // Get element label
+    function getElementLabel(element) {
+      let label = element.tagName.toLowerCase();
+      if (element.id) label += '#' + element.id;
+      if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.trim()).slice(0, 2).join('.');
+        if (classes) label += '.' + classes;
+      }
+      return label;
+    }
+
+    // Get CSS selector for element
+    function getElementSelector(element) {
+      if (element.id) return '#' + element.id;
+      if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.trim());
+        if (classes.length > 0) return '.' + classes[0];
+      }
+      return element.tagName.toLowerCase();
+    }
+
+    // Update properties panel
+    function updatePropertiesPanel(element) {
+      const computed = window.getComputedStyle(element);
+      
+      document.getElementById('propWidth').value = element.style.width || computed.width;
+      document.getElementById('propHeight').value = element.style.height || computed.height;
+      document.getElementById('propBgColor').value = rgbToHex(computed.backgroundColor);
+      document.getElementById('propColor').value = rgbToHex(computed.color);
+      document.getElementById('propFontSize').value = computed.fontSize;
+      document.getElementById('propPadding').value = computed.padding;
+      document.getElementById('propMargin').value = computed.margin;
+      document.getElementById('propBorderRadius').value = computed.borderRadius;
+      document.getElementById('propOpacity').value = computed.opacity;
+      
+      document.getElementById('selectedInfo').innerHTML = 
+        `<p><strong>Tag:</strong> ${element.tagName.toLowerCase()}</p>
+         <p><strong>ID:</strong> ${element.id || 'none'}</p>
+         <p><strong>Classes:</strong> ${element.className || 'none'}</p>`;
+      
+      document.getElementById('propertiesPanel').style.display = 'block';
+    }
+
+    // Update style
+    function updateStyle(property, value) {
+      if (!selectedElement) return;
+      
+      selectedElement.style[property] = value;
+      
+      // Track changes
+      const selector = getElementSelector(selectedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector][property] = value;
+      
+      updateCSSOutput();
+      showToast(`Updated ${property}`);
+    }
+
+    // Update CSS output
+    function updateCSSOutput() {
+      let css = '/* Generated CSS - Copy to your styles.css */\n\n';
+      
+      Object.keys(cssChanges).forEach(selector => {
+        css += `${selector} {\n`;
+        Object.keys(cssChanges[selector]).forEach(property => {
+          const kebabProperty = property.replace(/([A-Z])/g, '-$1').toLowerCase();
+          css += `  ${kebabProperty}: ${cssChanges[selector][property]};\n`;
+        });
+        css += '}\n\n';
+      });
+      
+      document.getElementById('cssOutput').textContent = css;
+    }
+
+    // Build element list
+    function buildElementList() {
+      const wrapper = document.getElementById('gameWrapper');
+      const elements = wrapper.querySelectorAll('*');
+      const listContainer = document.getElementById('elementList');
+      
+      listContainer.innerHTML = '';
+      
+      // Filter out script, style, and get meaningful elements
+      const meaningfulElements = Array.from(elements).filter(el => {
+        const tag = el.tagName.toLowerCase();
+        return !['script', 'style', 'link', 'meta'].includes(tag) && 
+               (el.id || el.className || ['div', 'button', 'span', 'header', 'nav', 'section'].includes(tag));
+      });
+      
+      // Show first 100 elements
+      meaningfulElements.slice(0, 100).forEach(element => {
+        const item = document.createElement('div');
+        item.className = 'element-item';
+        item.textContent = getElementLabel(element);
+        item.onclick = () => selectElement(element);
+        listContainer.appendChild(item);
+      });
+      
+      if (meaningfulElements.length === 0) {
+        listContainer.innerHTML = '<div style="color: #888; padding: 10px; text-align: center;">No elements found</div>';
+      }
+    }
+
+    // RGB to Hex
+    function rgbToHex(rgb) {
+      if (!rgb || rgb === 'rgba(0, 0, 0, 0)') return '#000000';
+      const result = rgb.match(/\d+/g);
+      if (!result) return '#000000';
+      return '#' + result.slice(0, 3).map(x => {
+        const hex = parseInt(x).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    }
+
+    // Toggle edit mode
+    document.getElementById('editModeBtn').addEventListener('click', () => {
+      editMode = true;
+      document.getElementById('gameWrapper').classList.add('edit-mode');
+      document.getElementById('editModeBtn').classList.add('active');
+      document.getElementById('previewModeBtn').classList.remove('active');
+      showToast('Edit mode enabled');
+    });
+
+    document.getElementById('previewModeBtn').addEventListener('click', () => {
+      editMode = false;
+      document.getElementById('gameWrapper').classList.remove('edit-mode');
+      document.getElementById('editModeBtn').classList.remove('active');
+      document.getElementById('previewModeBtn').classList.add('active');
+      document.getElementById('elementHighlight').classList.remove('active');
+      showToast('Preview mode enabled');
+    });
+
+    // Export CSS
+    document.getElementById('exportBtn').addEventListener('click', downloadCSS);
+
+    function downloadCSS() {
+      const css = document.getElementById('cssOutput').textContent;
+      const blob = new Blob([css], { type: 'text/css' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'chess-custom-styles.css';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSS downloaded!');
+    }
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Load chess game on page load
+    window.addEventListener('DOMContentLoaded', loadChessGame);
+  </script>
+</body>
+</html>

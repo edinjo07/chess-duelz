@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Chess Duelz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --accent-hover: #00ff00;
+      --border-color: #2f4553;
+      --error-color: #ff4655;
+      --success-color: #00e701;
+      --warning-color: #ffa500;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-primary), #00b300);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #2a3f4d;
+      border-color: #3f5969;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background: var(--error-color);
+      border-color: var(--error-color);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #ff6675;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-primary);
+    }
+
+    /* Search and Filter */
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--bg-tertiary);
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    tbody tr {
+      transition: background 0.2s;
+    }
+
+    tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(0, 231, 1, 0.1);
+      color: var(--success-color);
+    }
+
+    .status-inactive {
+      background: rgba(255, 70, 85, 0.1);
+      color: var(--error-color);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid var(--success-color);
+      color: var(--success-color);
+    }
+
+    .message.error {
+      background: rgba(255, 70, 85, 0.1);
+      border: 1px solid var(--error-color);
+      color: var(--error-color);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      border: 3px solid var(--border-color);
+      border-top: 3px solid var(--accent-primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">♟</div>
+        <span>Admin Panel</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/admin-deposits.html" class="btn">💰 Deposits</a>
+        <a href="/admin-ledger.html" class="btn">📊 Ledger</a>
+        <a href="/admin/withdrawals" class="btn">💸 Withdrawals</a>
+        <a href="/admin/kyc" class="btn">✅ KYC Verifications</a>
+        <a href="/admin/support" class="btn">📧 Support</a>
+        <a href="/admin-management.html" class="btn">🛡️ Admin Management</a>
+        <a href="/chess/admin-database.html" class="btn btn-primary">♟️ Chess Admin</a>
+        <span id="syncStatus" style="padding: 8px 12px; font-size: 12px; color: var(--text-secondary);">🔄 Synced</span>
+        <button id="logoutBtn" class="btn btn-danger">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1 class="page-title">Admin Panel</h1>
+    <p class="page-subtitle">Manage users, balances, and system settings</p>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value" id="totalUsers">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Balance</div>
+        <div class="stat-value" id="totalBalance">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Today</div>
+        <div class="stat-value" id="activeToday">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">New This Week</div>
+        <div class="stat-value" id="newThisWeek">0</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="users">Users</button>
+      <button class="tab" data-tab="transactions">Transactions</button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="users-tab" class="tab-content active">
+      <div class="card">
+        <div class="card-title">User Management</div>
+        
+        <div class="search-bar">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search users by username or email...">
+          <button id="refreshBtn" class="btn">Refresh</button>
+        </div>
+
+        <div id="loadingUsers" class="loading" style="display: none;">
+          <div class="spinner"></div>
+          <div>Loading users...</div>
+        </div>
+
+        <div class="table-container">
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Currency</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Users will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Tab -->
+    <div id="transactions-tab" class="tab-content">
+      <div class="card">
+        <div class="card-title">Recent Transactions</div>
+        <div id="transactionsContent">
+          <p style="color: var(--text-secondary);">Transaction history coming soon...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings-tab" class="tab-content">
+      <div class="card">
+        <div class="card-title">System Settings</div>
+        <div id="settingsContent">
+          <p style="color: var(--text-secondary);">System settings coming soon...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit User Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title">Edit User</h2>
+      <div id="modalMessage"></div>
+      
+      <form id="editUserForm">
+        <input type="hidden" id="editUserId">
+        
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" id="editUsername" class="form-input" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="editEmail" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Balance ($)</label>
+          <input type="number" id="editBalance" class="form-input" step="0.01" min="0">
+          <small style="color: #ffa500; font-size: 12px;">⚠️ Testing mode: Direct balance editing enabled</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Currency</label>
+          <select id="editCurrency" class="form-select">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="editPhone" class="form-input">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let allUsers = [];
+    let currentUser = null;
+
+    // Get auth token - try admin-prefixed first, then regular
+    function getAuthToken() {
+      return localStorage.getItem('admin_accessToken') || 
+             sessionStorage.getItem('admin_accessToken') ||
+             localStorage.getItem('accessToken') || 
+             sessionStorage.getItem('accessToken');
+    }
+
+    // Check authentication
+    async function checkAuth() {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/admin-login';
+        return false;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          throw new Error('Not authenticated');
+        }
+
+        const profile = await response.json();
+        currentUser = profile;
+
+        // Check if user is admin
+        if (!profile.isAdmin) {
+          console.error('User is not an admin');
+          window.location.href = '/admin-login';
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = '/admin-login';
+        return false;
+      }
+    }
+
+    // Load all users
+    async function loadUsers() {
+      const loadingDiv = document.getElementById('loadingUsers');
+      const tableBody = document.getElementById('usersTableBody');
+      
+      loadingDiv.style.display = 'block';
+      tableBody.innerHTML = '';
+
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE}/admin/users`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('API Error:', errorData);
+          
+          if (response.status === 403 && errorData.code === 'ADMIN_REQUIRED') {
+            // Token doesn't have admin privileges
+            alert('Your session does not have admin privileges. Please logout and login again.\n\nClick OK to logout now.');
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = '/admin-login';
+            return;
+          }
+          
+          throw new Error(errorData.error || 'Failed to load users');
+        }
+
+        const users = await response.json();
+        allUsers = users;
+        renderUsers(users);
+        updateStats(users);
+      } catch (error) {
+        console.error('Error loading users:', error);
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--error-color);">Failed to load users: ' + error.message + '</td></tr>';
+      } finally {
+        loadingDiv.style.display = 'none';
+      }
+    }
+
+    // Render users table
+    function renderUsers(users) {
+      const tableBody = document.getElementById('usersTableBody');
+      
+      if (users.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No users found</td></tr>';
+        return;
+      }
+
+      tableBody.innerHTML = users.map(user => `
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+              <div>
+                <div style="font-weight: 600;">${user.username}</div>
+                <div style="font-size: 12px; color: var(--text-secondary);">ID: ${user.id}</div>
+              </div>
+            </div>
+          </td>
+          <td>${user.email}</td>
+          <td style="color: var(--accent-primary); font-weight: 600;">$${parseFloat(user.balance || 0).toFixed(2)}</td>
+          <td>${user.currency || 'USD'}</td>
+          <td>${new Date(user.created_at).toLocaleDateString()}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-small" onclick="editUser(${user.id})">Edit</button>
+              <button class="btn btn-small btn-danger" onclick="deleteUser(${user.id}, '${user.username}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Show sync status
+    function showSyncStatus(message = 'Synced', isSuccess = true) {
+      const syncStatus = document.getElementById('syncStatus');
+      if (syncStatus) {
+        syncStatus.textContent = `🔄 ${message}`;
+        syncStatus.style.color = isSuccess ? 'var(--success-color)' : 'var(--warning-color)';
+        setTimeout(() => {
+          syncStatus.textContent = '🔄 Synced';
+          syncStatus.style.color = 'var(--text-secondary)';
+        }, 3000);
+      }
+    }
+
+    // Update stats
+    function updateStats(users) {
+      document.getElementById('totalUsers').textContent = users.length;
+      
+      const totalBalance = users.reduce((sum, user) => sum + parseFloat(user.balance || 0), 0);
+      document.getElementById('totalBalance').textContent = `$${totalBalance.toFixed(2)}`;
+      
+      showSyncStatus('Data loaded');
+      
+      // Calculate active today (users created today)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const activeToday = users.filter(user => new Date(user.created_at) >= today).length;
+      document.getElementById('activeToday').textContent = activeToday;
+      
+      // Calculate new this week
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      const newThisWeek = users.filter(user => new Date(user.created_at) >= weekAgo).length;
+      document.getElementById('newThisWeek').textContent = newThisWeek;
+    }
+
+    // Search users
+    function searchUsers(query) {
+      const filtered = allUsers.filter(user => 
+        user.username.toLowerCase().includes(query.toLowerCase()) ||
+        user.email.toLowerCase().includes(query.toLowerCase())
+      );
+      renderUsers(filtered);
+    }
+
+    // Edit user
+    function editUser(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      document.getElementById('editUserId').value = user.id;
+      document.getElementById('editUsername').value = user.username;
+      document.getElementById('editEmail').value = user.email;
+      document.getElementById('editBalance').value = parseFloat(user.balance || 0).toFixed(2);
+      document.getElementById('editCurrency').value = user.currency || 'USD';
+      document.getElementById('editPhone').value = user.phone || '';
+
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    // Save user changes
+    async function saveUserChanges(event) {
+      event.preventDefault();
+      
+      const userId = document.getElementById('editUserId').value;
+      const data = {
+        email: document.getElementById('editEmail').value,
+        balance: parseFloat(document.getElementById('editBalance').value),
+        currency: document.getElementById('editCurrency').value,
+        phone: document.getElementById('editPhone').value || null
+      };
+
+      console.log('Saving user changes:', userId, data);
+
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          showMessage('modalMessage', 'Not authenticated. Please log in again.', 'error');
+          return;
+        }
+
+        const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        console.log('Update response:', result);
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to update user');
+        }
+
+        showMessage('modalMessage', result.message || 'User updated successfully!', 'success');
+        showSyncStatus('Updated - Chess Admin synced', true);
+        setTimeout(() => {
+          document.getElementById('editModal').classList.remove('active');
+          document.getElementById('modalMessage').innerHTML = '';
+          loadUsers();
+        }, 1500);
+      } catch (error) {
+        console.error('Error updating user:', error);
+        showMessage('modalMessage', error.message || 'Failed to update user', 'error');
+      }
+    }
+
+    // Delete user
+    async function deleteUser(userId, username) {
+      if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.\n\nAll user data including chess games and statistics will be permanently deleted.`)) {
+        return;
+      }
+
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          alert('Not authenticated. Please log in again.');
+          return;
+        }
+
+        console.log('Deleting user:', userId);
+
+        const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+        console.log('Delete response:', result);
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to delete user');
+        }
+
+        alert(result.message || 'User deleted successfully!');
+        showSyncStatus('Deleted - Chess Admin synced', true);
+        loadUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user: ' + error.message);
+      }
+    }
+
+    // Show message
+    function showMessage(elementId, text, type) {
+      const element = document.getElementById(elementId);
+      element.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => {
+        element.innerHTML = '';
+      }, 5000);
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+      });
+    });
+
+    // Event listeners
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchUsers(e.target.value);
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', loadUsers);
+
+    document.getElementById('cancelEditBtn').addEventListener('click', () => {
+      document.getElementById('editModal').classList.remove('active');
+    });
+
+    document.getElementById('editUserForm').addEventListener('submit', saveUserChanges);
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('accessToken');
+      sessionStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('refreshToken');
+      window.location.href = '/admin-login';
+    });
+
+    // Auto-refresh data every 10 seconds for real-time sync
+    let autoRefreshInterval = null;
+    
+    function startAutoRefresh() {
+      if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+      autoRefreshInterval = setInterval(() => {
+        if (document.getElementById('users-tab').classList.contains('active')) {
+          loadUsers();
+        }
+      }, 10000); // Refresh every 10 seconds
+    }
+    
+    function stopAutoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+      }
+    }
+    
+    // Initialize
+    (async function init() {
+      const authenticated = await checkAuth();
+      if (authenticated) {
+        loadUsers();
+        startAutoRefresh();
+      }
+    })();
+    
+    // Stop auto-refresh when user leaves page
+    window.addEventListener('beforeunload', stopAutoRefresh);
+    window.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoRefresh();
+      } else {
+        startAutoRefresh();
+      }
+    });
+  </script>
+</body>
+</html>

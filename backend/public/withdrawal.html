@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Withdraw — Chess Duelz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e232d; --text:#e9eef5;
+    --muted:#9aa4b2; --accent:#2bb1ff; --border:#2a3140;
+    --success:#2ecc71; --warn:#ffb020; --danger:#ff5c5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 'Inter',system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+  h1{margin:0 0 14px 0;font-size:22px}
+  h2{margin:0 0 12px 0;font-size:16px;font-weight:600}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  @media(min-width:1200px){.grid{grid-template-columns:6fr 6fr}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px}
+  .title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+  .row{display:flex;gap:12px;align-items:center}
+  .muted{color:var(--muted);font-size:13px}
+  .mono{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all}
+  .select,.input{background:#0e1218;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;outline:0;font-family:inherit;width:100%}
+  .select{appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%239aa4b2" d="M5 7l5 6 5-6z"/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:36px}
+  .select:focus,.input:focus{border-color:var(--accent)}
+  .input.error{border-color:var(--danger);background:rgba(255,92,92,.08)}
+  .error-msg{color:var(--danger);font-size:12px;margin-top:4px;display:none}
+  .error-msg.show{display:block}
+  .btn{background:#11151c;border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;transition:all 0.2s;width:100%}
+  .btn:hover{border-color:#3a4254}
+  .btn:disabled{opacity:0.5;cursor:not-allowed}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#00121e}
+  .btn.primary:hover:not(:disabled){background:#1fc5ff}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin-top:12px}
+  .kv .k{color:var(--muted)}
+  .kv .v{justify-self:end;text-align:right;font-weight:600}
+  .balance-box{background:rgba(43,177,255,.08);border:1px solid rgba(43,177,255,.2);border-radius:10px;padding:12px;margin:12px 0}
+  .balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .balance-value{font-size:24px;font-weight:700;color:var(--accent);margin-top:4px}
+  .info-box{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.2);border-radius:10px;padding:12px;margin-top:12px}
+  .info-box ul{margin:6px 0 0 16px;padding:0;line-height:1.8}
+  .history-item{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px}
+  .history-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .history-row:last-child{margin-bottom:0}
+  .badge{display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+  .badge-pending{background:rgba(255,176,32,.15);color:var(--warn)}
+  .badge-approved{background:rgba(43,177,255,.15);color:var(--accent)}
+  .badge-sending{background:rgba(43,177,255,.2);color:var(--accent)}
+  .badge-sent{background:rgba(46,204,113,.15);color:var(--success)}
+  .badge-failed{background:rgba(255,92,92,.15);color:var(--danger)}
+  .badge-rejected{background:rgba(255,92,92,.2);color:var(--danger)}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .link{color:var(--accent);text-decoration:none}
+  .link:hover{text-decoration:underline}
+  .empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .field{margin-bottom:14px}
+  .field label{display:block;margin-bottom:6px;font-size:12px;color:var(--muted);font-weight:500}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 style="display:flex;align-items:center;justify-content:space-between">
+    <span>💸 Withdraw Crypto</span>
+    <button onclick="window.location.href='/dashboard.html'" class="btn" style="width:auto;padding:8px 16px;font-size:13px">← Back to Dashboard</button>
+  </h1>
+
+  <div class="grid">
+    <!-- LEFT: Withdrawal form -->
+    <div class="card">
+      <div class="title">1. Your Balance</div>
+      
+      <div class="balance-box">
+        <div class="balance-label">Available to withdraw</div>
+        <div class="balance-value">$<span id="available-usd">0.00</span></div>
+        <div class="muted" style="margin-top:4px">
+          Locked: $<span id="locked-usd">0.00</span>
+        </div>
+      </div>
+
+      <div class="title" style="margin-top:18px">2. Withdrawal details</div>
+      
+      <div class="field">
+        <label>Asset</label>
+        <select id="asset" class="select">
+          <option value="ETH">ETH (Ethereum)</option>
+          <option value="USDT">USDT (ERC20)</option>
+          <option value="USDC">USDC (ERC20)</option>
+          <option value="BTC">BTC (Bitcoin)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Withdrawal address *</label>
+        <input type="text" id="address" class="input" placeholder="Enter your wallet address" />
+        <div id="address-error" class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label>Amount (USD) *</label>
+        <input type="number" id="amount" class="input" placeholder="0.00" step="0.01" min="0" />
+        <div id="amount-error" class="error-msg"></div>
+        <div class="muted" style="margin-top:6px">
+          Min: $<span id="min-amount">10</span> • 
+          Fee: $<span id="fee-amount">1</span> • 
+          You'll receive: <span id="receive-amount">0</span> <span id="receive-coin">ETH</span>
+        </div>
+      </div>
+
+      <button class="btn primary" id="withdraw-btn">Request Withdrawal</button>
+
+      <div class="info-box">
+        <div style="font-weight:600;margin-bottom:6px">⚠️ Important</div>
+        <ul class="muted">
+          <li>Withdrawals are reviewed for security before processing</li>
+          <li>Processing time: Typically 10-30 minutes after approval, up to 24 hours maximum</li>
+          <li>Double-check address and network to avoid loss of funds</li>
+          <li>Once sent, transactions cannot be reversed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RIGHT: Rates & History -->
+    <div>
+      <div class="card">
+        <h2>💱 Current Rates</h2>
+        <div class="kv" id="rates">
+          <div class="k">BTC</div><div class="v">$<span id="rate-btc">—</span></div>
+          <div class="k">ETH</div><div class="v">$<span id="rate-eth">—</span></div>
+          <div class="k">USDT</div><div class="v">$<span id="rate-usdt">1.00</span></div>
+          <div class="k">USDC</div><div class="v">$<span id="rate-usdc">1.00</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2 style="margin:0">📜 Recent Withdrawals</h2>
+          <button class="btn" style="width:auto;padding:6px 12px;font-size:13px" onclick="loadWithdrawals()">🔄</button>
+        </div>
+        <div id="history-list"></div>
+        <div id="history-empty" class="empty" style="display:none">
+          No withdrawals yet
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = window.location.origin;
+
+// Check authentication - check both accessToken (OAuth) and token (regular login)
+const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+if (!token) {
+  window.location.href = '/login.html';
+}
+
+let rates = { BTC: 0, ETH: 0, USDT: 1, USDC: 1 };
+let minWithdraw = { BTC: 10, ETH: 10, USDT: 20, USDC: 20 };
+let fees = { BTC: 0.0005, ETH: 0.002, USDT: 1, USDC: 1 };
+let balance = { usd_balance: 0, locked_balance: 0, available_balance: 0 };
+
+// Load initial data
+loadBalance();
+loadRates();
+loadWithdrawals();
+
+// Auto-refresh every 30 seconds
+setInterval(() => {
+  loadBalance();
+  loadRates();
+  loadWithdrawals();
+}, 30000);
+
+// Asset change handler
+document.getElementById('asset').addEventListener('change', () => {
+  updateReceiveAmount();
+  updateMinAndFee();
+});
+
+// Amount change handler
+document.getElementById('amount').addEventListener('input', () => {
+  updateReceiveAmount();
+  clearError('amount');
+});
+
+// Address change handler
+document.getElementById('address').addEventListener('input', () => {
+  clearError('address');
+});
+
+// Withdraw button handler
+document.getElementById('withdraw-btn').addEventListener('click', requestWithdrawal);
+
+async function loadBalance() {
+  try {
+    const res = await fetch(`${API_URL}/api/balance`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load balance');
+
+    const data = await res.json();
+    if (data.success) {
+      balance = data;
+      document.getElementById('available-usd').textContent = data.available_balance.toFixed(2);
+      document.getElementById('locked-usd').textContent = data.locked_balance.toFixed(2);
+    }
+
+  } catch (err) {
+    console.error('Load balance error:', err);
+  }
+}
+
+async function loadRates() {
+  try {
+    const res = await fetch(`${API_URL}/api/rates`);
+    if (!res.ok) throw new Error('Failed to load rates');
+
+    const data = await res.json();
+    if (data.success) {
+      rates = data.rates;
+      minWithdraw = data.minWithdraw;
+      fees = data.fees;
+
+      document.getElementById('rate-btc').textContent = rates.BTC.toLocaleString();
+      document.getElementById('rate-eth').textContent = rates.ETH.toLocaleString();
+
+      updateMinAndFee();
+      updateReceiveAmount();
+    }
+
+  } catch (err) {
+    console.error('Load rates error:', err);
+  }
+}
+
+async function loadWithdrawals() {
+  try {
+    const res = await fetch(`${API_URL}/api/withdrawals`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load withdrawals');
+
+    const data = await res.json();
+    if (data.success && data.withdrawals.length > 0) {
+      renderWithdrawals(data.withdrawals);
+    } else {
+      document.getElementById('history-list').innerHTML = '';
+      document.getElementById('history-empty').style.display = 'block';
+    }
+
+  } catch (err) {
+    console.error('Load withdrawals error:', err);
+    document.getElementById('history-empty').style.display = 'block';
+  }
+}
+
+function renderWithdrawals(withdrawals) {
+  document.getElementById('history-empty').style.display = 'none';
+  
+  const html = withdrawals.slice(0, 5).map(w => {
+    const statusBadge = `badge-${w.status}`;
+    const shortAddr = truncateAddress(w.address);
+    const explorerUrl = getExplorerUrl(w.coin, w.txid);
+    const date = new Date(w.created_at).toLocaleDateString();
+
+    return `
+      <div class="history-item">
+        <div class="history-row">
+          <div>
+            <div style="font-weight:600">${parseFloat(w.amount_crypto).toFixed(6)} ${w.coin}</div>
+            <div class="muted mono">${shortAddr}</div>
+          </div>
+          <span class="badge ${statusBadge}">${w.status}</span>
+        </div>
+        <div class="history-row">
+          <div class="muted" style="font-size:11px">${date}</div>
+          ${w.txid ? `<a href="${explorerUrl}" target="_blank" class="link" style="font-size:11px">View TX →</a>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('history-list').innerHTML = html;
+}
+
+function updateMinAndFee() {
+  const coin = document.getElementById('asset').value;
+  document.getElementById('min-amount').textContent = minWithdraw[coin];
+  
+  if (coin === 'USDT' || coin === 'USDC') {
+    document.getElementById('fee-amount').textContent = fees[coin];
+  } else {
+    const feeUsd = fees[coin] * rates[coin];
+    document.getElementById('fee-amount').textContent = feeUsd.toFixed(2);
+  }
+}
+
+function updateReceiveAmount() {
+  const coin = document.getElementById('asset').value;
+  const amountUsd = parseFloat(document.getElementById('amount').value) || 0;
+
+  if (amountUsd > 0 && rates[coin] > 0) {
+    const receiveAmount = amountUsd / rates[coin];
+    document.getElementById('receive-amount').textContent = receiveAmount.toFixed(8);
+    document.getElementById('receive-coin').textContent = coin;
+  } else {
+    document.getElementById('receive-amount').textContent = '0';
+    document.getElementById('receive-coin').textContent = coin;
+  }
+}
+
+async function requestWithdrawal() {
+  const coin = document.getElementById('asset').value;
+  const address = document.getElementById('address').value.trim();
+  const amountUsd = parseFloat(document.getElementById('amount').value);
+
+  clearErrors();
+
+  // Validation
+  let hasError = false;
+
+  if (!address) {
+    showError('address', 'Withdrawal address is required');
+    hasError = true;
+  } else if (!validateAddress(coin, address)) {
+    showError('address', 'Invalid address format for selected network');
+    hasError = true;
+  }
+
+  if (!amountUsd || amountUsd <= 0) {
+    showError('amount', 'Amount must be greater than 0');
+    hasError = true;
+  } else if (amountUsd < minWithdraw[coin]) {
+    showError('amount', `Minimum withdrawal is $${minWithdraw[coin]}`);
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  // Disable button
+  const btn = document.getElementById('withdraw-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Processing...';
+
+  try {
+    const res = await fetch(`${API_URL}/api/withdraw/request`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        coin: coin,
+        amount_usd: amountUsd,
+        address: address
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert(`✅ Withdrawal request submitted!\n\nWithdrawal ID: ${data.withdrawalId}\nAmount: ${data.amountCrypto.toFixed(8)} ${coin}\nFee: $${data.feeUsd.toFixed(2)}\n\nYour request will be reviewed and processed shortly.`);
+      
+      // Clear form
+      document.getElementById('address').value = '';
+      document.getElementById('amount').value = '';
+      
+      // Reload data
+      loadBalance();
+      loadWithdrawals();
+    } else {
+      alert(`❌ Withdrawal failed:\n${data.error}`);
+    }
+
+  } catch (err) {
+    console.error('Withdrawal error:', err);
+    alert('❌ Failed to submit withdrawal request. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Request Withdrawal';
+  }
+}
+
+function validateAddress(coin, address) {
+  const patterns = {
+    'BTC': /^(1|3|bc1)[a-zA-HJ-NP-Z0-9]{25,62}$/,
+    'ETH': /^0x[a-fA-F0-9]{40}$/,
+    'USDT': /^0x[a-fA-F0-9]{40}$/,
+    'USDC': /^0x[a-fA-F0-9]{40}$/
+  };
+
+  return patterns[coin] ? patterns[coin].test(address) : false;
+}
+
+function showError(field, message) {
+  const input = document.getElementById(field);
+  const error = document.getElementById(`${field}-error`);
+  
+  input.classList.add('error');
+  error.textContent = message;
+  error.classList.add('show');
+}
+
+function clearError(field) {
+  const input = document.getElementById(field);
+  const error = document.getElementById(`${field}-error`);
+  
+  input.classList.remove('error');
+  error.classList.remove('show');
+}
+
+function clearErrors() {
+  clearError('address');
+  clearError('amount');
+}
+
+function truncateAddress(addr) {
+  if (!addr || addr.length <= 16) return addr;
+  return addr.substring(0, 8) + '...' + addr.substring(addr.length - 6);
+}
+
+function getExplorerUrl(coin, txid) {
+  if (!txid) return '#';
+  
+  switch (coin) {
+    case 'BTC':
+      return `https://mempool.space/tx/${txid}`;
+    case 'ETH':
+    case 'USDT':
+    case 'USDC':
+      return `https://etherscan.io/tx/${txid}`;
+    default:
+      return '#';
+  }
+}
+</script>
+</body>
+</html>

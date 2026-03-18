@@ -1,0 +1,922 @@
+/**
+ * Mobile & Tablet Responsive Styles
+ * Treasure Hunt Platform
+ * Optimized for devices 320px - 1024px
+ */
+
+/* ============================================
+   MOBILE BREAKPOINTS
+   ============================================ */
+/* Small phones: 320px - 480px */
+/* Large phones: 481px - 767px */
+/* Tablets: 768px - 1024px */
+
+/* ============================================
+   TABLET OPTIMIZATIONS (768px - 1024px)
+   ============================================ */
+@media (max-width: 1024px) and (min-width: 768px) {
+  /* Header adjustments */
+  .header {
+    padding: 14px 20px;
+  }
+
+  .header-container, .header-content, .header-inner {
+    padding: 12px 20px !important;
+  }
+
+  .logo {
+    font-size: 18px !important;
+  }
+
+  .logo-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 16px !important;
+  }
+
+  /* Navigation */
+  .nav, .nav-links, .header-nav {
+    gap: 10px !important;
+  }
+
+  .btn, .btn-secondary, .btn-primary {
+    padding: 9px 16px !important;
+    font-size: 13px !important;
+  }
+
+  /* Search bar */
+  .search-bar, .search-input {
+    max-width: 320px;
+  }
+
+  /* Wallet display */
+  .wallet {
+    padding: 7px 14px !important;
+  }
+
+  .wallet-amount {
+    font-size: 15px !important;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px !important;
+  }
+
+  .main-content {
+    margin-left: 220px !important;
+  }
+
+  /* Forms */
+  .form-row {
+    gap: 10px !important;
+  }
+
+  .form-input, .input, select, .form-select {
+    padding: 11px 14px !important;
+    font-size: 13px !important;
+  }
+
+  /* Games grid */
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  /* Cards */
+  .card {
+    padding: 18px !important;
+  }
+
+  /* Tables */
+  table {
+    font-size: 13px !important;
+  }
+
+  th, td {
+    padding: 10px 12px !important;
+  }
+
+  /* Stats grid */
+  .stats-grid, .stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .stat-value, .bubble-value {
+    font-size: 24px !important;
+  }
+
+  /* Modal */
+  .modal-content {
+    width: 95% !important;
+    max-width: 700px !important;
+    padding: 28px !important;
+  }
+}
+
+/* ============================================
+   MOBILE OPTIMIZATIONS (max-width: 767px)
+   ============================================ */
+@media (max-width: 767px) {
+  /* Base font size adjustments */
+  body {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Container padding */
+  .container, .main-content {
+    padding: 16px !important;
+    margin-left: 0 !important;
+  }
+
+  /* Header mobile */
+  .header {
+    padding: 12px 16px !important;
+    height: auto !important;
+  }
+
+  .header-container, .header-content, .header-inner {
+    padding: 10px 16px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .header-left, .header-right {
+    flex-wrap: wrap !important;
+  }
+
+  /* Logo mobile */
+  .logo {
+    font-size: 16px !important;
+  }
+
+  .logo-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
+
+  /* Hide search on mobile */
+  .search-bar {
+    display: none !important;
+  }
+
+  /* Navigation mobile */
+  .nav, .nav-links, .header-nav {
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .nav-link {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* Buttons mobile */
+  .btn, .btn-secondary, .btn-primary {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    min-width: auto !important;
+  }
+
+  .btn-small {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+
+  /* Wallet mobile */
+  .wallet {
+    padding: 6px 12px !important;
+  }
+
+  .wallet-amount {
+    font-size: 14px !important;
+  }
+
+  /* Sidebar mobile - hide by default */
+  .sidebar {
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+    width: 240px !important;
+    z-index: 999 !important;
+  }
+
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  /* Hero section mobile */
+  .hero {
+    padding: 32px 16px 60px !important;
+  }
+
+  .hero-container {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  .hero-visual {
+    order: -1 !important;
+  }
+
+  .hero-title {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-desc {
+    font-size: 14px !important;
+  }
+
+  .hero-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .hero-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .hero-badge {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+  }
+
+  .hero-stats-overlay {
+    position: static !important;
+    transform: none !important;
+    flex-direction: column !important;
+    margin-top: 20px !important;
+  }
+
+  .stat-bubble {
+    width: 100% !important;
+  }
+
+  /* Promo banner mobile */
+  .promo-banner {
+    padding: 24px 16px !important;
+  }
+
+  .promo-title {
+    font-size: 20px !important;
+  }
+
+  .promo-desc {
+    font-size: 14px !important;
+  }
+
+  /* Section headers mobile */
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .section-title, .section-title-center, .page-title {
+    font-size: 20px !important;
+  }
+
+  .section-subtitle {
+    font-size: 14px !important;
+  }
+
+  /* Features section mobile */
+  .features-section {
+    padding: 40px 16px !important;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .feature-card {
+    padding: 28px 20px !important;
+  }
+
+  .feature-icon {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .feature-title {
+    font-size: 18px !important;
+  }
+
+  /* Games grid mobile */
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .game-card {
+    border-radius: 10px !important;
+  }
+
+  .game-info {
+    padding: 10px !important;
+  }
+
+  .game-title {
+    font-size: 13px !important;
+  }
+
+  .game-provider {
+    font-size: 11px !important;
+  }
+
+  .game-badge {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+  .game-players {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    bottom: 8px !important;
+    left: 8px !important;
+  }
+
+  /* Category tabs mobile */
+  .category-tabs, .tabs {
+    overflow-x: auto !important;
+    scrollbar-width: thin !important;
+  }
+
+  .tabs-container {
+    padding: 0 16px !important;
+  }
+
+  .tab, .tab-filter {
+    font-size: 12px !important;
+    padding: 10px 16px !important;
+    white-space: nowrap !important;
+  }
+
+  .tab-count {
+    font-size: 10px !important;
+  }
+
+  /* Stats mobile */
+  .stats-bar {
+    padding: 24px 16px !important;
+  }
+
+  .stats-container, .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .stat-value, .bubble-value {
+    font-size: 20px !important;
+  }
+
+  .stat-label, .bubble-label {
+    font-size: 11px !important;
+  }
+
+  /* Testimonials mobile */
+  .testimonials-section {
+    padding: 40px 16px !important;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .testimonial-card {
+    padding: 24px !important;
+  }
+
+  .testimonial-text {
+    font-size: 14px !important;
+  }
+
+  /* Forms mobile */
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .form-input, .input, select, .form-select {
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+  }
+
+  .form-label, label.small {
+    font-size: 13px !important;
+  }
+
+  .form-hint, .help {
+    font-size: 11px !important;
+  }
+
+  /* Login/Register cards mobile */
+  .login-card, .register-card {
+    padding: 28px 20px !important;
+  }
+
+  .login-title, .register-title {
+    font-size: 24px !important;
+  }
+
+  .login-subtitle, .register-subtitle {
+    font-size: 13px !important;
+  }
+
+  /* OAuth buttons mobile */
+  .oauth-btn {
+    padding: 12px !important;
+    font-size: 13px !important;
+  }
+
+  .oauth-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Cards mobile */
+  .card {
+    padding: 16px !important;
+    border-radius: 10px !important;
+  }
+
+  .card-title {
+    font-size: 16px !important;
+  }
+
+  /* Tables mobile */
+  .table-container {
+    overflow-x: auto !important;
+  }
+
+  table {
+    min-width: 600px !important;
+    font-size: 12px !important;
+  }
+
+  th, td {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+
+  /* Alternative: Stacked table for mobile */
+  .thead {
+    display: none !important;
+  }
+
+  .tr {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .tr > div[data-label]::before {
+    content: attr(data-label) ' — ';
+    color: var(--text-muted, #888) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Activity list mobile */
+  .activity-list {
+    max-height: 300px !important;
+  }
+
+  .activity-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .activity-icon {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+  }
+
+  .activity-details {
+    width: 100% !important;
+  }
+
+  .activity-user {
+    font-size: 13px !important;
+  }
+
+  .activity-desc {
+    font-size: 11px !important;
+  }
+
+  .activity-amount {
+    font-size: 15px !important;
+    align-self: flex-start !important;
+  }
+
+  /* Modal mobile */
+  .modal-content {
+    width: 95% !important;
+    max-width: none !important;
+    padding: 24px 20px !important;
+    max-height: 85vh !important;
+  }
+
+  .modal-title {
+    font-size: 20px !important;
+  }
+
+  .modal-subtitle {
+    font-size: 13px !important;
+  }
+
+  .modal-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .modal-actions .btn {
+    width: 100% !important;
+  }
+
+  /* Footer mobile */
+  .footer {
+    padding: 48px 16px 20px !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  .footer-col h4 {
+    font-size: 12px !important;
+  }
+
+  .footer-link {
+    font-size: 13px !important;
+  }
+
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+
+  /* Payment badges mobile */
+  .payment-methods {
+    gap: 12px !important;
+  }
+
+  .payment-badge {
+    min-width: 100px !important;
+    padding: 12px 18px !important;
+  }
+
+  .payment-badge img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* Two column layouts mobile */
+  .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Address box mobile */
+  .addr-box {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .kbd {
+    word-break: break-all !important;
+    font-size: 11px !important;
+  }
+
+  /* QR code mobile */
+  .qr {
+    width: 160px !important;
+    height: 160px !important;
+  }
+
+  /* User menu mobile */
+  .user-menu, .avatar-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .dropdown, .user-dropdown {
+    right: 0 !important;
+    left: auto !important;
+    min-width: 180px !important;
+  }
+
+  /* Badge mobile */
+  .badge, .status-badge {
+    font-size: 10px !important;
+    padding: 3px 7px !important;
+  }
+
+  /* Divider mobile */
+  .divider {
+    font-size: 12px !important;
+  }
+
+  /* Checkbox group mobile */
+  .checkbox-group {
+    align-items: flex-start !important;
+  }
+
+  .checkbox-label {
+    font-size: 12px !important;
+  }
+
+  /* Rowline mobile */
+  .rowline {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .rowline .btn {
+    flex: 1 1 auto !important;
+    min-width: 120px !important;
+  }
+
+  /* Trust section mobile */
+  .trust-section {
+    padding: 32px 16px !important;
+  }
+
+  .trust-title {
+    font-size: 16px !important;
+  }
+
+  /* Loading overlay mobile */
+  .loading-overlay {
+    padding: 20px !important;
+  }
+
+  .loading-chess {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .loading-chess::before {
+    font-size: 48px !important;
+  }
+
+  .loading-text {
+    font-size: 18px !important;
+  }
+
+  .loading-bar {
+    width: 240px !important;
+  }
+
+  .loading-subtitle {
+    font-size: 12px !important;
+  }
+
+  /* Social links mobile */
+  .social-links {
+    gap: 12px !important;
+  }
+
+  .social-link {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* ============================================
+   SMALL PHONE OPTIMIZATIONS (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  /* Ultra-compact mode */
+  body {
+    font-size: 13px !important;
+  }
+
+  .container, .main-content {
+    padding: 12px !important;
+  }
+
+  .header {
+    padding: 10px 12px !important;
+  }
+
+  .logo {
+    font-size: 14px !important;
+  }
+
+  .logo-icon {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+  }
+
+  .hero-title {
+    font-size: 24px !important;
+  }
+
+  .section-title {
+    font-size: 18px !important;
+  }
+
+  .btn {
+    padding: 7px 12px !important;
+    font-size: 11px !important;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .game-title {
+    font-size: 12px !important;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stat-value {
+    font-size: 24px !important;
+  }
+
+  .card {
+    padding: 14px !important;
+  }
+
+  .modal-content {
+    padding: 20px 16px !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .qr {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .loading-bar {
+    width: 200px !important;
+  }
+}
+
+/* ============================================
+   TOUCH OPTIMIZATIONS
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase tap targets for touch devices */
+  .btn, button, a.btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .game-card {
+    min-height: 44px !important;
+  }
+
+  .tab, .tab-filter {
+    min-height: 44px !important;
+    padding: 12px 20px !important;
+  }
+
+  /* Disable hover effects on touch */
+  .btn:hover,
+  .game-card:hover,
+  .tab:hover,
+  .sidebar-item:hover {
+    transform: none !important;
+  }
+
+  /* Add active states for touch feedback */
+  .btn:active,
+  .game-card:active,
+  .tab:active {
+    opacity: 0.7 !important;
+    transform: scale(0.98) !important;
+  }
+}
+
+/* ============================================
+   LANDSCAPE MOBILE OPTIMIZATIONS
+   ============================================ */
+@media (max-width: 767px) and (orientation: landscape) {
+  .hero {
+    padding: 24px 16px 40px !important;
+  }
+
+  .hero-container {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .hero-visual {
+    order: 1 !important;
+  }
+
+  .modal-content {
+    max-height: 95vh !important;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+@media (max-width: 767px) {
+  /* Ensure minimum font size for readability */
+  body, .form-input, .input, select {
+    font-size: max(14px, 1rem) !important;
+  }
+
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Improve button tap targets */
+  button, a, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ============================================
+   SCROLLBAR STYLING FOR MOBILE
+   ============================================ */
+@media (max-width: 767px) {
+  /* Thin scrollbars for mobile */
+  * {
+    scrollbar-width: thin;
+  }
+
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ============================================
+   SAFE AREA INSETS (for notched devices)
+   ============================================ */
+@supports (padding: max(0px)) {
+  .header {
+    padding-left: max(12px, env(safe-area-inset-left)) !important;
+    padding-right: max(12px, env(safe-area-inset-right)) !important;
+  }
+
+  .main-content, .container {
+    padding-left: max(16px, env(safe-area-inset-left)) !important;
+    padding-right: max(16px, env(safe-area-inset-right)) !important;
+  }
+
+  .footer {
+    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+@media (max-width: 767px) {
+  /* Reduce animations on mobile for performance */
+  * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+
+  /* Disable complex transforms on mobile */
+  .game-card:hover img {
+    transform: none !important;
+  }
+
+  /* Use simpler shadows */
+  .card, .modal-content {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+}

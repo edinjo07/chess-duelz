@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sign Up - Chess Duelz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --accent-hover: #00ff00;
+      --border-color: #2f4553;
+      --error-color: #ff4655;
+      --success-color: #00e701;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #c9a84c, #e6c76a);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: #2a3f4d;
+      border-color: #3f5969;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .register-container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .register-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 40px;
+    }
+
+    .register-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .register-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .register-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    .divider span {
+      padding: 0 16px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-label .required {
+      color: var(--error-color);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      background: #2a3f4d;
+    }
+
+    .form-input::placeholder {
+      color: #566b7d;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-primary);
+    }
+
+    .checkbox-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .checkbox-label a {
+      color: var(--accent-primary);
+      text-decoration: none;
+    }
+
+    .checkbox-label a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent-primary);
+      border: none;
+      border-radius: 8px;
+      color: #000000;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.error {
+      background: rgba(255, 70, 85, 0.1);
+      border: 1px solid var(--error-color);
+      color: var(--error-color);
+      display: block;
+    }
+
+    .message.success {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid var(--success-color);
+      color: var(--success-color);
+      display: block;
+    }
+
+    .login-prompt {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .form-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-link:hover {
+      text-decoration: underline;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .register-card {
+        padding: 32px 24px;
+      }
+
+      .header {
+        padding: 12px 16px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .register-card {
+        padding: 24px 20px;
+      }
+
+      .register-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">♟</div>
+        <span>Chess Duelz</span>
+      </a>
+      <nav class="header-nav">
+        <a href="login.html" class="btn-secondary">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="register-container">
+      <div class="register-card">
+        <div class="register-header">
+          <h1 class="register-title">Create Account</h1>
+          <p class="register-subtitle">Join Chess Duelz today</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="registerForm">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              Email Address <span class="required">*</span>
+            </label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-input" 
+              placeholder="your@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="username">
+              Username <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="username" 
+              class="form-input" 
+              placeholder="Choose a username"
+              autocomplete="username"
+              required
+            >
+            <div class="form-hint">3-14 characters, must start with a letter</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">
+              Password <span class="required">*</span>
+            </label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-input" 
+              placeholder="Create a strong password"
+              autocomplete="new-password"
+              required
+            >
+            <div class="form-hint">Minimum 8 characters with uppercase, lowercase, number & symbol</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dob">
+                Date of Birth <span class="required">*</span>
+              </label>
+              <input 
+                type="date" 
+                id="dob" 
+                class="form-input" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="phone">
+                Phone Number
+              </label>
+              <input 
+                type="tel" 
+                id="phone" 
+                class="form-input" 
+                placeholder="+1234567890"
+                autocomplete="tel"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="referral">
+              Referral Code (Optional)
+            </label>
+            <input 
+              type="text" 
+              id="referral" 
+              class="form-input" 
+              placeholder="Enter referral code"
+            >
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" required>
+            <label class="checkbox-label" for="terms">
+              I am 18 years or older and agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btnRegister">
+            Create Account
+          </button>
+
+          <div id="msg" class="message"></div>
+        </form>
+
+        <div class="login-prompt">
+          Already have an account? <a href="login.html" class="form-link">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Automatically use the correct API base URL
+    const API_BASE = window.location.origin;
+    const API = {
+      register: API_BASE + '/register'
+    };
+
+    const $form = document.getElementById('registerForm');
+    const $msg = document.getElementById('msg');
+    const $btn = document.getElementById('btnRegister');
+
+    function show(text, ok = false) {
+      $msg.textContent = text || '';
+      $msg.className = 'message ' + (ok ? 'success' : (text ? 'error' : ''));
+      if (!text) $msg.style.display = 'none';
+      else $msg.style.display = 'block';
+    }
+
+    function setLoading(is) {
+      if (!$btn) return;
+      $btn.disabled = !!is;
+      if (is) {
+        $btn._old = $btn.textContent;
+        $btn.textContent = 'Please wait...';
+      } else if ($btn._old) {
+        $btn.textContent = $btn._old;
+      }
+    }
+
+    async function api(url, opts) {
+      try {
+        console.log('Making request to:', url);
+        const res = await fetch(url, {
+          headers: { 'Content-Type': 'application/json' },
+          ...opts
+        });
+        console.log('Response status:', res.status, res.statusText);
+        
+        const data = await res.json().catch(() => ({}));
+        console.log('Response data:', data);
+        
+        if (!res.ok) {
+          const e = new Error(data.error || data.message || 'Request failed');
+          e.data = data;
+          e.status = res.status;
+          throw e;
+        }
+        return data;
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        // Re-throw with more specific error message
+        if (fetchError.message === 'Failed to fetch') {
+          const e = new Error('Network error. Please check your connection and try again.');
+          e.originalError = fetchError;
+          throw e;
+        }
+        throw fetchError;
+      }
+    }
+
+    // Validation Helpers
+    function isEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isStrongPassword(password) {
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
+    }
+
+    function isValidUsername(username) {
+      return /^[a-zA-Z][a-zA-Z0-9_]{2,13}$/.test(username);
+    }
+
+    function isAdult(dobString) {
+      const dob = new Date(dobString);
+      if (isNaN(dob.getTime())) return false;
+      const now = new Date();
+      const age = now.getFullYear() - dob.getFullYear() -
+        ((now.getMonth() < dob.getMonth() ||
+          (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate())) ? 1 : 0);
+      return age >= 18;
+    }
+
+    // Real-time Validation
+    document.getElementById('email').addEventListener('blur', (e) => {
+      const email = e.target.value.trim();
+      if (email && !isEmail(email)) {
+        show('Please enter a valid email address');
+      } else {
+        show('');
+      }
+    });
+
+    document.getElementById('username').addEventListener('blur', (e) => {
+      const username = e.target.value.trim();
+      if (username && !isValidUsername(username)) {
+        show('Username must be 3-14 chars, start with letter, letters/digits/_ only');
+      } else {
+        show('');
+      }
+    });
+
+    document.getElementById('password').addEventListener('input', (e) => {
+      const password = e.target.value;
+      if (password && !isStrongPassword(password)) {
+        show('Password must be 8+ chars with upper, lower, number & symbol');
+      } else {
+        show('');
+      }
+    });
+
+    document.getElementById('dob').addEventListener('blur', (e) => {
+      const dob = e.target.value;
+      if (dob && !isAdult(dob)) {
+        show('You must be 18+ to register');
+      } else {
+        show('');
+      }
+    });
+
+    // Register Handler
+    $form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const dob = document.getElementById('dob').value;
+      const phone = document.getElementById('phone').value.trim();
+      const referral = document.getElementById('referral').value.trim();
+      const termsAccepted = document.getElementById('terms').checked;
+
+      // Validation
+      if (!email || !username || !password || !dob) {
+        return show('Please fill in all required fields');
+      }
+
+      if (!isEmail(email)) {
+        return show('Please enter a valid email address');
+      }
+
+      if (!isValidUsername(username)) {
+        return show('Username must be 3-14 chars, start with letter, letters/digits/_ only');
+      }
+
+      if (!isStrongPassword(password)) {
+        return show('Password must be 8+ chars with upper, lower, number & symbol');
+      }
+
+      if (!isAdult(dob)) {
+        return show('You must be 18+ to register');
+      }
+
+      if (!termsAccepted) {
+        return show('Please accept the terms and conditions');
+      }
+
+      const body = {
+        email,
+        username,
+        password,
+        dob,
+        phone: phone || undefined,
+        referral: referral || undefined,
+        lang: 'English'
+      };
+
+      try {
+        setLoading(true);
+        show('');
+        console.log('Registration attempt with:', { ...body, password: '***' });
+        console.log('API endpoint:', API.register);
+        const data = await api(API.register, {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        console.log('Registration response:', data);
+
+        // Save tokens
+        if (data.accessToken) {
+          localStorage.setItem('accessToken', data.accessToken);
+          sessionStorage.setItem('accessToken', data.accessToken);
+          console.log('Access token saved');
+        }
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+          console.log('Refresh token saved');
+        }
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+          console.log('User data saved');
+        }
+
+        show('Account created successfully! Redirecting to dashboard...', true);
+
+        setTimeout(() => {
+          window.location.href = './dashboard.html';
+        }, 800);
+
+      } catch (err) {
+        console.error('Registration error:', err);
+        console.error('Error status:', err.status);
+        
+        // Enhanced error messages based on status code and error type
+        let errorMessage = 'Registration failed';
+        
+        if (err.status === 409 || err.message.toLowerCase().includes('already exists') || 
+            err.message.toLowerCase().includes('already registered') || 
+            err.message.toLowerCase().includes('duplicate')) {
+          if (err.message.toLowerCase().includes('email')) {
+            errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+          } else if (err.message.toLowerCase().includes('username')) {
+            errorMessage = 'This username is already taken. Please choose a different username.';
+          } else {
+            errorMessage = 'An account with this email or username already exists. Please try logging in.';
+          }
+        } else if (err.status === 400 || err.message.toLowerCase().includes('invalid') || 
+                   err.message.toLowerCase().includes('validation')) {
+          errorMessage = err.message || 'Invalid registration data. Please check your information.';
+        } else if (err.status === 429 || err.message.toLowerCase().includes('too many')) {
+          errorMessage = 'Too many registration attempts. Please try again later.';
+        } else if (err.message.toLowerCase().includes('network') || err.message === 'Failed to fetch') {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (err.message.toLowerCase().includes('age') || err.message.toLowerCase().includes('18')) {
+          errorMessage = 'You must be 18 years or older to register.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        show(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // OAuth Token Handling
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthToken = urlParams.get('token');
+    const oauthRefresh = urlParams.get('refresh');
+    const oauthUser = urlParams.get('user');
+    const oauthError = urlParams.get('error');
+
+    if (oauthError) {
+      const errorMessages = {
+        'google_auth_failed': 'Google authentication failed. Please try again.',
+        'facebook_auth_failed': 'Facebook authentication failed. Please try again.',
+        'user_cancelled': 'Authentication was cancelled.',
+        'email_exists': 'An account with this email already exists.',
+        'invalid_token': 'Invalid authentication token.',
+        'server_error': 'Server error. Please try again later.'
+      };
+      show(errorMessages[oauthError] || 'Authentication failed. Please try again.');
+    }
+
+    if (oauthToken) {
+      console.log('OAuth registration detected, storing tokens...');
+      localStorage.setItem('accessToken', oauthToken);
+      sessionStorage.setItem('accessToken', oauthToken);
+
+      if (oauthRefresh) {
+        localStorage.setItem('refreshToken', oauthRefresh);
+      }
+
+      if (oauthUser) {
+        localStorage.setItem('username', oauthUser);
+      }
+
+      show('Registration successful! Redirecting...', true);
+      setTimeout(() => {
+        window.location.href = './dashboard.html';
+      }, 500);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Messages - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1923;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: rgba(15, 25, 35, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(177, 186, 211, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #00e701;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid rgba(0, 231, 1, 0.3);
+      border-radius: 8px;
+      color: #00e701;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background: rgba(0, 231, 1, 0.2);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #00e701;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #b1bad3;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filters {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      color: #b1bad3;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      background: rgba(15, 25, 35, 0.8);
+      border: 1px solid rgba(177, 186, 211, 0.2);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 14px;
+      min-width: 150px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      background: #00e701;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #1fff20;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .message-card:hover {
+      border-color: #00e701;
+      transform: translateX(4px);
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .message-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .priority-badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .priority-urgent {
+      background: rgba(255, 71, 87, 0.2);
+      color: #ff4757;
+    }
+
+    .priority-high {
+      background: rgba(255, 165, 0, 0.2);
+      color: #ffa500;
+    }
+
+    .priority-medium {
+      background: rgba(0, 231, 1, 0.2);
+      color: #00e701;
+    }
+
+    .priority-low {
+      background: rgba(177, 186, 211, 0.2);
+      color: #b1bad3;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-new {
+      background: rgba(0, 231, 1, 0.2);
+      color: #00e701;
+    }
+
+    .status-in_progress {
+      background: rgba(0, 150, 255, 0.2);
+      color: #0096ff;
+    }
+
+    .status-resolved {
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+    }
+
+    .status-closed {
+      background: rgba(127, 140, 141, 0.2);
+      color: #7f8c8d;
+    }
+
+    .message-subject {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .message-from {
+      font-size: 14px;
+      color: #b1bad3;
+      margin-bottom: 8px;
+    }
+
+    .message-preview {
+      font-size: 14px;
+      color: #9aa4b2;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .message-time {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 12px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-content {
+      background: #1a2c38;
+      border-radius: 16px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid rgba(177, 186, 211, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .message-details {
+      margin-bottom: 24px;
+    }
+
+    .message-full {
+      background: rgba(15, 25, 35, 0.5);
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    .replies-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(177, 186, 211, 0.1);
+    }
+
+    .reply-card {
+      background: rgba(0, 231, 1, 0.05);
+      border-left: 3px solid #00e701;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+    }
+
+    .reply-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #b1bad3;
+    }
+
+    .reply-text {
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    .reply-form {
+      margin-top: 16px;
+    }
+
+    .reply-textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 25, 35, 0.8);
+      border: 1px solid rgba(177, 186, 211, 0.2);
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .select-small {
+      padding: 8px 12px;
+      background: rgba(15, 25, 35, 0.8);
+      border: 1px solid rgba(177, 186, 211, 0.2);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #b1bad3;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/admin" class="logo">🛡️ Admin - Support Messages</a>
+      <div class="nav-links">
+        <a href="/admin" class="nav-link">Dashboard</a>
+        <a href="/admin/withdrawals" class="nav-link">Withdrawals</a>
+        <a href="/" class="nav-link">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">📧 Support Messages</h1>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">-</div>
+        <div class="stat-label">Total Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statNew">-</div>
+        <div class="stat-label">New Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statInProgress">-</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statUrgent">-</div>
+        <div class="stat-label">Urgent</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statToday">-</div>
+        <div class="stat-label">Today</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select class="filter-select" id="filterStatus">
+          <option value="">All Statuses</option>
+          <option value="new">New</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Priority</label>
+        <select class="filter-select" id="filterPriority">
+          <option value="">All Priorities</option>
+          <option value="urgent">Urgent</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="loadMessages()" style="margin-top: 20px;">🔄 Refresh</button>
+    </div>
+
+    <div class="messages-list" id="messagesList">
+      <div class="empty-state">Loading messages...</div>
+    </div>
+  </div>
+
+  <!-- Message Detail Modal -->
+  <div class="modal" id="messageModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Message Details</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Content will be populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) {
+      window.location.href = '/admin-login';
+    }
+
+    let currentMessages = [];
+
+    // Load stats
+    async function loadStats() {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/contact/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          const stats = data.stats;
+          document.getElementById('statTotal').textContent = stats.total || 0;
+          document.getElementById('statNew').textContent = stats.new_messages || 0;
+          document.getElementById('statInProgress').textContent = stats.in_progress || 0;
+          document.getElementById('statUrgent').textContent = stats.urgent_count || 0;
+          document.getElementById('statToday').textContent = stats.today_count || 0;
+        }
+      } catch (error) {
+        console.error('Failed to load stats:', error);
+      }
+    }
+
+    // Load messages
+    async function loadMessages() {
+      try {
+        const status = document.getElementById('filterStatus').value;
+        const priority = document.getElementById('filterPriority').value;
+
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        if (priority) params.append('priority', priority);
+
+        const response = await fetch(`${API_URL}/api/admin/contact/messages?${params}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          currentMessages = data.messages;
+          renderMessages(data.messages);
+        }
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+        document.getElementById('messagesList').innerHTML = '<div class="empty-state">Failed to load messages</div>';
+      }
+    }
+
+    // Render messages
+    function renderMessages(messages) {
+      const container = document.getElementById('messagesList');
+
+      if (messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages found</div>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => `
+        <div class="message-card" onclick="openMessage(${msg.id})">
+          <div class="message-header">
+            <div>
+              <div class="message-subject">${escapeHtml(msg.subject)}</div>
+              <div class="message-from">
+                From: <strong>${escapeHtml(msg.name)}</strong> (${escapeHtml(msg.email)})
+                ${msg.user_username ? ' - User: @' + escapeHtml(msg.user_username) : ''}
+              </div>
+            </div>
+            <div class="message-meta">
+              <span class="priority-badge priority-${msg.priority}">${msg.priority}</span>
+              <span class="status-badge status-${msg.status}">${msg.status.replace('_', ' ')}</span>
+            </div>
+          </div>
+          <div class="message-preview">${escapeHtml(msg.message)}</div>
+          <div class="message-time">
+            📅 ${new Date(msg.created_at).toLocaleString()}
+            ${msg.assigned_to_username ? ' • 👤 Assigned to: ' + escapeHtml(msg.assigned_to_username) : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Open message detail
+    async function openMessage(messageId) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/contact/message/${messageId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          renderMessageDetail(data.message, data.replies);
+          document.getElementById('messageModal').classList.add('active');
+        }
+      } catch (error) {
+        console.error('Failed to load message:', error);
+        alert('Failed to load message details');
+      }
+    }
+
+    // Render message detail
+    function renderMessageDetail(msg, replies) {
+      document.getElementById('modalTitle').textContent = msg.subject;
+      
+      document.getElementById('modalBody').innerHTML = `
+        <div class="message-details">
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <span class="priority-badge priority-${msg.priority}">${msg.priority}</span>
+            <span class="status-badge status-${msg.status}">${msg.status.replace('_', ' ')}</span>
+          </div>
+
+          <div style="margin-bottom: 16px; font-size: 14px; color: #b1bad3;">
+            <div><strong>From:</strong> ${escapeHtml(msg.name)} (${escapeHtml(msg.email)})</div>
+            ${msg.user_username ? `<div><strong>User:</strong> @${escapeHtml(msg.user_username)}</div>` : ''}
+            <div><strong>Created:</strong> ${new Date(msg.created_at).toLocaleString()}</div>
+            ${msg.assigned_to_username ? `<div><strong>Assigned to:</strong> ${escapeHtml(msg.assigned_to_username)}</div>` : ''}
+          </div>
+
+          <div class="message-full">${escapeHtml(msg.message).replace(/\n/g, '<br>')}</div>
+
+          ${msg.admin_notes ? `
+            <div style="margin-top: 16px;">
+              <strong>Admin Notes:</strong>
+              <div style="background: rgba(255,193,7,0.1); border-left: 3px solid #ffc107; padding: 12px; margin-top: 8px; border-radius: 4px;">
+                ${escapeHtml(msg.admin_notes).replace(/\n/g, '<br>')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="replies-section">
+          <h3 style="margin-bottom: 16px;">Replies (${replies.length})</h3>
+          ${replies.map(reply => `
+            <div class="reply-card">
+              <div class="reply-header">
+                <strong>@${escapeHtml(reply.admin_username)}</strong>
+                <span>${new Date(reply.created_at).toLocaleString()}</span>
+              </div>
+              <div class="reply-text">${escapeHtml(reply.reply_text).replace(/\n/g, '<br>')}</div>
+            </div>
+          `).join('')}
+
+          <div class="reply-form">
+            <h4 style="margin-bottom: 12px;">Add Reply</h4>
+            <textarea class="reply-textarea" id="replyText" placeholder="Type your reply..."></textarea>
+            <button class="btn" onclick="sendReply(${msg.id})" style="margin-top: 12px;">Send Reply</button>
+          </div>
+        </div>
+
+        <div class="replies-section">
+          <h3 style="margin-bottom: 16px;">Update Status</h3>
+          <div class="actions-row">
+            <select class="select-small" id="updateStatus">
+              <option value="new" ${msg.status === 'new' ? 'selected' : ''}>New</option>
+              <option value="in_progress" ${msg.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+              <option value="resolved" ${msg.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+              <option value="closed" ${msg.status === 'closed' ? 'selected' : ''}>Closed</option>
+            </select>
+            <select class="select-small" id="updatePriority">
+              <option value="low" ${msg.priority === 'low' ? 'selected' : ''}>Low</option>
+              <option value="medium" ${msg.priority === 'medium' ? 'selected' : ''}>Medium</option>
+              <option value="high" ${msg.priority === 'high' ? 'selected' : ''}>High</option>
+              <option value="urgent" ${msg.priority === 'urgent' ? 'selected' : ''}>Urgent</option>
+            </select>
+            <button class="btn" onclick="updateMessage(${msg.id})">Update</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Send reply
+    async function sendReply(messageId) {
+      const replyText = document.getElementById('replyText').value.trim();
+      if (!replyText) {
+        alert('Please enter a reply');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/admin/contact/message/${messageId}/reply`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reply_text: replyText })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('Reply sent successfully!');
+          openMessage(messageId); // Reload message
+        } else {
+          alert('Failed to send reply: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Failed to send reply:', error);
+        alert('Failed to send reply');
+      }
+    }
+
+    // Update message
+    async function updateMessage(messageId) {
+      const status = document.getElementById('updateStatus').value;
+      const priority = document.getElementById('updatePriority').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/admin/contact/message/${messageId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status, priority })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('Message updated successfully!');
+          closeModal();
+          loadMessages();
+          loadStats();
+        } else {
+          alert('Failed to update message: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Failed to update message:', error);
+        alert('Failed to update message');
+      }
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('messageModal').classList.remove('active');
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Event listeners
+    document.getElementById('filterStatus').addEventListener('change', loadMessages);
+    document.getElementById('filterPriority').addEventListener('change', loadMessages);
+
+    // Close modal on outside click
+    document.getElementById('messageModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Initial load
+    loadStats();
+    loadMessages();
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadStats();
+      loadMessages();
+    }, 30000);
+  </script>
+</body>
+</html>

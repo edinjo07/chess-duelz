@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYC Verifications - Admin Panel</title>
+  <style>
+    :root {
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --border-color: #2f4553;
+      --success-color: #00e701;
+      --warning-color: #ffa500;
+      --danger-color: #ff4655;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      border-color: var(--accent-primary);
+      background: rgba(0, 231, 1, 0.1);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    /* Submissions Table */
+    .submissions-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      background: var(--bg-tertiary);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:hover {
+      background: var(--bg-tertiary);
+      cursor: pointer;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-pending {
+      background: rgba(255, 165, 0, 0.15);
+      color: var(--warning-color);
+    }
+
+    .badge-approved {
+      background: rgba(0, 231, 1, 0.15);
+      color: var(--success-color);
+    }
+
+    .badge-rejected {
+      background: rgba(255, 70, 85, 0.15);
+      color: var(--danger-color);
+    }
+
+    /* Button */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #00ff00;
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-primary);
+      background: rgba(0, 231, 1, 0.1);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    /* User Info Grid */
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .info-item {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Documents Grid */
+    .documents-section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .document-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .document-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .document-info h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .document-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .document-preview {
+      width: 100%;
+      height: 200px;
+      background: var(--bg-primary);
+      border-radius: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .document-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-approve {
+      flex: 1;
+      background: var(--success-color);
+      color: #000;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-reject {
+      flex: 1;
+      background: var(--danger-color);
+      color: #fff;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-view {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Text Area */
+    textarea {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="/admin" class="logo">
+        <span>💎</span>
+        <span>Admin Panel - KYC Verifications</span>
+      </a>
+      <div class="nav-links">
+        <a href="/admin" class="nav-link">Dashboard</a>
+        <a href="/admin/withdrawals" class="nav-link">Withdrawals</a>
+        <a href="/admin/support" class="nav-link">Support</a>
+        <a href="/dashboard" class="nav-link">Exit Admin</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">KYC Verifications</h1>
+      <p class="page-subtitle">Review and approve user identity documents</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Pending Reviews</div>
+        <div class="stat-value" id="stat-pending">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Approved Today</div>
+        <div class="stat-value" id="stat-approved">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected Today</div>
+        <div class="stat-value" id="stat-rejected">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Verified Users</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-status="pending" onclick="switchTab('pending')">
+        Pending
+      </button>
+      <button class="tab" data-status="approved" onclick="switchTab('approved')">
+        Approved
+      </button>
+      <button class="tab" data-status="rejected" onclick="switchTab('rejected')">
+        Rejected
+      </button>
+      <button class="tab" data-status="all" onclick="switchTab('all')">
+        All
+      </button>
+    </div>
+
+    <!-- Submissions Table -->
+    <div class="submissions-container">
+      <div class="loading" id="loading">Loading submissions...</div>
+      <table class="table" id="submissions-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Submitted</th>
+            <th>ID Status</th>
+            <th>Address Status</th>
+            <th>Documents</th>
+            <th>Overall Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="submissions-tbody">
+        </tbody>
+      </table>
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-icon">📄</div>
+        <div>No submissions found</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal" id="review-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Review KYC Submission</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Content will be loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+    const API_URL = window.location.origin;
+    let currentStatus = 'pending';
+    let currentUserId = null;
+
+    if (!token) {
+      window.location.href = '/admin-login';
+    }
+
+    // Initialize
+    loadSubmissions('pending');
+    loadStats();
+
+    // Switch tab
+    function switchTab(status) {
+      currentStatus = status;
+      
+      // Update active tab
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.status === status) {
+          tab.classList.add('active');
+        }
+      });
+
+      loadSubmissions(status);
+    }
+
+    // Load stats
+    async function loadStats() {
+      // TODO: Implement stats API
+      document.getElementById('stat-pending').textContent = '0';
+      document.getElementById('stat-approved').textContent = '0';
+      document.getElementById('stat-rejected').textContent = '0';
+      document.getElementById('stat-total').textContent = '0';
+    }
+
+    // Load submissions
+    async function loadSubmissions(status) {
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('submissions-table');
+      const emptyState = document.getElementById('empty-state');
+      const tbody = document.getElementById('submissions-tbody');
+
+      loading.style.display = 'block';
+      table.style.display = 'none';
+      emptyState.style.display = 'none';
+
+      try {
+        const endpoint = status === 'pending' 
+          ? '/api/kyc/admin/pending'
+          : `/api/kyc/admin/all?status=${status !== 'all' ? status : ''}`;
+        
+        const response = await fetch(`${API_URL}${endpoint}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to load submissions');
+
+        const data = await response.json();
+        const submissions = data.submissions || [];
+
+        if (submissions.length === 0) {
+          loading.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        tbody.innerHTML = submissions.map(sub => `
+          <tr onclick="viewSubmission(${sub.user_id})">
+            <td>
+              <strong>${sub.username}</strong><br>
+              <span style="font-size: 12px; color: var(--text-secondary);">
+                ${sub.first_name || ''} ${sub.last_name || ''}
+              </span>
+            </td>
+            <td>${sub.email}</td>
+            <td>${sub.kyc_submitted_at ? new Date(sub.kyc_submitted_at).toLocaleDateString() : 'N/A'}</td>
+            <td><span class="badge badge-${getStatusColor(sub.proof_of_id_status)}">${sub.proof_of_id_status || 'N/A'}</span></td>
+            <td><span class="badge badge-${getStatusColor(sub.proof_of_address_status)}">${sub.proof_of_address_status || 'N/A'}</span></td>
+            <td>${sub.document_count || 0}</td>
+            <td><span class="badge badge-${getStatusColor(sub.kyc_status)}">${sub.kyc_status}</span></td>
+            <td>
+              <button class="btn btn-secondary" onclick="event.stopPropagation(); viewSubmission(${sub.user_id})">
+                Review
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        loading.style.display = 'none';
+        table.style.display = 'table';
+
+      } catch (error) {
+        console.error('Error loading submissions:', error);
+        loading.innerHTML = '<p style="color: var(--danger-color);">Error loading submissions</p>';
+      }
+    }
+
+    // Get status color
+    function getStatusColor(status) {
+      if (!status) return 'pending';
+      if (status === 'approved' || status === 'verified') return 'approved';
+      if (status === 'rejected') return 'rejected';
+      return 'pending';
+    }
+
+    // View submission
+    async function viewSubmission(userId) {
+      currentUserId = userId;
+      const modal = document.getElementById('review-modal');
+      const modalBody = document.getElementById('modal-body');
+
+      modalBody.innerHTML = '<div class="loading">Loading user details...</div>';
+      modal.classList.add('active');
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/user/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to load user details');
+
+        const data = await response.json();
+        renderUserDetails(data);
+
+      } catch (error) {
+        console.error('Error loading user details:', error);
+        modalBody.innerHTML = '<p style="color: var(--danger-color);">Error loading user details</p>';
+      }
+    }
+
+    // Render user details
+    function renderUserDetails(data) {
+      const user = data.user;
+      const documents = data.documents || [];
+      const modalBody = document.getElementById('modal-body');
+
+      const idDocs = documents.filter(d => d.document_type === 'proof_of_id');
+      const addressDocs = documents.filter(d => d.document_type === 'proof_of_address');
+      const otherDocs = documents.filter(d => d.document_type === 'other');
+
+      modalBody.innerHTML = `
+        <!-- User Info -->
+        <div class="user-info-grid">
+          <div class="info-item">
+            <div class="info-label">Username</div>
+            <div class="info-value">${user.username}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value">${user.email}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Full Name</div>
+            <div class="info-value">${user.first_name || ''} ${user.last_name || ''}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Date of Birth</div>
+            <div class="info-value">${user.date_of_birth || 'N/A'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Phone</div>
+            <div class="info-value">${user.phone || 'N/A'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Country</div>
+            <div class="info-value">${user.country || 'N/A'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Address</div>
+            <div class="info-value">${user.address_line1 || 'N/A'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Overall Status</div>
+            <div class="info-value">
+              <span class="badge badge-${getStatusColor(user.kyc_status)}">${user.kyc_status}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proof of ID Documents -->
+        ${idDocs.length > 0 ? `
+          <div class="documents-section">
+            <h3 class="section-title">📄 Proof of Identity</h3>
+            <div class="documents-grid">
+              ${idDocs.map(doc => renderDocument(doc)).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Proof of Address Documents -->
+        ${addressDocs.length > 0 ? `
+          <div class="documents-section">
+            <h3 class="section-title">🏠 Proof of Address</h3>
+            <div class="documents-grid">
+              ${addressDocs.map(doc => renderDocument(doc)).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Other Documents -->
+        ${otherDocs.length > 0 ? `
+          <div class="documents-section">
+            <h3 class="section-title">📎 Additional Documents</h3>
+            <div class="documents-grid">
+              ${otherDocs.map(doc => renderDocument(doc)).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Admin Notes -->
+        <div class="documents-section">
+          <h3 class="section-title">📝 Admin Notes</h3>
+          <div class="form-group">
+            <textarea id="admin-notes" placeholder="Add notes about this verification...">${user.notes || ''}</textarea>
+          </div>
+          <button class="btn btn-secondary" onclick="saveNotes()">Save Notes</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-primary" style="flex: 1;" onclick="approveKYC()">
+            ✅ Approve All
+          </button>
+          <button class="btn-reject" style="flex: 1;" onclick="showRejectForm()">
+            ❌ Reject All
+          </button>
+        </div>
+
+        <!-- Reject Form (hidden by default) -->
+        <div id="reject-form" style="display: none; margin-top: 20px;">
+          <div class="form-group">
+            <label class="form-label">Rejection Reason *</label>
+            <textarea id="reject-reason" placeholder="Explain why the documents are being rejected..." required></textarea>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn-reject" onclick="rejectKYC()">Confirm Rejection</button>
+            <button class="btn btn-secondary" onclick="hideRejectForm()">Cancel</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render single document
+    function renderDocument(doc) {
+      const isPDF = doc.mime_type === 'application/pdf';
+      const statusColor = getStatusColor(doc.status);
+      const sideLabel = doc.document_side && doc.document_side !== 'single' ? ` - ${doc.document_side.toUpperCase()}` : '';
+      const subtypeLabel = doc.document_subtype ? doc.document_subtype.replace('_', ' ').toUpperCase() : doc.document_type.toUpperCase();
+
+      return `
+        <div class="document-card">
+          <div class="document-header">
+            <div class="document-info">
+              <h4>${subtypeLabel}${sideLabel}</h4>
+              <div class="document-meta">
+                ${doc.file_name}<br>
+                Uploaded: ${new Date(doc.uploaded_at).toLocaleDateString()}
+              </div>
+            </div>
+            <span class="badge badge-${statusColor}">${doc.status}</span>
+          </div>
+          <div class="document-preview" onclick="viewDocument(${doc.id})">
+            ${isPDF 
+              ? '<div style="font-size: 48px;">📄</div>' 
+              : `<img src="${API_URL}/api/kyc/admin/document/${doc.id}" alt="Document" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23213743%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23ffffff%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3E📄%3C/text%3E%3C/svg%3E'">`
+            }
+          </div>
+          ${doc.rejection_reason ? `<p style="color: var(--danger-color); font-size: 12px; margin-bottom: 8px;">Reason: ${doc.rejection_reason}</p>` : ''}
+          ${doc.status === 'pending' ? `
+            <div class="document-actions">
+              <button class="btn-approve" onclick="approveDocument(${doc.id})">✅ Approve</button>
+              <button class="btn-reject" onclick="rejectDocument(${doc.id})">❌ Reject</button>
+            </div>
+          ` : `
+            <a href="${API_URL}/api/kyc/admin/document/${doc.id}" target="_blank" class="btn-view">View Full Size</a>
+          `}
+        </div>
+      `;
+    }
+
+    // View document
+    function viewDocument(docId) {
+      window.open(`${API_URL}/api/kyc/admin/document/${docId}`, '_blank');
+    }
+
+    // Approve document
+    async function approveDocument(docId) {
+      if (!confirm('Approve this document?')) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/document/${docId}/approve`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to approve document');
+
+        alert('Document approved successfully');
+        viewSubmission(currentUserId); // Reload
+        loadSubmissions(currentStatus);
+
+      } catch (error) {
+        console.error('Error approving document:', error);
+        alert('Failed to approve document: ' + error.message);
+      }
+    }
+
+    // Reject document
+    async function rejectDocument(docId) {
+      const reason = prompt('Enter rejection reason:');
+      if (!reason) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/document/${docId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason })
+        });
+
+        if (!response.ok) throw new Error('Failed to reject document');
+
+        alert('Document rejected successfully');
+        viewSubmission(currentUserId); // Reload
+        loadSubmissions(currentStatus);
+
+      } catch (error) {
+        console.error('Error rejecting document:', error);
+        alert('Failed to reject document: ' + error.message);
+      }
+    }
+
+    // Approve entire KYC
+    async function approveKYC() {
+      if (!confirm('Approve this user\'s KYC verification?')) return;
+
+      const notes = document.getElementById('admin-notes').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/user/${currentUserId}/approve`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ notes })
+        });
+
+        if (!response.ok) throw new Error('Failed to approve KYC');
+
+        alert('KYC approved successfully');
+        closeModal();
+        loadSubmissions(currentStatus);
+
+      } catch (error) {
+        console.error('Error approving KYC:', error);
+        alert('Failed to approve KYC: ' + error.message);
+      }
+    }
+
+    // Show reject form
+    function showRejectForm() {
+      document.getElementById('reject-form').style.display = 'block';
+    }
+
+    // Hide reject form
+    function hideRejectForm() {
+      document.getElementById('reject-form').style.display = 'none';
+    }
+
+    // Reject entire KYC
+    async function rejectKYC() {
+      const reason = document.getElementById('reject-reason').value;
+      if (!reason) {
+        alert('Please enter a rejection reason');
+        return;
+      }
+
+      if (!confirm('Reject this user\'s KYC verification?')) return;
+
+      const notes = document.getElementById('admin-notes').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/user/${currentUserId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason, notes })
+        });
+
+        if (!response.ok) throw new Error('Failed to reject KYC');
+
+        alert('KYC rejected successfully');
+        closeModal();
+        loadSubmissions(currentStatus);
+
+      } catch (error) {
+        console.error('Error rejecting KYC:', error);
+        alert('Failed to reject KYC: ' + error.message);
+      }
+    }
+
+    // Save notes
+    async function saveNotes() {
+      const notes = document.getElementById('admin-notes').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/kyc/admin/user/${currentUserId}/notes`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ notes })
+        });
+
+        if (!response.ok) throw new Error('Failed to save notes');
+
+        alert('Notes saved successfully');
+
+      } catch (error) {
+        console.error('Error saving notes:', error);
+        alert('Failed to save notes: ' + error.message);
+      }
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('review-modal').classList.remove('active');
+      currentUserId = null;
+    }
+
+    // Close modal on outside click
+    document.getElementById('review-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Chess Duelz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1923;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: rgba(15, 25, 35, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(177, 186, 211, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00e701;
+      text-decoration: none;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #00e701;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .page-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .page-subtitle {
+      font-size: 18px;
+      color: #b1bad3;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .contact-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .contact-card h3 {
+      color: #00e701;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .contact-card p {
+      color: #b1bad3;
+      margin-bottom: 16px;
+    }
+
+    .contact-method {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(26, 44, 56, 0.5);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .contact-method-icon {
+      font-size: 24px;
+    }
+
+    .contact-method-info strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .contact-method-info span {
+      color: #b1bad3;
+    }
+
+    .form-section {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .form-card h3 {
+      color: #00e701;
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(26, 44, 56, 0.5);
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #00e701;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: #00e701;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #1fff20;
+      transform: translateY(-2px);
+    }
+
+    .success-message {
+      display: none;
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid #00e701;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      color: #00e701;
+    }
+
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 32px;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">♟ Chess Duelz</a>
+      <a href="/" class="btn">Back to Home</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Contact Us</h1>
+    <p class="page-subtitle">We're here to help! Reach out to our support team</p>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>Get in Touch</h3>
+        <p>Our support team is available to assist you with any questions or concerns.</p>
+        
+        <div class="contact-method">
+          <div class="contact-method-icon">📧</div>
+          <div class="contact-method-info">
+            <strong>Email Support</strong>
+            <span>support@treasurehunt.com</span>
+          </div>
+        </div>
+
+        <div class="contact-method">
+          <div class="contact-method-icon">💬</div>
+          <div class="contact-method-info">
+            <strong>Live Chat</strong>
+            <span>Available on Dashboard</span>
+          </div>
+        </div>
+
+        <div class="contact-method">
+          <div class="contact-method-icon">⏰</div>
+          <div class="contact-method-info">
+            <strong>Response Time</strong>
+            <span>Usually within 24 hours</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <h3>Quick Links</h3>
+        <p>Find answers faster with these resources:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+          <a href="/help-center.html" class="btn" style="text-align: center;">Help Center</a>
+          <a href="/fairness.html" class="btn" style="text-align: center;">Fairness Policy</a>
+          <a href="/responsible-gaming.html" class="btn" style="text-align: center;">Responsible Gaming</a>
+          <a href="/dashboard.html" class="btn" style="text-align: center;">My Account</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-card">
+        <h3>Send Us a Message</h3>
+        
+        <div class="success-message" id="successMessage">
+          ✓ Message sent successfully! We'll get back to you within 24 hours.
+        </div>
+
+        <form id="contactForm">
+          <div class="form-group">
+            <label class="form-label">Your Name *</label>
+            <input type="text" class="form-input" id="name" required placeholder="John Doe">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address *</label>
+            <input type="email" class="form-input" id="email" required placeholder="john@example.com">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subject *</label>
+            <select class="form-select" id="subject" required>
+              <option value="">Select a topic</option>
+              <option value="account">Account Issues</option>
+              <option value="deposit">Deposit Problems</option>
+              <option value="withdrawal">Withdrawal Problems</option>
+              <option value="gameplay">Gameplay Issues</option>
+              <option value="technical">Technical Support</option>
+              <option value="fairness">Fairness Concern</option>
+              <option value="responsible">Responsible Gaming</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message *</label>
+            <textarea class="form-textarea" id="message" required placeholder="Please describe your issue or question in detail..."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+      
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+
+      try {
+        const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+        const headers = {
+          'Content-Type': 'application/json'
+        };
+        
+        // Add token if user is logged in
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_URL}/api/contact/submit`, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ name, email, subject, message })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success message
+          const successMsg = document.getElementById('successMessage');
+          successMsg.textContent = '✓ ' + data.message;
+          successMsg.style.display = 'block';
+          
+          // Reset form
+          this.reset();
+
+          // Scroll to success message
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Hide success message after 7 seconds
+          setTimeout(() => {
+            successMsg.style.display = 'none';
+          }, 7000);
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Contact form error:', error);
+        alert('❌ Failed to send message. Please try again or email us directly at support@treasurehunt.com');
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    // Check if user is logged in and pre-fill email
+    try {
+      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken') || localStorage.getItem('token');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.userId;
+        
+        // Fetch user email
+        fetch(`${API_URL}/api/user/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.email) {
+            document.getElementById('email').value = data.email;
+          }
+          if (data.username) {
+            document.getElementById('name').value = data.username;
+          }
+        })
+        .catch(err => console.log('Could not fetch user profile'));
+      }
+    } catch (err) {
+      // User not logged in, continue as guest
+    }
+  </script>
+</body>
+</html>

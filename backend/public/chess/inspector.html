@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chess Game Visual Editor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Editor Overlay */
+    .editor-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 999999;
+    }
+
+    /* Toolbar */
+    .editor-toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 400px;
+      height: 50px;
+      background: rgba(42, 42, 42, 0.98);
+      border-bottom: 2px solid #22ff99;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 10px;
+      z-index: 1000000;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-toolbar button {
+      padding: 6px 14px;
+      background: #3a3a3a;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .editor-toolbar button:hover {
+      background: #4a4a4a;
+      transform: translateY(-1px);
+    }
+
+    .editor-toolbar button.active {
+      background: #22ff99;
+      color: #000;
+      border-color: #22ff99;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 30px;
+      background: #555;
+      margin: 0 5px;
+    }
+
+    .toolbar-title {
+      font-weight: bold;
+      color: #22ff99;
+      margin-right: auto;
+    }
+
+    /* Drag Mode Styles */
+    body.drag-mode * {
+      cursor: move !important;
+    }
+
+    .dragging {
+      opacity: 0.8;
+      z-index: 999999 !important;
+    }
+
+    /* Side Panel */
+    .editor-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 400px;
+      background: rgba(26, 26, 26, 0.98);
+      border-left: 2px solid #22ff99;
+      overflow-y: auto;
+      z-index: 1000000;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-header {
+      padding: 15px 20px;
+      background: #2a2a2a;
+      border-bottom: 2px solid #333;
+    }
+
+    .panel-header h2 {
+      font-size: 18px;
+      color: #22ff99;
+    }
+
+    .panel-section {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+    }
+
+    .panel-section h3 {
+      margin-bottom: 12px;
+      color: #22ff99;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .property-group {
+      margin-bottom: 12px;
+    }
+
+    .property-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .property-group input,
+    .property-group select {
+      width: 100%;
+      padding: 8px 10px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .property-group input[type="color"] {
+      height: 40px;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .property-group input[type="range"] {
+      cursor: pointer;
+    }
+
+    .css-output {
+      background: #0d0d0d;
+      padding: 12px;
+      border-radius: 4px;
+      max-height: 250px;
+      overflow: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #22ff99;
+      line-height: 1.6;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 12px;
+      background: #22ff99;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #1aee88;
+      transform: translateY(-2px);
+    }
+
+    .action-btn.secondary {
+      background: #444;
+      color: #fff;
+    }
+
+    .action-btn.secondary:hover {
+      background: #555;
+    }
+
+    /* Element Highlight */
+    .element-highlight {
+      position: fixed;
+      border: 2px dashed #22ff99;
+      background: rgba(34, 255, 153, 0.1);
+      pointer-events: none;
+      z-index: 999998;
+      display: none;
+      box-shadow: 0 0 20px rgba(34, 255, 153, 0.5);
+    }
+
+    .element-highlight.active {
+      display: block;
+    }
+
+    .element-label {
+      position: absolute;
+      top: -28px;
+      left: 0;
+      background: #22ff99;
+      color: #000;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 4px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    /* Inspector Mode Cursor */
+    body.inspect-mode * {
+      cursor: crosshair !important;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22ff99;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+      z-index: 1000001;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Selected Element Info */
+    .selected-info {
+      background: #0d0d0d;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .selected-info div {
+      margin-bottom: 6px;
+    }
+
+    .selected-info strong {
+      color: #22ff99;
+      display: inline-block;
+      min-width: 60px;
+    }
+
+    /* Game Frame */
+    iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Chess game iframe -->
+  <iframe id="gameFrame" src="/chess"></iframe>
+
+  <!-- Editor Overlay -->
+  <div class="editor-overlay">
+    <!-- Toolbar -->
+    <div class="editor-toolbar">
+      <div class="toolbar-title">🎨 Visual Editor</div>
+      <button id="inspectBtn" class="active">🔍 Inspect</button>
+      <button id="dragBtn">🖱️ Drag</button>
+      <button id="editBtn">✏️ Play</button>
+      <div class="toolbar-divider"></div>
+      <button id="exportBtn">💾 Export CSS</button>
+      <button id="copyBtn">📋 Copy CSS</button>
+      <button id="resetBtn">↺ Reset</button>
+    </div>
+
+    <!-- Side Panel -->
+    <div class="editor-panel">
+      <div class="panel-header">
+        <h2>CSS Editor</h2>
+      </div>
+
+      <!-- Selected Element -->
+      <div class="panel-section">
+        <h3>Selected Element</h3>
+        <div class="selected-info" id="selectedInfo">
+          <div style="color: #666; text-align: center; padding: 20px;">
+            Click on any element in the game →
+          </div>
+        </div>
+      </div>
+
+      <!-- Properties -->
+      <div class="panel-section" id="propertiesSection" style="display: none;">
+        <h3>Quick Properties</h3>
+        
+        <div class="property-group">
+          <label>Background Color</label>
+          <input type="color" id="propBgColor" onchange="updateProperty('backgroundColor', this.value)">
+        </div>
+        
+        <div class="property-group">
+          <label>Text Color</label>
+          <input type="color" id="propColor" onchange="updateProperty('color', this.value)">
+        </div>
+        
+        <div class="property-group">
+          <label>Width</label>
+          <input type="text" id="propWidth" onchange="updateProperty('width', this.value)" placeholder="e.g. 200px, 50%, auto">
+        </div>
+        
+        <div class="property-group">
+          <label>Height</label>
+          <input type="text" id="propHeight" onchange="updateProperty('height', this.value)" placeholder="e.g. 100px, auto">
+        </div>
+        
+        <div class="property-group">
+          <label>Font Size</label>
+          <input type="text" id="propFontSize" onchange="updateProperty('fontSize', this.value)" placeholder="e.g. 16px, 1.2em">
+        </div>
+        
+        <div class="property-group">
+          <label>Padding</label>
+          <input type="text" id="propPadding" onchange="updateProperty('padding', this.value)" placeholder="e.g. 10px, 10px 20px">
+        </div>
+        
+        <div class="property-group">
+          <label>Margin</label>
+          <input type="text" id="propMargin" onchange="updateProperty('margin', this.value)" placeholder="e.g. 10px, 10px 20px">
+        </div>
+        
+        <div class="property-group">
+          <label>Border Radius</label>
+          <input type="text" id="propBorderRadius" onchange="updateProperty('borderRadius', this.value)" placeholder="e.g. 8px, 50%">
+        </div>
+
+        <div class="property-group">
+          <label>Border</label>
+          <input type="text" id="propBorder" onchange="updateProperty('border', this.value)" placeholder="e.g. 2px solid #fff">
+        </div>
+
+        <div class="property-group">
+          <label>Display</label>
+          <select id="propDisplay" onchange="updateProperty('display', this.value)">
+            <option value="">-- Select --</option>
+            <option value="block">Block</option>
+            <option value="inline">Inline</option>
+            <option value="inline-block">Inline Block</option>
+            <option value="flex">Flex</option>
+            <option value="grid">Grid</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+
+        <div class="property-group">
+          <label>Opacity</label>
+          <input type="range" id="propOpacity" min="0" max="1" step="0.1" value="1" onchange="updateProperty('opacity', this.value)">
+          <span id="opacityValue" style="color: #999; font-size: 11px;">1.0</span>
+        </div>
+      </div>
+
+      <!-- Generated CSS -->
+      <div class="panel-section">
+        <h3>Generated CSS</h3>
+        <div class="css-output" id="cssOutput">/* Select an element to generate CSS */</div>
+        <button class="action-btn" onclick="copyCSS()">📋 Copy to Clipboard</button>
+        <button class="action-btn secondary" onclick="downloadCSS()">💾 Download CSS File</button>
+      </div>
+    </div>
+
+    <!-- Element Highlight -->
+    <div class="element-highlight" id="highlight">
+      <div class="element-label" id="highlightLabel"></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    let gameFrame = null;
+    let gameDoc = null;
+    let selectedElement = null;
+    let inspectMode = true;
+    let dragMode = false;
+    let cssChanges = {};
+    let draggedElement = null;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
+
+    // Initialize editor
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('[INSPECTOR] Editor loading...');
+      gameFrame = document.getElementById('gameFrame');
+      
+      // Try to access iframe immediately and on load
+      const tryInit = () => {
+        console.log('[INSPECTOR] Attempting to access iframe...');
+        try {
+          gameDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+          
+          if (!gameDoc) {
+            console.error('[INSPECTOR] Cannot get iframe document');
+            showToast('⚠️ Cannot access iframe');
+            return false;
+          }
+          
+          if (!gameDoc.body) {
+            console.log('[INSPECTOR] Iframe body not ready yet');
+            return false;
+          }
+          
+          console.log('[INSPECTOR] Iframe accessed successfully!');
+          initInspector();
+          showToast('✓ Editor ready! Switch to Inspect or Drag mode.');
+          return true;
+        } catch (e) {
+          console.error('[INSPECTOR] Error accessing iframe:', e);
+          showToast('⚠️ Error: ' + e.message);
+          return false;
+        }
+      };
+      
+      // Try on iframe load event
+      gameFrame.addEventListener('load', () => {
+        console.log('[INSPECTOR] Iframe load event fired');
+        setTimeout(() => {
+          if (!tryInit()) {
+            // Retry after delay
+            console.log('[INSPECTOR] Retrying in 2 seconds...');
+            setTimeout(tryInit, 2000);
+          }
+        }, 500);
+      });
+      
+      // Also try immediately in case iframe is already loaded
+      if (gameFrame.contentDocument && gameFrame.contentDocument.readyState === 'complete') {
+        console.log('[INSPECTOR] Iframe already loaded');
+        setTimeout(tryInit, 1000);
+      }
+    });
+
+    // Initialize inspector
+    function initInspector() {
+      if (!gameDoc) {
+        console.error('gameDoc is null');
+        return;
+      }
+
+      console.log('Initializing inspector...', gameDoc.body);
+
+      // Add event listeners to game document
+      gameDoc.addEventListener('mousemove', handleMouseMove);
+      gameDoc.addEventListener('click', handleClick, true); // Use capture phase
+      gameDoc.addEventListener('mouseout', handleMouseOut);
+      gameDoc.addEventListener('mousedown', handleMouseDown, true); // Use capture phase
+
+      // Toolbar buttons (only add once)
+      const inspectBtn = document.getElementById('inspectBtn');
+      const dragBtn = document.getElementById('dragBtn');
+      const editBtn = document.getElementById('editBtn');
+      
+      if (inspectBtn && !inspectBtn.dataset.initialized) {
+        inspectBtn.addEventListener('click', () => setMode('inspect'));
+        dragBtn.addEventListener('click', () => setMode('drag'));
+        editBtn.addEventListener('click', () => setMode('edit'));
+        document.getElementById('exportBtn').addEventListener('click', downloadCSS);
+        document.getElementById('copyBtn').addEventListener('click', copyCSS);
+        document.getElementById('resetBtn').addEventListener('click', resetChanges);
+        
+        inspectBtn.dataset.initialized = 'true';
+      }
+
+      // Global mouse events for dragging - attach to BOTH documents
+      document.addEventListener('mousemove', handleDragMove);
+      document.addEventListener('mouseup', handleDragEnd);
+      gameDoc.addEventListener('mousemove', handleDragMove);
+      gameDoc.addEventListener('mouseup', handleDragEnd);
+      
+      console.log('[INSPECTOR] Inspector initialized with drag listeners on both documents');
+    }
+
+    // Handle mouse move in game
+    function handleMouseMove(e) {
+      if (isDragging) return;
+      if (!inspectMode && !dragMode) return;
+
+      const element = e.target;
+      if (element && element !== selectedElement) {
+        console.log('[INSPECTOR] Hover:', element.tagName, element.id, element.className);
+        highlightElement(element);
+      }
+    }
+
+    // Handle click in game
+    function handleClick(e) {
+      console.log('[INSPECTOR] Click detected, mode:', { inspectMode, dragMode });
+      
+      if (!inspectMode && !dragMode) return;
+      
+      // Don't process clicks if we were dragging
+      if (isDragging) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const element = e.target;
+      console.log('[INSPECTOR] Element clicked:', element.tagName, element.id, element.className);
+      selectElement(element);
+    }
+
+    // Handle mouse down for dragging
+    function handleMouseDown(e) {
+      console.log('[INSPECTOR] MouseDown - dragMode:', dragMode, 'element:', e.target.tagName);
+      if (!dragMode) return;
+
+      // In drag mode, ANY click starts a drag
+      const element = e.target;
+      
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Select this element and prepare for dragging
+      selectElement(element);
+      draggedElement = element;
+      isDragging = true;
+
+      console.log('[INSPECTOR] 🎯 Starting drag! Element:', draggedElement.tagName, draggedElement.className);
+
+      // Record starting positions
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // Get current position - DON'T move the element, just make it draggable
+      const computed = gameDoc.defaultView.getComputedStyle(draggedElement);
+      
+      // CRITICAL: Get element's current position BEFORE changing anything
+      const rect = draggedElement.getBoundingClientRect();
+      
+      console.log('[INSPECTOR] 💡 Element rect BEFORE:', rect.left, rect.top, rect.width, rect.height);
+      console.log('[INSPECTOR] 💡 Current position style:', computed.position);
+      
+      // Store original styles to restore if needed
+      const originalPosition = computed.position;
+      
+      // Force absolute positioning for precise placement
+      if (originalPosition !== 'absolute' && originalPosition !== 'fixed') {
+        // FIRST: Determine what the offsetParent will be after we set position: absolute
+        // This is usually the nearest positioned ancestor or body
+        let offsetParent = draggedElement.offsetParent;
+        if (!offsetParent || offsetParent === gameDoc.body || offsetParent === gameDoc.documentElement) {
+          offsetParent = gameDoc.body;
+        }
+        
+        // Get offsetParent's position
+        const parentRect = offsetParent.getBoundingClientRect();
+        
+        console.log('[INSPECTOR] 💡 Offset parent:', offsetParent.tagName, 'at', parentRect.left, parentRect.top);
+        
+        // Calculate position RELATIVE TO THE OFFSET PARENT
+        const relativeLeft = rect.left - parentRect.left;
+        const relativeTop = rect.top - parentRect.top;
+        
+        console.log('[INSPECTOR] 💡 Calculated relative position:', relativeLeft, relativeTop);
+        
+        // NOW set to absolute and position it
+        draggedElement.style.position = 'absolute';
+        draggedElement.style.left = relativeLeft + 'px';
+        draggedElement.style.top = relativeTop + 'px';
+        
+        // Clear conflicting styles
+        draggedElement.style.margin = '0';
+        draggedElement.style.transform = 'none';
+        
+        // Remove grid/flex positioning if present
+        draggedElement.style.gridColumn = 'auto';
+        draggedElement.style.gridRow = 'auto';
+        draggedElement.style.float = 'none';
+        
+        // Verify it didn't move
+        const newRect = draggedElement.getBoundingClientRect();
+        console.log('[INSPECTOR] 💡 Element rect AFTER:', newRect.left, newRect.top);
+        console.log('[INSPECTOR] ✏️ Converted to absolute. Was:', originalPosition);
+      }
+
+      // Now get the position we just set (or existing absolute position)
+      startLeft = parseInt(draggedElement.style.left) || 0;
+      startTop = parseInt(draggedElement.style.top) || 0;
+
+      console.log('[INSPECTOR] 📍 Start position:', startLeft, startTop, 'Mouse:', startX, startY);
+
+      // Add dragging class and ensure element stays on top
+      draggedElement.classList.add('dragging');
+      draggedElement.style.zIndex = '9999';
+      
+      showToast('Dragging ' + draggedElement.tagName + '...');
+    }
+
+    // Handle drag move
+    function handleDragMove(e) {
+      if (!isDragging || !draggedElement) {
+        // Log why we're not dragging
+        if (e.buttons === 1 && dragMode) {
+          console.log('[INSPECTOR] ⚠️ DragMove but NOT dragging. isDragging:', isDragging, 'draggedElement:', draggedElement);
+        }
+        return;
+      }
+
+      e.preventDefault();
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      const newLeft = startLeft + deltaX;
+      const newTop = startTop + deltaY;
+
+      console.log('[INSPECTOR] 🚀 Dragging... delta:', deltaX, deltaY, 'new position:', newLeft, newTop);
+
+      // Apply exact position - no rounding, no constraints
+      draggedElement.style.left = newLeft + 'px';
+      draggedElement.style.top = newTop + 'px';
+      draggedElement.style.position = 'absolute';
+      
+      // Remove any transforms that might interfere
+      draggedElement.style.transform = 'none';
+      draggedElement.style.margin = '0';
+
+      // Update highlight
+      highlightElement(draggedElement);
+    }
+
+    // Handle drag end
+    function handleDragEnd(e) {
+      if (!isDragging || !draggedElement) return;
+
+      e.preventDefault();
+
+      console.log('[INSPECTOR] ✅ Drag ended at:', draggedElement.style.left, draggedElement.style.top);
+
+      // Remove dragging class
+      draggedElement.classList.remove('dragging');
+
+      // Track CSS changes
+      const selector = getElementSelector(draggedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector].position = 'absolute';
+      cssChanges[selector].left = draggedElement.style.left;
+      cssChanges[selector].top = draggedElement.style.top;
+      cssChanges[selector].transform = 'none';
+      cssChanges[selector].margin = '0';
+
+      updateCSSOutput();
+      updatePropertiesPanel(draggedElement);
+
+      showToast('✓ Element placed at ' + draggedElement.style.left + ', ' + draggedElement.style.top);
+
+      isDragging = false;
+      draggedElement = null;
+    }
+
+    // Handle mouse out
+    function handleMouseOut(e) {
+      if (e.target === gameDoc.body) {
+        hideHighlight();
+      }
+    }
+
+    // Highlight element
+    function highlightElement(element) {
+      const highlight = document.getElementById('highlight');
+      const label = document.getElementById('highlightLabel');
+      
+      const rect = element.getBoundingClientRect();
+      const frameRect = gameFrame.getBoundingClientRect();
+      
+      highlight.style.left = (frameRect.left + rect.left) + 'px';
+      highlight.style.top = (frameRect.top + rect.top) + 'px';
+      highlight.style.width = rect.width + 'px';
+      highlight.style.height = rect.height + 'px';
+      highlight.classList.add('active');
+      
+      label.textContent = getElementLabel(element);
+    }
+
+    // Hide highlight
+    function hideHighlight() {
+      document.getElementById('highlight').classList.remove('active');
+    }
+
+    // Select element
+    function selectElement(element) {
+      selectedElement = element;
+      highlightElement(element);
+      updatePropertiesPanel(element);
+      showToast('Selected: ' + getElementLabel(element));
+    }
+
+    // Get element label
+    function getElementLabel(element) {
+      let label = element.tagName.toLowerCase();
+      if (element.id) label += '#' + element.id;
+      if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.trim()).slice(0, 2);
+        if (classes.length > 0) label += '.' + classes.join('.');
+      }
+      return label;
+    }
+
+    // Get CSS selector
+    function getElementSelector(element) {
+      if (element.id) return '#' + element.id;
+      if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.trim());
+        if (classes.length > 0) return '.' + classes[0];
+      }
+      return element.tagName.toLowerCase();
+    }
+
+    // Update properties panel
+    function updatePropertiesPanel(element) {
+      const computed = gameDoc.defaultView.getComputedStyle(element);
+      
+      // Show properties section
+      document.getElementById('propertiesSection').style.display = 'block';
+      
+      // Update selected info
+      document.getElementById('selectedInfo').innerHTML = `
+        <div><strong>Tag:</strong> ${element.tagName.toLowerCase()}</div>
+        <div><strong>ID:</strong> ${element.id || '(none)'}</div>
+        <div><strong>Classes:</strong> ${element.className || '(none)'}</div>
+        <div><strong>Selector:</strong> <code style="color: #22ff99;">${getElementSelector(element)}</code></div>
+      `;
+      
+      // Update property inputs
+      document.getElementById('propBgColor').value = rgbToHex(computed.backgroundColor);
+      document.getElementById('propColor').value = rgbToHex(computed.color);
+      document.getElementById('propWidth').value = element.style.width || '';
+      document.getElementById('propHeight').value = element.style.height || '';
+      document.getElementById('propFontSize').value = element.style.fontSize || '';
+      document.getElementById('propPadding').value = element.style.padding || '';
+      document.getElementById('propMargin').value = element.style.margin || '';
+      document.getElementById('propBorderRadius').value = element.style.borderRadius || '';
+      document.getElementById('propBorder').value = element.style.border || '';
+      document.getElementById('propDisplay').value = element.style.display || '';
+      document.getElementById('propOpacity').value = computed.opacity;
+      document.getElementById('opacityValue').textContent = computed.opacity;
+    }
+
+    // Update property
+    function updateProperty(property, value) {
+      if (!selectedElement) return;
+
+      selectedElement.style[property] = value;
+
+      // Track changes
+      const selector = getElementSelector(selectedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector][property] = value;
+
+      updateCSSOutput();
+      showToast(`✓ Updated ${property}`);
+
+      // Update opacity display
+      if (property === 'opacity') {
+        document.getElementById('opacityValue').textContent = value;
+      }
+    }
+
+    // Update CSS output
+    function updateCSSOutput() {
+      let css = '/* Generated CSS - Add to custom-styles.css */\n\n';
+
+      Object.keys(cssChanges).forEach(selector => {
+        css += `${selector} {\n`;
+        Object.keys(cssChanges[selector]).forEach(property => {
+          const kebabProperty = property.replace(/([A-Z])/g, '-$1').toLowerCase();
+          css += `  ${kebabProperty}: ${cssChanges[selector][property]};\n`;
+        });
+        css += '}\n\n';
+      });
+
+      document.getElementById('cssOutput').textContent = css;
+    }
+
+    // RGB to Hex
+    function rgbToHex(rgb) {
+      if (!rgb || rgb === 'rgba(0, 0, 0, 0)' || rgb === 'transparent') return '#000000';
+      const result = rgb.match(/\d+/g);
+      if (!result) return '#000000';
+      return '#' + result.slice(0, 3).map(x => {
+        const hex = parseInt(x).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    }
+
+    // Set mode
+    function setMode(mode) {
+      inspectMode = (mode === 'inspect');
+      dragMode = (mode === 'drag');
+      const editMode = (mode === 'edit');
+
+      document.getElementById('inspectBtn').classList.toggle('active', inspectMode);
+      document.getElementById('dragBtn').classList.toggle('active', dragMode);
+      document.getElementById('editBtn').classList.toggle('active', editMode);
+      
+      document.body.classList.toggle('inspect-mode', inspectMode);
+      document.body.classList.toggle('drag-mode', dragMode);
+
+      if (inspectMode) {
+        showToast('🔍 Inspect mode - Click elements to select & edit');
+      } else if (dragMode) {
+        showToast('🖱️ Drag mode - 1) Click to select 2) Click & drag to move');
+      } else {
+        showToast('✏️ Play mode - Game is fully interactive');
+        hideHighlight();
+      }
+    }
+
+    // Copy CSS
+    function copyCSS() {
+      const css = document.getElementById('cssOutput').textContent;
+      navigator.clipboard.writeText(css).then(() => {
+        showToast('✓ CSS copied to clipboard!');
+      }).catch(() => {
+        showToast('⚠️ Could not copy CSS');
+      });
+    }
+
+    // Download CSS
+    function downloadCSS() {
+      const css = document.getElementById('cssOutput').textContent;
+      if (!css || css.includes('Select an element')) {
+        showToast('⚠️ No CSS to download');
+        return;
+      }
+
+      const blob = new Blob([css], { type: 'text/css' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'chess-custom-styles.css';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      showToast('✓ CSS downloaded!');
+    }
+
+    // Reset changes
+    function resetChanges() {
+      if (confirm('Reset all CSS changes?')) {
+        cssChanges = {};
+        document.getElementById('cssOutput').textContent = '/* Select an element to generate CSS */';
+        showToast('✓ Changes reset');
+        // Reload iframe to reset styles
+        gameFrame.src = gameFrame.src;
+      }
+    }
+
+    // Toast
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideHighlight();
+        selectedElement = null;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        if (document.getElementById('cssOutput').textContent !== '/* Select an element to generate CSS */') {
+          e.preventDefault();
+          copyCSS();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

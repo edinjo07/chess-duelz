@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chess Game CSS Editor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Top Toolbar */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #2a2a2a;
+      border-bottom: 2px solid #3a3a3a;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding-right: 15px;
+      border-right: 1px solid #444;
+    }
+
+    .toolbar-group:last-child {
+      border-right: none;
+      margin-left: auto;
+    }
+
+    .toolbar button {
+      padding: 8px 16px;
+      background: #3a3a3a;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .toolbar button:hover {
+      background: #4a4a4a;
+      border-color: #5a5a5a;
+    }
+
+    .toolbar button.active {
+      background: #22ff99;
+      color: #000;
+      border-color: #22ff99;
+    }
+
+    .toolbar input[type="range"] {
+      width: 120px;
+    }
+
+    .toolbar label {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    /* Side Panel */
+    .side-panel {
+      position: fixed;
+      right: 0;
+      top: 60px;
+      bottom: 0;
+      width: 350px;
+      background: #2a2a2a;
+      border-left: 2px solid #3a3a3a;
+      overflow-y: auto;
+      z-index: 9999;
+      transition: transform 0.3s;
+    }
+
+    .side-panel.hidden {
+      transform: translateX(100%);
+    }
+
+    .panel-section {
+      padding: 20px;
+      border-bottom: 1px solid #3a3a3a;
+    }
+
+    .panel-section h3 {
+      margin-bottom: 15px;
+      color: #22ff99;
+      font-size: 16px;
+    }
+
+    .property-group {
+      margin-bottom: 15px;
+    }
+
+    .property-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .property-group input,
+    .property-group select,
+    .property-group textarea {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .property-group input[type="color"] {
+      height: 40px;
+      cursor: pointer;
+    }
+
+    .property-group textarea {
+      min-height: 100px;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+    }
+
+    /* Canvas Area */
+    .canvas-container {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 350px;
+      bottom: 0;
+      overflow: auto;
+      background: #1a1a1a;
+      transition: right 0.3s;
+    }
+
+    .canvas-container.panel-hidden {
+      right: 0;
+    }
+
+    .canvas {
+      transform-origin: 0 0;
+      min-height: 100%;
+      position: relative;
+    }
+
+    /* Iframe for preview */
+    #preview-frame {
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: white;
+    }
+
+    /* Element Selector Overlay */
+    .element-selector {
+      position: absolute;
+      pointer-events: none;
+      border: 2px dashed #22ff99;
+      background: rgba(34, 255, 153, 0.1);
+      z-index: 9998;
+      display: none;
+    }
+
+    .element-selector.active {
+      display: block;
+    }
+
+    .element-label {
+      position: absolute;
+      top: -25px;
+      left: 0;
+      background: #22ff99;
+      color: #000;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* Draggable Handles */
+    .drag-handle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #22ff99;
+      border: 2px solid #000;
+      border-radius: 50%;
+      cursor: move;
+      z-index: 9999;
+      display: none;
+    }
+
+    .drag-handle.active {
+      display: block;
+    }
+
+    .resize-handle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ff5555;
+      border: 1px solid #000;
+      z-index: 9999;
+      display: none;
+    }
+
+    .resize-handle.active {
+      display: block;
+    }
+
+    .resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+    .resize-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+    .resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+    .resize-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+
+    /* Code Preview */
+    .code-preview {
+      background: #1a1a1a;
+      padding: 15px;
+      max-height: 300px;
+      overflow: auto;
+    }
+
+    .code-preview pre {
+      margin: 0;
+      color: #22ff99;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Element List */
+    .element-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .element-item {
+      padding: 10px;
+      background: #1a1a1a;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .element-item:hover {
+      background: #252525;
+    }
+
+    .element-item.selected {
+      background: #22ff99;
+      color: #000;
+    }
+
+    .element-item .tag {
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .element-item .id {
+      color: #ff5555;
+      font-size: 11px;
+    }
+
+    .element-item .class {
+      color: #5599ff;
+      font-size: 11px;
+    }
+
+    /* Loading Overlay */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      font-size: 20px;
+    }
+
+    .loading.hidden {
+      display: none;
+    }
+
+    /* Toast Notifications */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22ff99;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Add Element Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10003;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+      color: #22ff99;
+    }
+
+    .modal-content button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #22ff99;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .modal-content button:hover {
+      background: #1aee88;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading" id="loading">
+    <div>Loading Chess Game...</div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <button id="selectMode" class="active">Select Mode</button>
+      <button id="dragMode">Drag Mode</button>
+      <button id="resizeMode">Resize Mode</button>
+    </div>
+    
+    <div class="toolbar-group">
+      <label>Zoom:</label>
+      <input type="range" id="zoomSlider" min="25" max="200" value="100" step="5"/>
+      <span id="zoomValue">100%</span>
+    </div>
+    
+    <div class="toolbar-group">
+      <button id="addElement">+ Add Element</button>
+      <button id="duplicateElement">Duplicate</button>
+      <button id="deleteElement">Delete</button>
+    </div>
+    
+    <div class="toolbar-group">
+      <button id="undoBtn">↶ Undo</button>
+      <button id="redoBtn">↷ Redo</button>
+    </div>
+    
+    <div class="toolbar-group">
+      <button id="togglePanel">Toggle Panel</button>
+      <button id="exportCSS">💾 Export CSS</button>
+      <button id="applyChanges">✓ Apply & Save</button>
+    </div>
+  </div>
+
+  <!-- Side Panel -->
+  <div class="side-panel" id="sidePanel">
+    <!-- Element List -->
+    <div class="panel-section">
+      <h3>📋 Elements</h3>
+      <div class="element-list" id="elementList">
+        <div style="color: #888; text-align: center; padding: 20px;">
+          Loading elements...
+        </div>
+      </div>
+    </div>
+
+    <!-- Properties -->
+    <div class="panel-section">
+      <h3>🎨 Properties</h3>
+      <div id="propertiesPanel">
+        <p style="color: #888;">Select an element to edit properties</p>
+      </div>
+    </div>
+
+    <!-- Custom CSS -->
+    <div class="panel-section">
+      <h3>✨ Custom CSS</h3>
+      <div class="property-group">
+        <label>Custom Styles (will be applied to selected element)</label>
+        <textarea id="customCSS" placeholder="color: red;&#10;font-size: 20px;&#10;..."></textarea>
+        <button style="margin-top: 10px; width: 100%; padding: 8px; background: #22ff99; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;" onclick="applyCustomCSS()">Apply Custom CSS</button>
+      </div>
+    </div>
+
+    <!-- Generated Code -->
+    <div class="panel-section">
+      <h3>📝 Generated CSS</h3>
+      <div class="code-preview">
+        <pre id="generatedCode">/* CSS changes will appear here */</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas Container -->
+  <div class="canvas-container" id="canvasContainer">
+    <div class="canvas" id="canvas">
+      <iframe id="preview-frame" src="./index.html"></iframe>
+    </div>
+  </div>
+
+  <!-- Element Selector Overlay -->
+  <div class="element-selector" id="elementSelector">
+    <div class="element-label" id="elementLabel"></div>
+  </div>
+
+  <!-- Drag & Resize Handles -->
+  <div class="drag-handle" id="dragHandle"></div>
+  <div class="resize-handle nw" id="resizeNW"></div>
+  <div class="resize-handle ne" id="resizeNE"></div>
+  <div class="resize-handle sw" id="resizeSW"></div>
+  <div class="resize-handle se" id="resizeSE"></div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Add Element Modal -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <h2>Add New Element</h2>
+      <div class="property-group">
+        <label>Element Type</label>
+        <select id="newElementType">
+          <option value="div">Div</option>
+          <option value="button">Button</option>
+          <option value="span">Span</option>
+          <option value="p">Paragraph</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="img">Image</option>
+          <option value="input">Input</option>
+        </select>
+      </div>
+      <div class="property-group">
+        <label>ID (optional)</label>
+        <input type="text" id="newElementId" placeholder="my-element"/>
+      </div>
+      <div class="property-group">
+        <label>Class (optional)</label>
+        <input type="text" id="newElementClass" placeholder="my-class"/>
+      </div>
+      <div class="property-group">
+        <label>Text Content (optional)</label>
+        <input type="text" id="newElementText" placeholder="Hello World"/>
+      </div>
+      <button onclick="createNewElement()">Create Element</button>
+      <button onclick="closeModal()" style="background: #444; margin-left: 10px;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== STATE =====
+    let selectedElement = null;
+    let mode = 'select'; // 'select', 'drag', 'resize'
+    let zoom = 1;
+    let isDragging = false;
+    let isResizing = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let elementStartX = 0;
+    let elementStartY = 0;
+    let cssChanges = {};
+    let history = [];
+    let historyIndex = -1;
+    let iframe = null;
+    let iframeDoc = null;
+
+    // ===== INITIALIZATION =====
+    window.addEventListener('DOMContentLoaded', () => {
+      iframe = document.getElementById('preview-frame');
+      
+      iframe.addEventListener('load', () => {
+        iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        setTimeout(() => {
+          initEditor();
+          document.getElementById('loading').classList.add('hidden');
+        }, 500);
+      });
+
+      // Toolbar buttons
+      document.getElementById('selectMode').addEventListener('click', () => setMode('select'));
+      document.getElementById('dragMode').addEventListener('click', () => setMode('drag'));
+      document.getElementById('resizeMode').addEventListener('click', () => setMode('resize'));
+      document.getElementById('zoomSlider').addEventListener('input', handleZoom);
+      document.getElementById('addElement').addEventListener('click', () => {
+        document.getElementById('addModal').classList.add('show');
+      });
+      document.getElementById('duplicateElement').addEventListener('click', duplicateElement);
+      document.getElementById('deleteElement').addEventListener('click', deleteElement);
+      document.getElementById('undoBtn').addEventListener('click', undo);
+      document.getElementById('redoBtn').addEventListener('click', redo);
+      document.getElementById('togglePanel').addEventListener('click', togglePanel);
+      document.getElementById('exportCSS').addEventListener('click', exportCSS);
+      document.getElementById('applyChanges').addEventListener('click', applyChanges);
+    });
+
+    function initEditor() {
+      console.log('Initializing editor...');
+      
+      // Build element tree
+      buildElementList();
+      
+      // Add click handlers to iframe elements
+      iframeDoc.body.addEventListener('click', handleElementClick);
+      iframeDoc.body.addEventListener('mouseover', handleElementHover);
+      iframeDoc.body.addEventListener('mouseout', handleElementOut);
+      
+      showToast('Editor ready! Click any element to edit.');
+    }
+
+    // ===== MODE SWITCHING =====
+    function setMode(newMode) {
+      mode = newMode;
+      document.querySelectorAll('.toolbar button').forEach(btn => btn.classList.remove('active'));
+      if (newMode === 'select') document.getElementById('selectMode').classList.add('active');
+      if (newMode === 'drag') document.getElementById('dragMode').classList.add('active');
+      if (newMode === 'resize') document.getElementById('resizeMode').classList.add('active');
+      
+      updateHandles();
+    }
+
+    // ===== ELEMENT SELECTION =====
+    function handleElementClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectElement(e.target);
+    }
+
+    function handleElementHover(e) {
+      if (selectedElement === e.target) return;
+      highlightElement(e.target);
+    }
+
+    function handleElementOut(e) {
+      if (selectedElement !== e.target) {
+        document.getElementById('elementSelector').classList.remove('active');
+      }
+    }
+
+    function selectElement(element) {
+      selectedElement = element;
+      highlightElement(element);
+      updatePropertiesPanel(element);
+      updateHandles();
+      
+      // Highlight in element list
+      document.querySelectorAll('.element-item').forEach(item => {
+        item.classList.remove('selected');
+        if (item.dataset.element === getElementPath(element)) {
+          item.classList.add('selected');
+        }
+      });
+    }
+
+    function highlightElement(element) {
+      const rect = element.getBoundingClientRect();
+      const iframeRect = iframe.getBoundingClientRect();
+      const selector = document.getElementById('elementSelector');
+      const label = document.getElementById('elementLabel');
+      
+      selector.style.left = (iframeRect.left + rect.left) + 'px';
+      selector.style.top = (iframeRect.top + rect.top + iframe.contentWindow.scrollY) + 'px';
+      selector.style.width = rect.width + 'px';
+      selector.style.height = rect.height + 'px';
+      selector.classList.add('active');
+      
+      label.textContent = getElementLabel(element);
+    }
+
+    function getElementLabel(element) {
+      let label = element.tagName.toLowerCase();
+      if (element.id) label += '#' + element.id;
+      if (element.className) label += '.' + element.className.split(' ').join('.');
+      return label;
+    }
+
+    function getElementPath(element) {
+      let path = element.tagName.toLowerCase();
+      if (element.id) path += '#' + element.id;
+      return path;
+    }
+
+    // ===== ELEMENT LIST =====
+    function buildElementList() {
+      const listContainer = document.getElementById('elementList');
+      listContainer.innerHTML = '';
+      
+      const elements = iframeDoc.body.querySelectorAll('*');
+      const interactiveElements = Array.from(elements).filter(el => {
+        // Filter out script, style, and other non-visual elements
+        const tag = el.tagName.toLowerCase();
+        return !['script', 'style', 'link', 'meta', 'title'].includes(tag);
+      });
+      
+      interactiveElements.forEach(element => {
+        const item = document.createElement('div');
+        item.className = 'element-item';
+        item.dataset.element = getElementPath(element);
+        
+        const tag = element.tagName.toLowerCase();
+        const id = element.id ? `#${element.id}` : '';
+        const classes = element.className ? `.${element.className.split(' ').join('.')}` : '';
+        
+        item.innerHTML = `
+          <div>
+            <span class="tag">${tag}</span>
+            <span class="id">${id}</span>
+            <span class="class">${classes}</span>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selectElement(element);
+        });
+        
+        listContainer.appendChild(item);
+      });
+    }
+
+    // ===== PROPERTIES PANEL =====
+    function updatePropertiesPanel(element) {
+      const panel = document.getElementById('propertiesPanel');
+      const computed = iframeDoc.defaultView.getComputedStyle(element);
+      
+      panel.innerHTML = `
+        <div class="property-group">
+          <label>Position</label>
+          <select onchange="updateProperty('position', this.value)">
+            <option value="static" ${computed.position === 'static' ? 'selected' : ''}>Static</option>
+            <option value="relative" ${computed.position === 'relative' ? 'selected' : ''}>Relative</option>
+            <option value="absolute" ${computed.position === 'absolute' ? 'selected' : ''}>Absolute</option>
+            <option value="fixed" ${computed.position === 'fixed' ? 'selected' : ''}>Fixed</option>
+          </select>
+        </div>
+        
+        <div class="property-group">
+          <label>Width</label>
+          <input type="text" value="${element.style.width || computed.width}" onchange="updateProperty('width', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Height</label>
+          <input type="text" value="${element.style.height || computed.height}" onchange="updateProperty('height', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Background Color</label>
+          <input type="color" value="${rgbToHex(computed.backgroundColor)}" onchange="updateProperty('backgroundColor', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Text Color</label>
+          <input type="color" value="${rgbToHex(computed.color)}" onchange="updateProperty('color', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Font Size</label>
+          <input type="text" value="${computed.fontSize}" onchange="updateProperty('fontSize', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Font Weight</label>
+          <select onchange="updateProperty('fontWeight', this.value)">
+            <option value="normal" ${computed.fontWeight === 'normal' || computed.fontWeight === '400' ? 'selected' : ''}>Normal</option>
+            <option value="bold" ${computed.fontWeight === 'bold' || computed.fontWeight === '700' ? 'selected' : ''}>Bold</option>
+            <option value="lighter" ${computed.fontWeight === 'lighter' ? 'selected' : ''}>Lighter</option>
+          </select>
+        </div>
+        
+        <div class="property-group">
+          <label>Padding</label>
+          <input type="text" value="${computed.padding}" onchange="updateProperty('padding', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Margin</label>
+          <input type="text" value="${computed.margin}" onchange="updateProperty('margin', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Border</label>
+          <input type="text" value="${computed.border}" onchange="updateProperty('border', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Border Radius</label>
+          <input type="text" value="${computed.borderRadius}" onchange="updateProperty('borderRadius', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Opacity</label>
+          <input type="range" min="0" max="1" step="0.1" value="${computed.opacity}" onchange="updateProperty('opacity', this.value)"/>
+        </div>
+        
+        <div class="property-group">
+          <label>Display</label>
+          <select onchange="updateProperty('display', this.value)">
+            <option value="block" ${computed.display === 'block' ? 'selected' : ''}>Block</option>
+            <option value="inline" ${computed.display === 'inline' ? 'selected' : ''}>Inline</option>
+            <option value="inline-block" ${computed.display === 'inline-block' ? 'selected' : ''}>Inline Block</option>
+            <option value="flex" ${computed.display === 'flex' ? 'selected' : ''}>Flex</option>
+            <option value="grid" ${computed.display === 'grid' ? 'selected' : ''}>Grid</option>
+            <option value="none" ${computed.display === 'none' ? 'selected' : ''}>None</option>
+          </select>
+        </div>
+        
+        <div class="property-group">
+          <label>Z-Index</label>
+          <input type="number" value="${computed.zIndex !== 'auto' ? computed.zIndex : 0}" onchange="updateProperty('zIndex', this.value)"/>
+        </div>
+      `;
+    }
+
+    function updateProperty(property, value) {
+      if (!selectedElement) return;
+      
+      saveHistory();
+      selectedElement.style[property] = value;
+      
+      // Track changes
+      const selector = getElementSelector(selectedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector][property] = value;
+      
+      updateGeneratedCSS();
+      showToast(`Updated ${property}`);
+    }
+
+    function applyCustomCSS() {
+      if (!selectedElement) {
+        showToast('Please select an element first!');
+        return;
+      }
+      
+      const customCSS = document.getElementById('customCSS').value;
+      if (!customCSS.trim()) return;
+      
+      saveHistory();
+      
+      // Parse and apply CSS
+      const rules = customCSS.split(';').filter(r => r.trim());
+      rules.forEach(rule => {
+        const [property, value] = rule.split(':').map(s => s.trim());
+        if (property && value) {
+          selectedElement.style[property] = value;
+          
+          // Track changes
+          const selector = getElementSelector(selectedElement);
+          if (!cssChanges[selector]) cssChanges[selector] = {};
+          cssChanges[selector][property] = value;
+        }
+      });
+      
+      updateGeneratedCSS();
+      showToast('Custom CSS applied!');
+    }
+
+    function getElementSelector(element) {
+      if (element.id) return '#' + element.id;
+      if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.trim()).join('.');
+        if (classes) return '.' + classes;
+      }
+      return element.tagName.toLowerCase();
+    }
+
+    function updateGeneratedCSS() {
+      let css = '/* Generated CSS - Copy to styles.css */\n\n';
+      
+      Object.keys(cssChanges).forEach(selector => {
+        css += `${selector} {\n`;
+        Object.keys(cssChanges[selector]).forEach(property => {
+          const kebabProperty = property.replace(/([A-Z])/g, '-$1').toLowerCase();
+          css += `  ${kebabProperty}: ${cssChanges[selector][property]};\n`;
+        });
+        css += '}\n\n';
+      });
+      
+      document.getElementById('generatedCode').textContent = css;
+    }
+
+    // ===== DRAG & RESIZE =====
+    function updateHandles() {
+      const dragHandle = document.getElementById('dragHandle');
+      const resizeHandles = [
+        document.getElementById('resizeNW'),
+        document.getElementById('resizeNE'),
+        document.getElementById('resizeSW'),
+        document.getElementById('resizeSE')
+      ];
+      
+      if (!selectedElement || mode === 'select') {
+        dragHandle.classList.remove('active');
+        resizeHandles.forEach(h => h.classList.remove('active'));
+        return;
+      }
+      
+      const rect = selectedElement.getBoundingClientRect();
+      const iframeRect = iframe.getBoundingClientRect();
+      
+      if (mode === 'drag') {
+        dragHandle.classList.add('active');
+        dragHandle.style.left = (iframeRect.left + rect.left + rect.width / 2 - 5) + 'px';
+        dragHandle.style.top = (iframeRect.top + rect.top + rect.height / 2 - 5) + 'px';
+        resizeHandles.forEach(h => h.classList.remove('active'));
+        
+        dragHandle.onmousedown = startDrag;
+      }
+      
+      if (mode === 'resize') {
+        dragHandle.classList.remove('active');
+        resizeHandles.forEach(h => h.classList.add('active'));
+        
+        resizeHandles[0].style.left = (iframeRect.left + rect.left - 4) + 'px';
+        resizeHandles[0].style.top = (iframeRect.top + rect.top - 4) + 'px';
+        
+        resizeHandles[1].style.left = (iframeRect.left + rect.right - 4) + 'px';
+        resizeHandles[1].style.top = (iframeRect.top + rect.top - 4) + 'px';
+        
+        resizeHandles[2].style.left = (iframeRect.left + rect.left - 4) + 'px';
+        resizeHandles[2].style.top = (iframeRect.top + rect.bottom - 4) + 'px';
+        
+        resizeHandles[3].style.left = (iframeRect.left + rect.right - 4) + 'px';
+        resizeHandles[3].style.top = (iframeRect.top + rect.bottom - 4) + 'px';
+        
+        resizeHandles.forEach(h => h.onmousedown = startResize);
+      }
+    }
+
+    function startDrag(e) {
+      if (!selectedElement) return;
+      
+      // Make element absolute if it isn't already
+      if (getComputedStyle(selectedElement).position === 'static') {
+        selectedElement.style.position = 'relative';
+      }
+      
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      
+      const currentLeft = parseInt(selectedElement.style.left) || 0;
+      const currentTop = parseInt(selectedElement.style.top) || 0;
+      elementStartX = currentLeft;
+      elementStartY = currentTop;
+      
+      document.addEventListener('mousemove', doDrag);
+      document.addEventListener('mouseup', stopDrag);
+      
+      saveHistory();
+    }
+
+    function doDrag(e) {
+      if (!isDragging) return;
+      
+      const deltaX = e.clientX - dragStartX;
+      const deltaY = e.clientY - dragStartY;
+      
+      selectedElement.style.left = (elementStartX + deltaX) + 'px';
+      selectedElement.style.top = (elementStartY + deltaY) + 'px';
+      
+      updateHandles();
+      highlightElement(selectedElement);
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      document.removeEventListener('mousemove', doDrag);
+      document.removeEventListener('mouseup', stopDrag);
+      
+      // Track changes
+      const selector = getElementSelector(selectedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector].left = selectedElement.style.left;
+      cssChanges[selector].top = selectedElement.style.top;
+      cssChanges[selector].position = selectedElement.style.position;
+      
+      updateGeneratedCSS();
+    }
+
+    function startResize(e) {
+      if (!selectedElement) return;
+      
+      isResizing = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      
+      const rect = selectedElement.getBoundingClientRect();
+      elementStartX = rect.width;
+      elementStartY = rect.height;
+      
+      document.addEventListener('mousemove', doResize);
+      document.addEventListener('mouseup', stopResize);
+      
+      saveHistory();
+    }
+
+    function doResize(e) {
+      if (!isResizing) return;
+      
+      const deltaX = e.clientX - dragStartX;
+      const deltaY = e.clientY - dragStartY;
+      
+      selectedElement.style.width = Math.max(10, elementStartX + deltaX) + 'px';
+      selectedElement.style.height = Math.max(10, elementStartY + deltaY) + 'px';
+      
+      updateHandles();
+      highlightElement(selectedElement);
+    }
+
+    function stopResize() {
+      isResizing = false;
+      document.removeEventListener('mousemove', doResize);
+      document.removeEventListener('mouseup', stopResize);
+      
+      // Track changes
+      const selector = getElementSelector(selectedElement);
+      if (!cssChanges[selector]) cssChanges[selector] = {};
+      cssChanges[selector].width = selectedElement.style.width;
+      cssChanges[selector].height = selectedElement.style.height;
+      
+      updateGeneratedCSS();
+    }
+
+    // ===== ZOOM =====
+    function handleZoom(e) {
+      zoom = e.target.value / 100;
+      document.getElementById('zoomValue').textContent = e.target.value + '%';
+      document.getElementById('canvas').style.transform = `scale(${zoom})`;
+    }
+
+    // ===== ELEMENT OPERATIONS =====
+    function createNewElement() {
+      const type = document.getElementById('newElementType').value;
+      const id = document.getElementById('newElementId').value;
+      const className = document.getElementById('newElementClass').value;
+      const text = document.getElementById('newElementText').value;
+      
+      const newEl = iframeDoc.createElement(type);
+      if (id) newEl.id = id;
+      if (className) newEl.className = className;
+      if (text) newEl.textContent = text;
+      
+      // Set some default styles
+      newEl.style.padding = '10px';
+      newEl.style.margin = '10px';
+      newEl.style.border = '1px solid #ccc';
+      newEl.style.display = 'block';
+      
+      iframeDoc.body.appendChild(newEl);
+      buildElementList();
+      closeModal();
+      showToast('Element created!');
+    }
+
+    function duplicateElement() {
+      if (!selectedElement) {
+        showToast('Select an element first!');
+        return;
+      }
+      
+      saveHistory();
+      const clone = selectedElement.cloneNode(true);
+      selectedElement.parentNode.insertBefore(clone, selectedElement.nextSibling);
+      buildElementList();
+      showToast('Element duplicated!');
+    }
+
+    function deleteElement() {
+      if (!selectedElement) {
+        showToast('Select an element first!');
+        return;
+      }
+      
+      if (confirm('Delete this element?')) {
+        saveHistory();
+        selectedElement.remove();
+        selectedElement = null;
+        document.getElementById('elementSelector').classList.remove('active');
+        buildElementList();
+        showToast('Element deleted!');
+      }
+    }
+
+    // ===== HISTORY =====
+    function saveHistory() {
+      const state = iframeDoc.body.innerHTML;
+      historyIndex++;
+      history = history.slice(0, historyIndex);
+      history.push(state);
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        iframeDoc.body.innerHTML = history[historyIndex];
+        buildElementList();
+        showToast('Undo');
+      }
+    }
+
+    function redo() {
+      if (historyIndex < history.length - 1) {
+        historyIndex++;
+        iframeDoc.body.innerHTML = history[historyIndex];
+        buildElementList();
+        showToast('Redo');
+      }
+    }
+
+    // ===== UTILITIES =====
+    function rgbToHex(rgb) {
+      if (!rgb || rgb === 'rgba(0, 0, 0, 0)') return '#000000';
+      const result = rgb.match(/\d+/g);
+      if (!result) return '#000000';
+      return '#' + result.slice(0, 3).map(x => {
+        const hex = parseInt(x).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function togglePanel() {
+      document.getElementById('sidePanel').classList.toggle('hidden');
+      document.getElementById('canvasContainer').classList.toggle('panel-hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('addModal').classList.remove('show');
+    }
+
+    function exportCSS() {
+      const css = document.getElementById('generatedCode').textContent;
+      const blob = new Blob([css], { type: 'text/css' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'chess-custom-styles.css';
+      a.click();
+      showToast('CSS exported!');
+    }
+
+    function applyChanges() {
+      if (confirm('Apply changes and save to styles.css?\n\nThis will update your actual CSS file.')) {
+        const css = document.getElementById('generatedCode').textContent;
+        
+        // Send to server to save
+        fetch('/api/save-css', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ css: css })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            showToast('✓ Changes saved successfully!');
+          } else {
+            alert('Error saving: ' + data.error);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(css);
+          showToast('Copied to clipboard! Paste manually into styles.css');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

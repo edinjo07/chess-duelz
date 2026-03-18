@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Deposit — Chess Duelz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1115;--panel:#171a21;--panel2:#1e232d;--text:#e9eef5;--muted:#9aa4b2;--accent:#2bb1ff;--border:#2a3140;--success:#2ecc71;--warn:#ffb020;--danger:#ff5c5c}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}h1{margin:0 0 14px;font-size:22px;display:flex;align-items:center;gap:12px}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:1200px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin-top:12px}.kv .k{color:var(--muted)}.kv .v{justify-self:end;text-align:right}
+  .mono{font-family:ui-monospace,monospace;word-break:break-all}
+  .select,.input{background:#0e1218;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;outline:0;font-family:inherit;width:100%;transition:border .3s}
+  .select:focus,.input:focus{border-color:var(--accent)}
+  .select{appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%239aa4b2" d="M5 7l5 6 5-6z"/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:36px}
+  .btn{background:#11151c;border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:10px;cursor:pointer;font:inherit;font-size:14px;font-weight:600;transition:all .3s}
+  .btn:hover{background:#1a1f28;border-color:var(--accent)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#00121e}
+  .btn.primary:hover{background:#3bc0ff}.btn:disabled{opacity:.5;cursor:not-allowed}.btn:disabled:hover{background:#11151c;border-color:var(--border)}
+  .addr-box{background:#0e1218;border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:8px}
+  .qr{width:100%;max-width:220px;aspect-ratio:1;border:1px dashed var(--border);border-radius:12px;display:grid;place-items:center;color:var(--muted);margin:16px auto;overflow:hidden;background:#0a0d12}
+  .qr canvas{width:100%!important;height:100%!important;border-radius:10px}
+  .progress{background:#0d1118;border:1px solid var(--border);height:8px;border-radius:999px;overflow:hidden;margin-top:8px}
+  .progress>div{height:100%;background:var(--accent);width:0%;transition:width .5s}
+  .dots{display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center}
+  .dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid var(--border);transition:all .3s}
+  .dot.active{background:var(--accent);border-color:var(--accent)}
+  .link{color:var(--accent);text-decoration:none;transition:opacity .3s}.link:hover{text-decoration:underline;opacity:.8}
+  .copy{display:inline-block;margin-left:8px;color:var(--success);font-size:12px}
+  .status-badge{display:inline-block;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600}
+  .status-waiting{background:rgba(255,176,32,.15);color:var(--warn)}.status-pending{background:rgba(43,177,255,.15);color:var(--accent)}
+  .status-confirmed{background:rgba(46,204,113,.15);color:var(--success)}.status-error{background:rgba(255,92,92,.15);color:var(--danger)}
+  .recent-tx{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px}
+  .tx-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(42,49,64,.5);transition:background .3s}
+  .tx-row:hover{background:rgba(43,177,255,.05)}.tx-row:last-child{border-bottom:none}
+  .tx-hash{font-family:monospace;font-size:11px;color:var(--muted);margin-top:4px}
+  .alert{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:14px}
+  .alert-error{background:rgba(255,92,92,.15);border:1px solid var(--danger);color:var(--danger)}
+  .loading{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .balance-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(42,49,64,.3)}
+  .balance-row:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>
+    <span>💰 Deposit Crypto</span>
+    <button onclick="window.location.href='/dashboard.html'" class="btn" style="margin-left:auto;font-size:13px">← Back</button>
+  </h1>
+
+  <div id="auth-error" class="alert alert-error" style="display:none">
+    ⚠️ Please <a href="/login.html" style="color:inherit;text-decoration:underline">log in</a> to make deposits.
+  </div>
+
+  <div id="main-content" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <div class="title">1. Choose cryptocurrency</div>
+        <select id="asset" class="select">
+          <option value="BTC">Bitcoin (BTC)</option>
+          <option value="ETH">Ethereum (ETH)</option>
+          <option value="USDT">Tether (USDT)</option>
+          <option value="USDC">USD Coin (USDC)</option>
+        </select>
+
+        <div class="kv">
+          <div class="k">Minimum</div><div class="v" id="min-deposit">$10</div>
+          <div class="k">Confirmations</div><div class="v" id="required-conf">2</div>
+        </div>
+
+        <div style="margin-top:24px">
+          <div class="title">2. Enter amount</div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:1">
+              <input type="number" id="amount-input" class="input" placeholder="Enter USD amount (e.g., 50)" min="0.0001" step="0.01" style="margin-bottom:8px">
+              <div style="font-size:12px;color:var(--muted)">Minimum: <span id="min-amount-text">$10</span></div>
+            </div>
+            <button id="create-btn" class="btn primary" style="padding:11px 20px">💳 Create</button>
+          </div>
+        </div>
+
+        <div id="payment-section" style="display:none;margin-top:24px">
+          <div class="title">3. Send to address</div>
+          <div class="addr-box">
+            <div id="addr" class="mono" style="font-size:12px"></div>
+          </div>
+
+          <div class="row" style="margin-top:12px;justify-content:center">
+            <button id="copy-btn" class="btn">📋 Copy</button>
+            <span id="copied" class="copy" style="display:none">✓ Copied!</span>
+          </div>
+
+          <div id="qr-box" class="qr"><div class="loading"></div></div>
+
+          <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">
+            Send exactly <strong id="pay-amount" style="color:var(--text)">...</strong>
+          </div>
+
+          <a id="explorer-link" href="#" target="_blank" class="link" style="display:block;text-align:center;margin-top:8px;font-size:13px">View on explorer ↗</a>
+        </div>
+
+        <div style="margin-top:24px">
+          <div class="title">Your balances</div>
+          <div id="balances-list" style="margin-top:8px">
+            <div style="color:var(--muted);font-size:13px">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title">Payment status</div>
+        
+        <div class="kv" style="margin-top:0">
+          <div class="k">Status</div>
+          <div class="v"><span id="status" class="status-badge status-waiting">Ready</span></div>
+          <div class="k">Confirmations</div>
+          <div class="v"><span id="confirms">0</span>/<span id="need">—</span></div>
+        </div>
+
+        <div class="progress"><div id="progress-bar"></div></div>
+        <div class="dots" id="dots"></div>
+
+        <div id="status-message" style="margin-top:16px;padding:12px;background:var(--panel2);border-radius:8px;font-size:13px;text-align:center;color:var(--muted)">
+          Create a deposit to see status
+        </div>
+
+        <div style="margin-top:32px">
+          <div class="title">Recent deposits</div>
+          <div id="recent-list" style="margin-top:8px">
+            <div style="color:var(--muted);font-size:13px">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+(function(){'use strict';const $=s=>document.querySelector(s);const authError=$('#auth-error'),mainContent=$('#main-content'),assetSel=$('#asset'),minLbl=$('#min-deposit'),needLbl=$('#required-conf'),createBtn=$('#create-btn'),paymentSection=$('#payment-section'),addrLbl=$('#addr'),copyBtn=$('#copy-btn'),copied=$('#copied'),qrBox=$('#qr-box'),payAmount=$('#pay-amount'),explorerLink=$('#explorer-link'),balancesList=$('#balances-list'),statusLbl=$('#status'),confirmsLbl=$('#confirms'),needConfLbl=$('#need'),progressBar=$('#progress-bar'),dots=$('#dots'),statusMessage=$('#status-message'),recentList=$('#recent-list');let currentPaymentId=null,pollTimer=null,config=null;function getToken(){return localStorage.getItem('accessToken')||sessionStorage.getItem('accessToken')||localStorage.getItem('token')}function isLoggedIn(){return!!getToken()}async function apiCall(method,path,body=null){const token=getToken();const headers={'Content-Type':'application/json'};if(token){headers['Authorization']=`Bearer ${token}`}else{headers['x-user-id']='1'}const options={method,headers,...(body&&{body:JSON.stringify(body)})};const res=await fetch(path,options);const text=await res.text();if(!res.ok){throw new Error(text||`HTTP ${res.status}`)}return text?JSON.parse(text):{}}function setStatus(text,type='waiting'){statusLbl.textContent=text;statusLbl.className=`status-badge status-${type}`}function setProgress(current,required){confirmsLbl.textContent=String(current);needConfLbl.textContent=String(required);const pct=required>0?Math.min(100,(current/required)*100):0;progressBar.style.width=pct+'%';renderDots(current,required)}function renderDots(current,required){dots.innerHTML='';const count=Math.min(required||0,10);for(let i=0;i<count;i++){const dot=document.createElement('div');dot.className='dot'+(i<current?' active':'');dots.appendChild(dot)}}function showError(message){alert('❌ '+message)}async function loadConfig(){try{config=await apiCall('GET','/api/deposit/config');const asset=assetSel.value;const minAmount=config.minimums[asset]||10;minLbl.textContent=minAmount>=1?`$${minAmount}`:`$${minAmount.toFixed(4)}`;needLbl.textContent=String(config.confirmations[asset]||12);setProgress(0,config.confirmations[asset]||12);document.getElementById('min-amount-text').textContent=minAmount>=1?`$${minAmount}`:`$${minAmount.toFixed(4)}`;document.getElementById('amount-input').min=minAmount}catch(err){console.error('Config error:',err);minLbl.textContent='$10';needLbl.textContent='12'}}async function loadBalances(){try{const data=await apiCall('GET','/api/deposit/balances');const balances=data.balances||[];if(balances.length===0){balancesList.innerHTML='<div style="color:var(--muted);font-size:13px">No balances</div>';return}balancesList.innerHTML=balances.map(b=>`<div class="balance-row"><div style="font-weight:600">${b.asset}</div><div style="font-family:monospace">${b.available}</div></div>`).join('')}catch(err){console.error('Balances error:',err);balancesList.innerHTML='<div style="color:var(--danger);font-size:13px">Failed to load</div>'}}async function loadRecent(){try{const data=await apiCall('GET','/api/deposit/recent');const items=data.items||[];if(items.length===0){recentList.innerHTML='<div style="color:var(--muted);font-size:13px">No deposits</div>';return}recentList.innerHTML='<div class="recent-tx">'+items.map(it=>{const currency=(it.payCurrency||'crypto').toUpperCase();const status=it.status||'pending';const date=it.createdAt?new Date(it.createdAt).toLocaleDateString():'N/A';const amount=it.priceAmount?`$${parseFloat(it.priceAmount).toFixed(2)}`:'N/A';return`<div class="tx-row"><div><div style="font-weight:600">${currency} • ${status}</div><div class="tx-hash">ID:${it.paymentId}</div></div><div style="text-align:right"><div>${amount}</div><div style="font-size:11px;color:var(--muted)">${date}</div></div></div>`}).join('')+'</div>'}catch(err){console.error('Recent error:',err);recentList.innerHTML='<div style="color:var(--muted);font-size:13px">Unable to load</div>'}}async function createDeposit(){const asset=assetSel.value;const minText=minLbl.textContent.replace('$','');const minAmount=parseFloat(minText)||10;const amountInput=document.getElementById('amount-input');const amount=parseFloat(amountInput.value);if(!amount||amount<=0){showError('Please enter a valid amount');amountInput.focus();return}if(amount<minAmount){showError(`Amount too low. Minimum is $${minAmount}`);amountInput.focus();return}createBtn.disabled=true;createBtn.innerHTML='<span class="loading"></span> Creating...';setStatus('Creating...','pending');try{const payment=await apiCall('POST','/api/deposit/create',{asset,amountUsd:amount});currentPaymentId=payment.paymentId;addrLbl.textContent=payment.payAddress;payAmount.textContent=`${payment.payAmount} ${payment.payCurrency.toUpperCase()}`;qrBox.innerHTML='';if(typeof QRCode!=='undefined'){QRCode.toCanvas(payment.payAddress,{width:200,margin:1},(err,canvas)=>{if(!err&&canvas){qrBox.appendChild(canvas)}else{qrBox.innerHTML='<div class="mono" style="font-size:10px;padding:20px">'+payment.payAddress+'</div>'}})}else{qrBox.innerHTML='<div class="mono" style="font-size:10px;padding:20px">'+payment.payAddress+'</div>'}const explorers={'btc':a=>`https://mempool.space/address/${a}`,'eth':a=>`https://etherscan.io/address/${a}`,'usdt':a=>`https://etherscan.io/address/${a}`,'usdc':a=>`https://etherscan.io/address/${a}`};const explorerUrl=explorers[payment.payCurrency];if(explorerUrl){explorerLink.href=explorerUrl(payment.payAddress);explorerLink.style.display='block'}paymentSection.style.display='block';setStatus('Waiting','waiting');statusMessage.innerHTML=`<strong>Created!</strong><br>Send <strong>${payment.payAmount} ${payment.payCurrency.toUpperCase()}</strong>`;startPolling(payment.paymentId)}catch(err){console.error('Create error:',err);showError(err.message||'Failed');setStatus('Error','error')}finally{createBtn.disabled=false;createBtn.innerHTML='💳 Create'}}function startPolling(paymentId){if(pollTimer)clearInterval(pollTimer);async function poll(){try{const status=await apiCall('GET',`/api/deposit/status?paymentId=${paymentId}`);const statusMap={'waiting':['Waiting','waiting','Waiting for payment'],'confirming':['Confirming','pending','Confirming transaction'],'confirmed':['Confirmed','pending','Transaction confirmed'],'sending':['Processing','pending','Processing payment'],'finished':['Completed','confirmed','Payment completed ✅'],'credited':['Credited','confirmed','Balance credited ✅'],'failed':['Failed','error','Payment failed'],'refunded':['Refunded','error','Payment refunded'],'expired':['Expired','error','Payment expired'],'partially_paid':['Partial','waiting','Partial payment received']};const[statusText,statusType,message]=statusMap[status.paymentStatus]||[status.paymentStatus,'waiting','Status: '+status.paymentStatus];setStatus(statusText,statusType);statusMessage.innerHTML=message;const confs=status.confirmations||0;const required=parseInt(needConfLbl.textContent)||12;setProgress(confs,required);if(['finished','credited','failed','refunded','expired'].includes(status.paymentStatus)){clearInterval(pollTimer);pollTimer=null;await loadBalances();await loadRecent()}}catch(err){console.error('Poll error:',err)}}poll();pollTimer=setInterval(poll,10000)}copyBtn.addEventListener('click',async()=>{const addr=addrLbl.textContent;if(!addr)return;try{await navigator.clipboard.writeText(addr);copied.style.display='inline-block';setTimeout(()=>copied.style.display='none',2000)}catch{showError('Copy failed')}});createBtn.addEventListener('click',createDeposit);assetSel.addEventListener('change',loadConfig);(async function init(){if(!isLoggedIn()){authError.style.display='block';return}mainContent.style.display='block';await loadConfig();await loadBalances();await loadRecent();setStatus('Ready','waiting')})()})();
+</script>
+</body>
+</html>

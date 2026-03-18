@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Exclusion - Chess Duelz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1923;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: rgba(15, 25, 35, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(177, 186, 211, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00e701;
+      text-decoration: none;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #00e701;
+      color: #000;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .page-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .page-subtitle {
+      font-size: 18px;
+      color: #b1bad3;
+      margin-bottom: 48px;
+    }
+
+    .warning-box {
+      background: rgba(220, 53, 69, 0.1);
+      border-left: 4px solid #dc3545;
+      padding: 20px;
+      margin-bottom: 32px;
+      border-radius: 8px;
+      color: #ff6b7a;
+    }
+
+    .exclusion-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .exclusion-card h2 {
+      color: #00e701;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .exclusion-card p {
+      color: #b1bad3;
+      margin-bottom: 16px;
+    }
+
+    .exclusion-card ul {
+      color: #b1bad3;
+      margin-left: 24px;
+      margin-bottom: 24px;
+    }
+
+    .exclusion-card li {
+      margin-bottom: 8px;
+    }
+
+    .exclusion-options {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .exclusion-option {
+      background: rgba(26, 44, 56, 0.5);
+      border: 2px solid rgba(177, 186, 211, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .exclusion-option:hover {
+      border-color: #00e701;
+      background: rgba(0, 231, 1, 0.05);
+    }
+
+    .exclusion-option input[type="radio"] {
+      margin-right: 12px;
+    }
+
+    .exclusion-option label {
+      cursor: pointer;
+      font-weight: 600;
+      display: block;
+    }
+
+    .exclusion-option .description {
+      color: #b1bad3;
+      font-size: 14px;
+      margin-top: 8px;
+      margin-left: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(26, 44, 56, 0.5);
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .form-checkbox {
+      margin-right: 8px;
+    }
+
+    .help-box {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid #00e701;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+
+    .help-box h3 {
+      color: #00e701;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">♟ Chess Duelz</a>
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Self-Exclusion</h1>
+    <p class="page-subtitle">Take control of your gaming by temporarily or permanently excluding yourself from Chess Duelz</p>
+
+    <div class="warning-box">
+      <strong>⚠️ Important:</strong> Self-exclusion is a serious step. Once activated, you will not be able to log in or play during the exclusion period. Please consider this carefully.
+    </div>
+
+    <div class="exclusion-card">
+      <h2>What is Self-Exclusion?</h2>
+      <p>Self-exclusion allows you to block yourself from accessing Chess Duelz for a specified period. This tool is designed to help players who feel they need a break from competitive chess.</p>
+      
+      <p><strong>During self-exclusion:</strong></p>
+      <ul>
+        <li>You will not be able to log into your account</li>
+        <li>You cannot deposit funds or play games</li>
+        <li>Marketing communications will be stopped</li>
+        <li>You can withdraw any existing balance</li>
+        <li>The exclusion cannot be reversed once activated</li>
+      </ul>
+    </div>
+
+    <div class="exclusion-card">
+      <h2>Choose Your Exclusion Period</h2>
+      
+      <div class="exclusion-options">
+        <div class="exclusion-option">
+          <label>
+            <input type="radio" name="exclusion" value="24h" id="opt-24h">
+            24 Hours
+            <div class="description">Take a short break and return tomorrow</div>
+          </label>
+        </div>
+
+        <div class="exclusion-option">
+          <label>
+            <input type="radio" name="exclusion" value="7d" id="opt-7d">
+            7 Days
+            <div class="description">One week away from gaming</div>
+          </label>
+        </div>
+
+        <div class="exclusion-option">
+          <label>
+            <input type="radio" name="exclusion" value="30d" id="opt-30d">
+            30 Days
+            <div class="description">Take a full month off</div>
+          </label>
+        </div>
+
+        <div class="exclusion-option">
+          <label>
+            <input type="radio" name="exclusion" value="90d" id="opt-90d">
+            90 Days
+            <div class="description">Extended break for 3 months</div>
+          </label>
+        </div>
+
+        <div class="exclusion-option">
+          <label>
+            <input type="radio" name="exclusion" value="permanent" id="opt-perm">
+            Permanent
+            <div class="description">Close your account permanently (cannot be undone)</div>
+          </label>
+        </div>
+      </div>
+
+      <div id="exclusionForm" style="display: none; margin-top: 32px;">
+        <div class="form-group">
+          <label class="form-label">Reason for Self-Exclusion (Optional)</label>
+          <textarea id="reason" class="form-input" rows="4" placeholder="Help us understand why you're taking this step..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" class="form-checkbox" id="confirmCheck" required>
+            I understand that I will not be able to access my account during the exclusion period
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" class="form-checkbox" id="withdrawCheck" required>
+            I understand that I can withdraw my balance but cannot deposit or play
+          </label>
+        </div>
+
+        <button class="btn btn-danger" id="submitBtn" disabled style="width: 100%; padding: 16px; font-size: 16px;">
+          Activate Self-Exclusion
+        </button>
+      </div>
+    </div>
+
+    <div class="help-box">
+      <h3>Need to Talk to Someone?</h3>
+      <p style="color: #b1bad3; margin-bottom: 16px;">If you're struggling with gaming problems, please reach out for help:</p>
+      <ul style="color: #b1bad3;">
+        <li><strong>National Problem Gambling Helpline:</strong> 1-800-522-4700</li>
+        <li><strong>Chess Duelz Support:</strong> <a href="/contact.html" style="color: #00e701;">Contact us</a></li>
+        <li><strong>Resources:</strong> <a href="/responsible-gaming.html" style="color: #00e701;">Responsible Gaming Guide</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const radios = document.querySelectorAll('input[name="exclusion"]');
+    const form = document.getElementById('exclusionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const confirmCheck = document.getElementById('confirmCheck');
+    const withdrawCheck = document.getElementById('withdrawCheck');
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        form.style.display = 'block';
+        submitBtn.disabled = true;
+      });
+    });
+
+    [confirmCheck, withdrawCheck].forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        submitBtn.disabled = !(confirmCheck.checked && withdrawCheck.checked);
+      });
+    });
+
+    submitBtn.addEventListener('click', () => {
+      const selected = document.querySelector('input[name="exclusion"]:checked');
+      const reason = document.getElementById('reason').value;
+
+      if (!selected) {
+        alert('Please select an exclusion period');
+        return;
+      }
+
+      if (!confirmCheck.checked || !withdrawCheck.checked) {
+        alert('Please confirm both checkboxes');
+        return;
+      }
+
+      const periods = {
+        '24h': '24 hours',
+        '7d': '7 days',
+        '30d': '30 days',
+        '90d': '90 days',
+        'permanent': 'permanent'
+      };
+
+      const period = periods[selected.value];
+      
+      if (confirm(`Are you sure you want to self-exclude for ${period}? This action cannot be undone.`)) {
+        // In a real implementation, this would call an API
+        alert(`Self-exclusion request submitted. You will be logged out and excluded for ${period}.`);
+        // window.location.href = '/logout';
+        
+        // For now, just redirect to home with message
+        alert('For security, please contact support to activate self-exclusion: support@treasurehunt.com');
+        window.location.href = '/contact.html';
+      }
+    });
+  </script>
+</body>
+</html>

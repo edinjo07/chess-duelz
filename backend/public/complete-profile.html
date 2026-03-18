@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Profile - Chess Duelz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --accent-hover: #00ff00;
+      --border-color: #2f4553;
+      --error-color: #ff4655;
+      --success-color: #00e701;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent-primary), #00b300);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .info-box {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid rgba(0, 231, 1, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .info-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .info-text {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .required {
+      color: var(--error-color);
+    }
+
+    .optional-badge {
+      background: var(--bg-tertiary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 231, 1, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #556677;
+    }
+
+    .form-hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--accent-primary);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 231, 1, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px 24px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.error {
+      background: rgba(255, 70, 85, 0.1);
+      border: 1px solid rgba(255, 70, 85, 0.3);
+      color: #ff4655;
+    }
+
+    .message.success {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid rgba(0, 231, 1, 0.3);
+      color: var(--accent-primary);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">T</div>
+      <h1>Complete Your Profile</h1>
+      <p class="subtitle">
+        We need a bit more information to verify your account and ensure compliance with gaming regulations.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <div class="info-icon">ℹ️</div>
+      <div class="info-text">
+        Your date of birth is required to verify you're 18+ years old. Phone number helps secure your account.
+      </div>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <form id="profile-form">
+      <div class="form-group">
+        <label class="form-label" for="dob">
+          Date of Birth <span class="required">*</span>
+        </label>
+        <input 
+          type="date" 
+          id="dob" 
+          class="form-input" 
+          required
+          max=""
+        >
+        <div class="form-hint">You must be 18 years or older to play</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">
+          Phone Number
+          <span class="optional-badge">Optional</span>
+        </label>
+        <input 
+          type="tel" 
+          id="phone" 
+          class="form-input" 
+          placeholder="+1234567890"
+        >
+        <div class="form-hint">Include country code (e.g., +1 for US)</div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submit-btn">
+        Complete Profile
+      </button>
+
+      <button type="button" class="btn-secondary" id="skip-btn">
+        Skip for Now
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Set max date to 18 years ago
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    document.getElementById('dob').max = maxDate.toISOString().split('T')[0];
+
+    // Get token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const refreshToken = urlParams.get('refreshToken');
+
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    // Store tokens
+    if (token) localStorage.setItem('token', token);
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+
+    function showMessage(text, type = 'error') {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type}`;
+      messageDiv.style.display = 'block';
+      
+      if (type === 'success') {
+        setTimeout(() => {
+          messageDiv.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const originalText = submitBtn.textContent;
+      
+      const dob = document.getElementById('dob').value;
+      const phone = document.getElementById('phone').value.trim();
+
+      // Validate age
+      if (dob) {
+        const birthDate = new Date(dob);
+        const age = (Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+        
+        if (age < 18) {
+          showMessage('You must be at least 18 years old to register.', 'error');
+          return;
+        }
+      }
+
+      // Validate phone format (basic)
+      if (phone && !phone.match(/^\+?[\d\s\-()]+$/)) {
+        showMessage('Please enter a valid phone number', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading"></span>Updating...';
+
+      try {
+        const response = await fetch('/api/profile/complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ dob, phone: phone || null })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showMessage('Profile updated successfully! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 1500);
+        } else {
+          showMessage(data.error || 'Failed to update profile', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Profile update error:', error);
+        showMessage('Network error. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    document.getElementById('skip-btn').addEventListener('click', () => {
+      if (confirm('You can complete your profile later from account settings. Continue to dashboard?')) {
+        window.location.href = '/dashboard.html';
+      }
+    });
+  </script>
+</body>
+</html>

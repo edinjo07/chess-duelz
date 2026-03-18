@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Login - Chess Duelz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f1923;
+      --bg-secondary: #1a2c38;
+      --bg-tertiary: #213743;
+      --text-primary: #ffffff;
+      --text-secondary: #b1bad3;
+      --accent-primary: #00e701;
+      --accent-hover: #00ff00;
+      --border-color: #2f4553;
+      --error-color: #ff4655;
+      --success-color: #00e701;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #c9a84c, #e6c76a);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: #2a3f4d;
+      border-color: #3f5969;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .login-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 40px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .login-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* OAuth Buttons */
+    .oauth-section {
+      margin-bottom: 24px;
+    }
+
+    .oauth-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .oauth-btn:hover {
+      background: #2a3f4d;
+      transform: translateY(-1px);
+    }
+
+    .oauth-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    .divider span {
+      padding: 0 16px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      background: #2a3f4d;
+    }
+
+    .form-input::placeholder {
+      color: #566b7d;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent-primary);
+      border: none;
+      border-radius: 8px;
+      color: #000000;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .form-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-link:hover {
+      text-decoration: underline;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.error {
+      background: rgba(255, 70, 85, 0.1);
+      border: 1px solid var(--error-color);
+      color: var(--error-color);
+      display: block;
+    }
+
+    .message.success {
+      background: rgba(0, 231, 1, 0.1);
+      border: 1px solid var(--success-color);
+      color: var(--success-color);
+      display: block;
+    }
+
+    .register-prompt {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 440px;
+      width: 100%;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn-ghost {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-tertiary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .login-card {
+        padding: 32px 24px;
+      }
+
+      .header {
+        padding: 12px 16px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 24px 20px;
+      }
+
+      .login-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">♟</div>
+        <span>Chess Duelz</span>
+      </a>
+      <nav class="header-nav">
+        <a href="register.html" class="btn-secondary">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1 class="login-title">Welcome Back</h1>
+          <p class="login-subtitle">Sign in to continue playing</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="identifier">Username or Email</label>
+            <input 
+              type="text" 
+              id="identifier" 
+              class="form-input" 
+              placeholder="Enter your username or email"
+              autocomplete="username"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-input" 
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn-primary" id="login-btn">
+            Sign In
+          </button>
+
+          <div class="form-footer">
+            <a href="#" class="form-link" id="forgot-link">Forgot password?</a>
+          </div>
+
+          <div id="message" class="message"></div>
+        </form>
+
+        <div class="register-prompt">
+          Don't have an account? <a href="register.html" class="form-link">Sign up</a>
+        </div>
+
+        <div style="margin-top: 16px; text-align: center;">
+          <a href="/" class="btn-secondary" style="display: inline-block; text-decoration: none;">← Back to Homepage</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgot-modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+      <h2 class="modal-title">Reset Password</h2>
+      <p class="modal-subtitle">Enter your email address and we'll send you a reset link.</p>
+      
+      <div class="form-group">
+        <label class="form-label" for="fp-email">Email Address</label>
+        <input 
+          type="email" 
+          id="fp-email" 
+          class="form-input" 
+          placeholder="your@email.com"
+          required
+        >
+      </div>
+
+      <div id="fp-message" class="message"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="fp-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="fp-send" style="flex: 1;">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = {
+      login: '/login',
+      forgot: '/password-reset-request'
+    };
+
+    const $form = document.getElementById('login-form');
+    const $id = document.getElementById('identifier');
+    const $pw = document.getElementById('password');
+    const $btn = document.getElementById('login-btn');
+    const $msg = document.getElementById('message');
+    const $forgotLink = document.getElementById('forgot-link');
+    const $forgotModal = document.getElementById('forgot-modal');
+    const $fpEmail = document.getElementById('fp-email');
+    const $fpSend = document.getElementById('fp-send');
+    const $fpCancel = document.getElementById('fp-cancel');
+    const $fpMsg = document.getElementById('fp-message');
+
+    function show(el, text, isSuccess = false) {
+      if (!text) {
+        el.style.display = 'none';
+        el.textContent = '';
+        el.className = 'message';
+        return;
+      }
+      el.textContent = text;
+      el.className = isSuccess ? 'message success' : 'message error';
+      el.style.display = 'block';
+    }
+
+    function setLoading(btn, is) {
+      if (!btn) return;
+      btn.disabled = !!is;
+      if (is) {
+        btn._old = btn.textContent;
+        btn.textContent = 'Please wait...';
+      } else if (btn._old) {
+        btn.textContent = btn._old;
+      }
+    }
+
+    async function api(url, opts) {
+      console.log('API call to:', url, 'with options:', opts);
+      try {
+        const res = await fetch(url, {
+          headers: { 'Content-Type': 'application/json' },
+          ...opts
+        });
+        console.log('Response status:', res.status, res.statusText);
+
+        const data = await res.json().catch((jsonErr) => {
+          console.error('JSON parse error:', jsonErr);
+          return {};
+        });
+
+        console.log('Response data:', data);
+
+        if (!res.ok) {
+          const e = new Error(data.error || data.message || `HTTP ${res.status}: ${res.statusText}`);
+          e.data = data;
+          e.status = res.status;
+          throw e;
+        }
+        return data;
+      } catch (fetchErr) {
+        console.error('Fetch error:', fetchErr);
+        throw fetchErr;
+      }
+    }
+
+    // Login Handler
+    $form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const identifier = $id.value.trim();
+      const password = $pw.value;
+      
+      if (!identifier || !password) {
+        return show($msg, 'Please enter your username/email and password');
+      }
+
+      console.log('Login attempt started for:', identifier);
+
+      try {
+        setLoading($btn, true);
+        show($msg, '');
+        console.log('Making API call to:', API.login);
+
+        const data = await api(API.login, {
+          method: 'POST',
+          body: JSON.stringify({ identifier, password })
+        });
+
+        console.log('Login response received:', data);
+
+        if (!data.accessToken) {
+          console.error('No access token in response:', data);
+          throw new Error('Login failed - no access token received');
+        }
+
+        // Store tokens with player prefix to avoid conflict with admin sessions
+        localStorage.setItem('player_accessToken', data.accessToken);
+        sessionStorage.setItem('player_accessToken', data.accessToken);
+        localStorage.setItem('accessToken', data.accessToken); // Keep for backward compatibility
+        sessionStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('authToken', data.accessToken);
+        sessionStorage.setItem('authToken', data.accessToken);
+        console.log('Access token stored:', localStorage.getItem('accessToken'));
+
+        if (data.refreshToken) {
+          localStorage.setItem('player_refreshToken', data.refreshToken);
+          sessionStorage.setItem('player_refreshToken', data.refreshToken);
+          localStorage.setItem('refreshToken', data.refreshToken);
+          sessionStorage.setItem('refreshToken', data.refreshToken);
+          console.log('Refresh token stored:', localStorage.getItem('refreshToken'));
+        }
+
+        console.log('Login successful, redirecting...');
+        
+        // Redirect admin users to admin panel, regular users to dashboard
+        if (data.user && data.user.isAdmin) {
+          console.log('Admin user detected, redirecting to admin panel');
+          window.location.href = './admin.html';
+        } else {
+          console.log('Regular user, redirecting to dashboard');
+          window.location.href = './dashboard.html';
+        }
+
+      } catch (err) {
+        console.error('Login error details:', err);
+        console.error('Error message:', err.message);
+        console.error('Error status:', err.status);
+        
+        // Enhanced error messages based on status code and error type
+        let errorMessage = 'Login failed';
+        
+        if (err.status === 401 || err.message.toLowerCase().includes('invalid credentials') || 
+            err.message.toLowerCase().includes('incorrect') || err.message.toLowerCase().includes('wrong password')) {
+          errorMessage = 'Invalid username/email or password. Please check your credentials and try again.';
+        } else if (err.status === 404 || err.message.toLowerCase().includes('not found') || 
+                   err.message.toLowerCase().includes('user does not exist')) {
+          errorMessage = 'No account found with this username/email. Please check or sign up.';
+        } else if (err.status === 403 || err.message.toLowerCase().includes('banned') || 
+                   err.message.toLowerCase().includes('suspended')) {
+          errorMessage = 'Your account has been suspended. Please contact support.';
+        } else if (err.status === 429 || err.message.toLowerCase().includes('too many')) {
+          errorMessage = 'Too many login attempts. Please try again later.';
+        } else if (err.message.toLowerCase().includes('network') || err.message === 'Failed to fetch') {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        show($msg, errorMessage);
+      } finally {
+        setLoading($btn, false);
+      }
+    });
+
+    // Forgot Password Flow
+    $forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      $forgotModal.classList.add('is-open');
+      $forgotModal.setAttribute('aria-hidden', 'false');
+      $fpEmail.focus();
+    });
+
+    $fpCancel.addEventListener('click', () => {
+      $forgotModal.classList.remove('is-open');
+      $forgotModal.setAttribute('aria-hidden', 'true');
+      show($fpMsg, '');
+    });
+
+    $fpSend.addEventListener('click', async () => {
+      const email = $fpEmail.value.trim();
+      if (!email) return show($fpMsg, 'Enter your email');
+      
+      // Basic email validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return show($fpMsg, 'Please enter a valid email address');
+      }
+      
+      try {
+        setLoading($fpSend, true);
+        show($fpMsg, '');
+        await api(API.forgot, {
+          method: 'POST',
+          body: JSON.stringify({ email })
+        });
+        show($fpMsg, 'If an account exists with this email, a password reset link has been sent.', true);
+        
+        // Clear the input after successful request
+        setTimeout(() => {
+          $fpEmail.value = '';
+        }, 3000);
+      } catch (err) {
+        console.error('Forgot password error:', err);
+        
+        let errorMessage = 'Could not send reset link';
+        
+        if (err.status === 429 || err.message.toLowerCase().includes('too many')) {
+          errorMessage = 'Too many reset requests. Please try again later.';
+        } else if (err.status === 400 || err.message.toLowerCase().includes('invalid email')) {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (err.message.toLowerCase().includes('network') || err.message === 'Failed to fetch') {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        show($fpMsg, errorMessage);
+      } finally {
+        setLoading($fpSend, false);
+      }
+    });
+
+    // Enter to Submit
+    [$id, $pw].forEach(el => el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') $form.dispatchEvent(new Event('submit'));
+    }));
+
+    // Check for password reset success message
+    try {
+      const resetSuccess = sessionStorage.getItem('resetSuccess');
+      if (resetSuccess) {
+        show($msg, resetSuccess, true);
+        sessionStorage.removeItem('resetSuccess');
+        sessionStorage.removeItem('pwdReset');
+      }
+    } catch (e) {
+      console.error('Session storage error:', e);
+    }
+  </script>
+</body>
+</html>

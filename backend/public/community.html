@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community - Chess Duelz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1923;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: rgba(15, 25, 35, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(177, 186, 211, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00e701;
+      text-decoration: none;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #00e701;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .page-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .page-subtitle {
+      font-size: 18px;
+      color: #b1bad3;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .community-card {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .community-card:hover {
+      border-color: #00e701;
+      transform: translateY(-4px);
+    }
+
+    .community-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .community-card h3 {
+      color: #00e701;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .community-card p {
+      color: #b1bad3;
+      margin-bottom: 24px;
+    }
+
+    .community-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00e701;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #b1bad3;
+    }
+
+    .content-section {
+      background: #1a2c38;
+      border: 1px solid rgba(177, 186, 211, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .content-section h2 {
+      color: #00e701;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .content-section p {
+      color: #b1bad3;
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    .content-section ul {
+      color: #b1bad3;
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    .content-section li {
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 32px;
+      }
+
+      .community-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">♟ Chess Duelz</a>
+      <a href="/" class="btn">Back to Home</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Join Our Community</h1>
+    <p class="page-subtitle">Connect with fellow players, share strategies, and stay updated</p>
+
+    <div class="community-grid">
+      <div class="community-card">
+        <div class="community-icon">💬</div>
+        <h3>Discord Server</h3>
+        <p>Join our Discord community to chat with other players, share strategies, and get real-time support.</p>
+        <div class="community-stats">
+          <div class="stat">
+            <div class="stat-value">500+</div>
+            <div class="stat-label">Members</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">24/7</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+        <a href="#" class="btn" onclick="alert('Discord link will be shared soon!'); return false;">Join Discord</a>
+      </div>
+
+      <div class="community-card">
+        <div class="community-icon">✈️</div>
+        <h3>Telegram Channel</h3>
+        <p>Get instant updates, announcements, and exclusive promotions through our Telegram channel.</p>
+        <div class="community-stats">
+          <div class="stat">
+            <div class="stat-value">300+</div>
+            <div class="stat-label">Subscribers</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">Daily</div>
+            <div class="stat-label">Updates</div>
+          </div>
+        </div>
+        <a href="#" class="btn" onclick="alert('Telegram link will be shared soon!'); return false;">Join Telegram</a>
+      </div>
+
+      <div class="community-card">
+        <div class="community-icon">𝕏</div>
+        <h3>Twitter / X</h3>
+        <p>Follow us on Twitter for news, updates, tournament announcements, and community highlights.</p>
+        <div class="community-stats">
+          <div class="stat">
+            <div class="stat-value">1K+</div>
+            <div class="stat-label">Followers</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">Active</div>
+            <div class="stat-label">Community</div>
+          </div>
+        </div>
+        <a href="#" class="btn" onclick="alert('Twitter link will be shared soon!'); return false;">Follow Us</a>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Community Guidelines</h2>
+      <p>To maintain a positive and welcoming environment, all community members must:</p>
+      <ul>
+        <li>Be respectful and courteous to all members</li>
+        <li>Avoid spam, advertising, or self-promotion</li>
+        <li>No harassment, hate speech, or discriminatory language</li>
+        <li>Keep discussions relevant to Chess Duelz and competitive chess</li>
+        <li>Respect privacy - no sharing of personal information</li>
+        <li>Follow moderator instructions</li>
+        <li>Report violations to moderators</li>
+      </ul>
+      <p>Violations of these guidelines may result in warnings, temporary suspension, or permanent ban from our community channels.</p>
+    </div>
+
+    <div class="content-section">
+      <h2>Community Benefits</h2>
+      <p>By joining our community, you'll get access to:</p>
+      <ul>
+        <li><strong>Strategy Discussions:</strong> Learn from experienced players and share your own tips</li>
+        <li><strong>Tournament News:</strong> Be the first to know about upcoming tournaments and events</li>
+        <li><strong>Exclusive Promotions:</strong> Community-only bonuses and special offers</li>
+        <li><strong>Direct Support:</strong> Faster response times and community help</li>
+        <li><strong>Beta Access:</strong> Early access to new games and features</li>
+        <li><strong>Leaderboard Updates:</strong> Track top players and competitions</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>Events & Tournaments</h2>
+      <p>We regularly host community events and tournaments:</p>
+      <ul>
+        <li><strong>Weekly Tournaments:</strong> Compete for special prizes</li>
+        <li><strong>Monthly Championships:</strong> Larger prize pools for top players</li>
+        <li><strong>Community Challenges:</strong> Fun events with unique rules</li>
+        <li><strong>Livestream Sessions:</strong> Watch top players compete</li>
+      </ul>
+      <p>All events are announced in our community channels. Join to stay informed!</p>
+    </div>
+
+    <div class="content-section">
+      <h2>Player Support</h2>
+      <p>Need help? Our community is here for you:</p>
+      <ul>
+        <li>Ask questions in Discord and get answers from the community</li>
+        <li>Share feedback and suggestions directly with our team</li>
+        <li>Report bugs or issues for quick resolution</li>
+        <li>Get gameplay tips from experienced players</li>
+      </ul>
+      <p style="margin-top: 24px;">
+        <a href="/contact.html" class="btn">Contact Support</a>
+        <a href="/help-center.html" class="btn" style="margin-left: 12px;">Help Center</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

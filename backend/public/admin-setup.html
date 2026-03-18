@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Setup - One Time Use</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .result.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .result.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .instructions {
+      background: #e7f3ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #004085;
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Admin Account Setup</h1>
+    <p style="color: #666; margin-bottom: 20px;">One-time setup tool</p>
+
+    <div class="warning">
+      <strong>⚠️ Security Notice:</strong> This page should be removed after creating your admin account. Only use once!
+    </div>
+
+    <div class="instructions">
+      <strong>Instructions:</strong>
+      <ol>
+        <li>First, register a regular account if you haven't already</li>
+        <li>Enter that username below to promote it to admin</li>
+        <li>After promotion, login at <strong>/admin-login</strong></li>
+      </ol>
+    </div>
+
+    <form id="setup-form">
+      <div class="form-group">
+        <label for="username">Username to Promote</label>
+        <input type="text" id="username" placeholder="Enter existing username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="secret">Secret Key</label>
+        <input type="password" id="secret" value="CHANGE_ME_IN_PRODUCTION_12345" required>
+      </div>
+
+      <button type="submit" class="btn" id="submit-btn">
+        Promote to Admin
+      </button>
+    </form>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+
+    document.getElementById('setup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const secretKey = document.getElementById('secret').value;
+      const submitBtn = document.getElementById('submit-btn');
+      const resultDiv = document.getElementById('result');
+
+      if (!username || !secretKey) {
+        showResult('Please fill in all fields', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+      resultDiv.style.display = 'none';
+
+      try {
+        const response = await fetch(`${API_URL}/api/setup-admin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, secretKey })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Setup failed');
+        }
+
+        showResult(
+          `✅ Success! User "${data.username}" is now an admin. ` +
+          `You can now login at /admin-login`,
+          'success'
+        );
+
+        setTimeout(() => {
+          window.location.href = '/admin-login';
+        }, 3000);
+
+      } catch (error) {
+        console.error('Setup error:', error);
+        showResult(`❌ Error: ${error.message}`, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Promote to Admin';
+      }
+    });
+
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = message;
+      resultDiv.className = `result ${type}`;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

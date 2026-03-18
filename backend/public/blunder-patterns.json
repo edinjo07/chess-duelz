@@ -1,0 +1,127 @@
+{
+  "800-1200": {
+    "games_analyzed": 519,
+    "mistake_rate": {
+      "one_move_blunders_per_game": 12.630057803468208,
+      "tactical_errors_per_game": 0.12138728323699421,
+      "positional_errors_per_game": 2.464354527938343,
+      "total_mistakes_per_game": 15.215799614643545
+    },
+    "blunder_types": {
+      "hung_pawn": 2075,
+      "repetitive_moves": 1279,
+      "hung_N": 1225,
+      "hung_B": 1023,
+      "hung_R": 747,
+      "hung_K": 729,
+      "hung_Q": 680,
+      "hung_O": 76,
+      "quick_loss": 63
+    },
+    "error_injection_config": {
+      "blunder_probability": 0.15,
+      "tactical_error_probability": 0.002254589700461654,
+      "positional_error_probability": 0.045771749633181834
+    }
+  },
+  "1200-1600": {
+    "games_analyzed": 8563,
+    "mistake_rate": {
+      "one_move_blunders_per_game": 13.622562186149715,
+      "tactical_errors_per_game": 0.06644867452995445,
+      "positional_errors_per_game": 2.31998131495971,
+      "total_mistakes_per_game": 16.008992175639378
+    },
+    "blunder_types": {
+      "hung_pawn": 36377,
+      "hung_N": 20902,
+      "hung_B": 20692,
+      "repetitive_moves": 19866,
+      "hung_R": 14029,
+      "hung_Q": 12045,
+      "hung_K": 11033,
+      "hung_O": 1572,
+      "quick_loss": 569
+    },
+    "error_injection_config": {
+      "blunder_probability": 0.15,
+      "tactical_error_probability": 0.0011092028749602812,
+      "positional_error_probability": 0.03872658051662732
+    }
+  },
+  "1600-2000": {
+    "games_analyzed": 15663,
+    "mistake_rate": {
+      "one_move_blunders_per_game": 14.943688948477304,
+      "tactical_errors_per_game": 0.0319862095384026,
+      "positional_errors_per_game": 2.0404775585775394,
+      "total_mistakes_per_game": 17.016152716593247
+    },
+    "blunder_types": {
+      "hung_pawn": 74023,
+      "hung_N": 42621,
+      "hung_B": 40927,
+      "repetitive_moves": 31960,
+      "hung_R": 30317,
+      "hung_Q": 24222,
+      "hung_K": 19253,
+      "hung_O": 2700,
+      "quick_loss": 501
+    },
+    "error_injection_config": {
+      "blunder_probability": 0.15,
+      "tactical_error_probability": 0.0004670109435298943,
+      "positional_error_probability": 0.029791755998433974
+    }
+  },
+  "2000-2400": {
+    "games_analyzed": 4965,
+    "mistake_rate": {
+      "one_move_blunders_per_game": 16.3460221550856,
+      "tactical_errors_per_game": 0.011077542799597181,
+      "positional_errors_per_game": 1.883987915407855,
+      "total_mistakes_per_game": 18.24108761329305
+    },
+    "blunder_types": {
+      "hung_pawn": 25447,
+      "hung_N": 14616,
+      "hung_B": 13936,
+      "hung_R": 11289,
+      "repetitive_moves": 9354,
+      "hung_Q": 8128,
+      "hung_K": 6929,
+      "hung_O": 813,
+      "quick_loss": 55
+    },
+    "error_injection_config": {
+      "blunder_probability": 0.15,
+      "tactical_error_probability": 0.0001456475224032371,
+      "positional_error_probability": 0.024770671355634176
+    }
+  },
+  "2400+": {
+    "games_analyzed": 290,
+    "mistake_rate": {
+      "one_move_blunders_per_game": 17.389655172413793,
+      "tactical_errors_per_game": 0.010344827586206896,
+      "positional_errors_per_game": 1.9482758620689655,
+      "total_mistakes_per_game": 19.348275862068967
+    },
+    "blunder_types": {
+      "hung_pawn": 1556,
+      "hung_N": 925,
+      "hung_B": 845,
+      "hung_R": 707,
+      "repetitive_moves": 565,
+      "hung_Q": 499,
+      "hung_K": 465,
+      "hung_O": 46,
+      "quick_loss": 3
+    },
+    "error_injection_config": {
+      "blunder_probability": 0.15,
+      "tactical_error_probability": 0.00012369603760359544,
+      "positional_error_probability": 0.02329608708201047
+    }
+  }
+}
