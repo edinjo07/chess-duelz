@@ -49,7 +49,11 @@ function mysqlToPg(sql) {
     .replace(/SHOW\s+COLUMNS\s+FROM\s+(\w+)/gi,
       (_, t) => `SELECT column_name, data_type FROM information_schema.columns WHERE table_schema='public' AND table_name='${t}'`)
     // SELECT DATABASE()
-    .replace(/SELECT DATABASE\(\)/gi, "SELECT current_database() AS db");
+    .replace(/SELECT DATABASE\(\)/gi, "SELECT current_database() AS db")
+    // INSERT IGNORE INTO → INSERT INTO ... ON CONFLICT DO NOTHING
+    .replace(/INSERT\s+IGNORE\s+INTO\s+/gi, 'INSERT INTO ')
+    // ON DUPLICATE KEY UPDATE ... (anything until end of statement) → ON CONFLICT DO NOTHING
+    .replace(/\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+[^;]*/gi, ' ON CONFLICT DO NOTHING');
 }
 
 // ── Result normalisation ─────────────────────────────────────────────────────

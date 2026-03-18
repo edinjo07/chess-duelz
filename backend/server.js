@@ -543,6 +543,27 @@ async function initializeDatabase() {
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_moves_game_id ON chess_game_moves(game_id)`);
     console.log('✅ chess_game_moves table ready');
 
+    // ── chess_user_stats ──────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS chess_user_stats (
+        user_id BIGINT PRIMARY KEY,
+        elo_rating INT DEFAULT 1500,
+        games_played INT DEFAULT 0,
+        games_won INT DEFAULT 0,
+        games_lost INT DEFAULT 0,
+        games_drawn INT DEFAULT 0,
+        total_winnings DECIMAL(10,2) DEFAULT 0.00,
+        total_losses DECIMAL(10,2) DEFAULT 0.00,
+        best_win_streak INT DEFAULT 0,
+        current_win_streak INT DEFAULT 0,
+        last_played_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_chess_user_stats_user_id ON chess_user_stats(user_id)`);
+    console.log('✅ chess_user_stats table ready');
+
     // ── crypto_deposits ───────────────────────────────────────────────
     await run(`
       CREATE TABLE IF NOT EXISTS crypto_deposits (
@@ -2113,7 +2134,7 @@ app.post('/chess/game/start', verifyToken, async (req, res) => {
           db.query(
             `INSERT INTO chess_user_stats (user_id, elo_rating, games_played) 
              VALUES (?, 1500, 0) 
-             ON DUPLICATE KEY UPDATE user_id = user_id`,
+             ON CONFLICT (user_id) DO NOTHING`,
             [userId],
             (statsErr) => {
               if (statsErr) {
@@ -2220,7 +2241,7 @@ app.get('/chess/user/stats', verifyToken, (req, res) => {
         db.query(
           `INSERT INTO chess_user_stats (user_id, elo_rating, games_played) 
            VALUES (?, 1500, 0) 
-           ON DUPLICATE KEY UPDATE user_id = user_id`,
+           ON CONFLICT (user_id) DO NOTHING`,
           [userId],
           (initErr) => {
             if (initErr) {
@@ -2929,7 +2950,7 @@ io.on('connection', (socket) => {
                 for (const playerId of [whitePlayerId, blackPlayerId]) {
                   await new Promise((resolve, reject) => {
                     db.query(
-                      `INSERT IGNORE INTO chess_user_stats (user_id) VALUES (?)`,
+                      `INSERT INTO chess_user_stats (user_id) VALUES (?) ON CONFLICT (user_id) DO NOTHING`,
                       [playerId],
                       (err) => {
                         if (err) reject(err);
@@ -3926,7 +3947,7 @@ io.on('connection', (socket) => {
       for (const playerId of [whitePlayerId, blackPlayerId]) {
         await new Promise((resolve, reject) => {
           db.query(
-            `INSERT IGNORE INTO chess_user_stats (user_id) VALUES (?)`,
+            `INSERT INTO chess_user_stats (user_id) VALUES (?) ON CONFLICT (user_id) DO NOTHING`,
             [playerId],
             (err) => {
               if (err) reject(err);
