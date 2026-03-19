@@ -61,7 +61,7 @@ const EMAIL_PASS = process.env.EMAIL_PASS || 'your-app-password';
 // $10 bet each → winner gets $16 (20% rake on $20 pot)
 // $50 bet each → winner gets $90 (10% rake on $100 pot)
 // Default: 10% rake for unlisted tiers
-const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10 };
+const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10, 100: 0.10 };
 function getHouseRake(betAmountDollars) {
   return RAKE_TABLE[betAmountDollars] || 0.10;
 }

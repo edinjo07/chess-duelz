@@ -2539,8 +2539,8 @@ function setPot(c){
   }
 }
 /* ===== Pot Fee (Rake) ===== */
-// House rake by bet tier (in dollars): $5→20%, $10→20%, $50→10%, default→10%
-const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10 };
+// House rake by bet tier (in dollars): $5→20%, $10→20%, $50→10%, $100→10%, default→10%
+const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10, 100: 0.10 };
 function netPot(totalPotCents){
   const betDollars = Math.round(totalPotCents / 2 / 100); // each player's bet in dollars
   const rake = RAKE_TABLE[betDollars] || 0.10;
@@ -4992,7 +4992,7 @@ duelBtn.addEventListener('click', async ()=>{
       return; 
     }
     if(!selectedBetCents){ 
-      statusMsg.textContent = 'Select a bet: $1, $5, $10, or $50.';
+      statusMsg.textContent = 'Select a bet: $1, $5, $10, $50, or $100.';
       statusMsg.style.color = '#ff0000';
       console.log('[DUEL_BTN] ❌ No bet selected');
       return; 
