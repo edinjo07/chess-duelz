@@ -216,13 +216,13 @@ module.exports = (db, verifyToken, verifyAdminToken) => {
       db.query(`
         INSERT INTO kyc_status (user_id, overall_status, ${documentType}_status, submission_date)
         VALUES (?, 'pending', 'pending', NOW())
-        ON DUPLICATE KEY UPDATE 
+        ON CONFLICT (user_id) DO UPDATE SET
           ${documentType}_status = 'pending',
-          overall_status = CASE 
-            WHEN overall_status = 'not_started' THEN 'pending'
-            ELSE overall_status
+          overall_status = CASE
+            WHEN kyc_status.overall_status = 'not_started' THEN 'pending'
+            ELSE kyc_status.overall_status
           END,
-          submission_date = COALESCE(submission_date, NOW()),
+          submission_date = COALESCE(kyc_status.submission_date, NOW()),
           updated_at = NOW()
       `, [userId], (err) => {
         if (err) {
@@ -338,11 +338,11 @@ module.exports = (db, verifyToken, verifyAdminToken) => {
           u.email,
           COUNT(DISTINCT kd.id) as document_count,
           MAX(kd.uploaded_at) as last_upload,
-          GROUP_CONCAT(DISTINCT kd.document_type) as document_types
+          STRING_AGG(DISTINCT kd.document_type, ',') as document_types
         FROM kyc_documents kd
         JOIN users u ON kd.user_id = u.id
         WHERE kd.status = 'pending'
-        GROUP BY kd.user_id
+        GROUP BY kd.user_id, u.username, u.email
         ORDER BY MAX(kd.uploaded_at) DESC
       `, (err, results) => {
         if (err) {

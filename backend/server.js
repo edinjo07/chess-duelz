@@ -638,16 +638,72 @@ async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         user_id INT NOT NULL,
         document_type VARCHAR(50) NOT NULL,
+        document_subtype VARCHAR(50),
+        document_side VARCHAR(20) DEFAULT 'single',
+        file_path TEXT,
         file_url TEXT,
+        file_name VARCHAR(255),
+        file_size INT,
+        mime_type VARCHAR(100),
         status VARCHAR(20) DEFAULT 'pending',
         rejection_reason TEXT,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        reviewed_at TIMESTAMP,
         reviewed_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     await run(`CREATE INDEX IF NOT EXISTS idx_kyc_user_id ON kyc_documents(user_id)`);
+    // Add missing columns to existing table (idempotent)
+    for (const col of [
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS document_subtype VARCHAR(50)`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS document_side VARCHAR(20) DEFAULT 'single'`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS file_path TEXT`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS file_name VARCHAR(255)`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS file_size INT`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100)`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`,
+      `ALTER TABLE kyc_documents ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMP`,
+    ]) { await run(col).catch(() => {}); }
     console.log('✅ kyc_documents table ready');
+
+    // ── kyc_status ────────────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS kyc_status (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL,
+        overall_status VARCHAR(20) DEFAULT 'not_started',
+        proof_of_id_status VARCHAR(20) DEFAULT 'not_submitted',
+        proof_of_address_status VARCHAR(20) DEFAULT 'not_submitted',
+        other_status VARCHAR(20) DEFAULT 'not_submitted',
+        submission_date TIMESTAMP,
+        approval_date TIMESTAMP,
+        rejection_date TIMESTAMP,
+        rejection_reason TEXT,
+        notes TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ kyc_status table ready');
+
+    // ── kyc_verification_log ──────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS kyc_verification_log (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        action VARCHAR(100) NOT NULL,
+        document_id INT,
+        admin_id INT,
+        old_status VARCHAR(20),
+        new_status VARCHAR(20),
+        reason TEXT,
+        metadata JSONB,
+        ip_address VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ kyc_verification_log table ready');
 
     // ── ledger_entries ────────────────────────────────────────────────
     await run(`
