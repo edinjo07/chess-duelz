@@ -15,9 +15,11 @@ const _dbUrl = _rawDbUrl
 const pool = new Pool({
   connectionString: _dbUrl,
   ssl: { rejectUnauthorized: false },
-  max: 10,
+  max: 50,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+  statement_timeout: 15000,        // kill queries running > 15s
+  query_timeout: 15000,
 });
 
 pool.on('error', (err) => {

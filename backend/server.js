@@ -3085,10 +3085,157 @@ app.use('/api/nowpayments', payoutIpnRouter);
 const activeGames = new Map(); // gameId -> { chess, whitePlayerId, blackPlayerId, potAmount, betAmount }
 const matchmakingQueue = new Map(); // betAmount -> [{ userId, username, balance, socketId, timestamp }]
 
+// ── Player socket tracking (userId -> Set<socketId>) for reconnection ──
+const playerSockets = new Map();
+
+// ── Disconnect grace timers: userId -> { timer, gameId } ──
+const disconnectTimers = new Map();
+
+// ── Per-socket rate limiting state ──
+const RATE_LIMIT_WINDOW = 1000; // 1 second window
+const RATE_LIMIT_MAX_EVENTS = 15; // max events per window
+
+// ── Stale game cleanup interval (every 60s) ──
+const STALE_GAME_MAX_AGE = 30 * 60 * 1000; // 30 minutes with no moves = stale
+const STALE_CLEANUP_INTERVAL = 60 * 1000;
+
+setInterval(() => {
+  const now = Date.now();
+  let cleaned = 0;
+
+  activeGames.forEach((game, gameId) => {
+    if (game.isEnding) return; // already ending
+    const lastActivity = game.lastMoveTime || game.createdAt || 0;
+    if (now - lastActivity > STALE_GAME_MAX_AGE) {
+      console.log(`[CLEANUP] Stale game ${gameId} (no activity for ${Math.round((now - lastActivity) / 60000)}m) — force ending as draw`);
+
+      game.isEnding = true;
+
+      // Refund both players (split pot)
+      const split = game.potAmount / 2;
+      const refundPlayers = [game.whitePlayerId, game.blackPlayerId].filter(Boolean);
+      refundPlayers.forEach(playerId => {
+        ledger.createLedgerEntry({
+          userId: playerId,
+          type: ledger.ENTRY_TYPES.BET_REFUND,
+          amount: split,
+          currency: 'USD',
+          referenceType: 'chess_game',
+          referenceId: game.dbGameId,
+          metadata: { reason: 'stale_game_cleanup' }
+        }).catch(err => console.error(`[CLEANUP] Refund failed for user ${playerId}:`, err));
+      });
+
+      // Mark abandoned in DB
+      db.query(
+        `UPDATE chess_games SET outcome = 'draw', ended_at = NOW() WHERE id = ? AND ended_at IS NULL`,
+        [game.dbGameId],
+        (err) => { if (err) console.error('[CLEANUP] DB update error:', err); }
+      );
+
+      io.to(`game_${gameId}`).emit('game_ended', {
+        winner: null,
+        gameResult: 'abandoned',
+        finalFen: game.chess.fen(),
+        potAmount: game.potAmount,
+        betAmount: game.betAmount
+      });
+
+      activeGames.delete(gameId);
+      cleaned++;
+    }
+  });
+
+  // Also clean truly empty matchmaking queues
+  matchmakingQueue.forEach((queue, betAmount) => {
+    const valid = queue.filter(e => now - e.timestamp < 60000);
+    if (valid.length !== queue.length) {
+      matchmakingQueue.set(betAmount, valid);
+    }
+    if (valid.length === 0) matchmakingQueue.delete(betAmount);
+  });
+
+  if (cleaned > 0) console.log(`[CLEANUP] Removed ${cleaned} stale games. Active: ${activeGames.size}`);
+}, STALE_CLEANUP_INTERVAL);
+
+// ── Helper: end a game due to disconnect forfeit ──
+function forfeitGameForPlayer(disconnectedUserId, gameId) {
+  const game = activeGames.get(gameId);
+  if (!game || game.isEnding) return;
+
+  game.isEnding = true;
+  const winner = disconnectedUserId === game.whitePlayerId ? game.blackPlayerId : game.whitePlayerId;
+  const outcome = winner === game.whitePlayerId ? 'win_white' : 'win_black';
+  const finalFen = game.chess.fen();
+
+  console.log(`[FORFEIT] Player ${disconnectedUserId} forfeited game ${gameId} by disconnect. Winner: ${winner}`);
+
+  // Update DB
+  db.query(
+    `UPDATE chess_games SET outcome = ?, fen = ?, ended_at = NOW() WHERE id = ?`,
+    [outcome, finalFen, game.dbGameId],
+    (err) => { if (err) console.error('[FORFEIT] DB update error:', err); }
+  );
+
+  // Award pot to winner via ledger
+  ledger.createLedgerEntry({
+    userId: winner,
+    type: ledger.ENTRY_TYPES.WIN_CREDIT,
+    amount: game.potAmount,
+    currency: 'USD',
+    referenceType: 'chess_game',
+    referenceId: game.dbGameId,
+    metadata: { result: 'disconnect_forfeit', loser: disconnectedUserId }
+  }).then(() => {
+    // Notify winner
+    io.to(`user_${winner}`).emit('game_ended', {
+      winner: winner,
+      gameResult: 'opponent_disconnected',
+      finalFen: finalFen,
+      potAmount: game.potAmount,
+      betAmount: game.betAmount
+    });
+  }).catch(err => console.error('[FORFEIT] Ledger error:', err));
+
+  // Update stats
+  db.query(`UPDATE chess_user_stats SET games_won = games_won + 1, games_played = games_played + 1 WHERE user_id = ?`, [winner], () => {});
+  db.query(`UPDATE chess_user_stats SET games_lost = games_lost + 1, games_played = games_played + 1 WHERE user_id = ?`, [disconnectedUserId], () => {});
+
+  activeGames.delete(gameId);
+}
+
+// ── Helper: find active game for a player ──
+function findActiveGameForPlayer(userId) {
+  for (const [gameId, game] of activeGames) {
+    if (!game.isEnding && (game.whitePlayerId === userId || game.blackPlayerId === userId)) {
+      return gameId;
+    }
+  }
+  return null;
+}
+
 // Chess Socket.IO for real-time gameplay with balance updates
 io.on('connection', (socket) => {
   console.log('Chess client connected:', socket.id);
-  
+
+  // ── Per-socket rate limiter ──
+  let eventCount = 0;
+  let windowStart = Date.now();
+
+  function isRateLimited() {
+    const now = Date.now();
+    if (now - windowStart > RATE_LIMIT_WINDOW) {
+      eventCount = 0;
+      windowStart = now;
+    }
+    eventCount++;
+    if (eventCount > RATE_LIMIT_MAX_EVENTS) {
+      console.warn(`[RATE] Socket ${socket.id} rate limited (${eventCount} events in ${RATE_LIMIT_WINDOW}ms)`);
+      return true;
+    }
+    return false;
+  }
+
   let userId = null;
   let username = null;
 
@@ -3104,6 +3251,45 @@ io.on('connection', (socket) => {
             socket.userId = userId;
             socket.username = username;
             socket.join(`user_${userId}`);
+
+            // ── Track socket for this user (supports multiple tabs) ──
+            if (!playerSockets.has(userId)) playerSockets.set(userId, new Set());
+            playerSockets.get(userId).add(socket.id);
+
+            // ── Cancel disconnect-forfeit timer if reconnecting ──
+            if (disconnectTimers.has(userId)) {
+              const dt = disconnectTimers.get(userId);
+              clearTimeout(dt.timer);
+              disconnectTimers.delete(userId);
+              console.log(`[RECONNECT] ✅ ${username} reconnected — cancelled forfeit timer`);
+
+              // Rejoin them to their active game room
+              const activeGameId = findActiveGameForPlayer(userId);
+              if (activeGameId) {
+                socket.join(`game_${activeGameId}`);
+                socket.currentGameId = activeGameId;
+                const game = activeGames.get(activeGameId);
+                if (game) {
+                  socket.emit('game_state', {
+                    gameId: activeGameId,
+                    fen: game.chess.fen(),
+                    turn: game.chess.turn(),
+                    isGameOver: game.chess.isGameOver(),
+                    whiteTimeMs: game.whiteTimeMs,
+                    blackTimeMs: game.blackTimeMs,
+                    whitePlayerId: game.whitePlayerId,
+                    blackPlayerId: game.blackPlayerId,
+                    whiteUsername: game.whiteUsername,
+                    blackUsername: game.blackUsername,
+                    potAmount: game.potAmount,
+                    betAmount: game.betAmount,
+                    reconnected: true
+                  });
+                  console.log(`[RECONNECT] ✅ ${username} re-joined game ${activeGameId}`);
+                }
+              }
+            }
+
             console.log(`✅ User ${username} (ID: ${userId}) authenticated and joined user room`);
             if (callback) callback({ success: true, userId: userId });
           } else {
@@ -3123,6 +3309,7 @@ io.on('connection', (socket) => {
 
   // Join matchmaking
   socket.on('join_matchmaking', async (data) => {
+    if (isRateLimited()) return;
     try {
       // Normalize bet amount to ensure proper matching
       const betAmount = parseFloat(data.betAmount);
@@ -3178,16 +3365,17 @@ io.on('connection', (socket) => {
             const queue = matchmakingQueue.get(betAmount);
             console.log(`[MATCHMAKING] Queue for $${betAmount} has ${queue.length} players BEFORE filtering`);
             
-            // Remove any stale entries (older than 60 seconds) AND this user if already in queue
+            // Remove stale entries, same-user duplicates, AND entries with dead sockets
             const now = Date.now();
             const validQueue = queue.filter(entry => {
               const isStale = now - entry.timestamp >= 60000;
               const isSameUser = entry.userId === socket.userId;
-              return !isStale && !isSameUser;
+              const socketAlive = io.sockets.sockets.has(entry.socketId);
+              return !isStale && !isSameUser && socketAlive;
             });
             
             if (validQueue.length !== queue.length) {
-              console.log(`[MATCHMAKING] Cleaned queue: removed ${queue.length - validQueue.length} entries (stale or duplicate)`);
+              console.log(`[MATCHMAKING] Cleaned queue: removed ${queue.length - validQueue.length} entries (stale, duplicate, or dead socket)`);
             }
             
             console.log(`[MATCHMAKING] Valid queue for $${betAmount}: ${validQueue.length} players AFTER filtering`);
@@ -3201,6 +3389,56 @@ io.on('connection', (socket) => {
               
               console.log(`[MATCHMAKING] ✅ MATCH FOUND! ${user.username} vs ${opponent.username} for $${betAmount}`);
               
+              // ── Verify opponent socket is still alive BEFORE creating the game ──
+              const opponentSocket = io.sockets.sockets.get(opponent.socketId);
+              if (!opponentSocket || !opponentSocket.connected) {
+                console.log(`[MATCHMAKING] ⚠️ Opponent ${opponent.username} socket dead — re-queuing current player`);
+                // Refund opponent (their socket is gone, but ledger still works)
+                ledger.createLedgerEntry({
+                  userId: opponent.userId,
+                  type: ledger.ENTRY_TYPES.BET_REFUND,
+                  amount: betAmount,
+                  currency: 'USD',
+                  referenceType: 'matchmaking_dead_socket',
+                  referenceId: null,
+                  metadata: { reason: 'socket_disconnected_before_match' }
+                }).catch(err => console.error(`[MATCHMAKING] Refund failed for dead socket user:`, err));
+
+                // Put current player into queue instead
+                validQueue.push({
+                  userId: socket.userId,
+                  username: user.username,
+                  balance: user.balance - betAmount,
+                  socketId: socket.id,
+                  timestamp: Date.now()
+                });
+                matchmakingQueue.set(betAmount, validQueue);
+                socket.emit('matchmaking_joined', { position: validQueue.length });
+
+                // Set timeout for this player
+                const mmTimeout = setTimeout(() => {
+                  const currentQueue = matchmakingQueue.get(betAmount) || [];
+                  const stillInQueue = currentQueue.find(entry => entry.userId === socket.userId);
+                  if (stillInQueue) {
+                    const filtered = currentQueue.filter(entry => entry.userId !== socket.userId);
+                    matchmakingQueue.set(betAmount, filtered);
+                    ledger.createLedgerEntry({
+                      userId: socket.userId,
+                      type: ledger.ENTRY_TYPES.BET_REFUND,
+                      amount: betAmount,
+                      currency: 'USD',
+                      referenceType: 'bingo_game',
+                      referenceId: null,
+                      metadata: { reason: 'matchmaking_timeout' }
+                    }).catch(err => console.error(`[MATCHMAKING] Refund failed:`, err));
+                    socket.emit('matchmaking_timeout');
+                  }
+                }, 30000);
+                // Track timeout for cleanup on disconnect
+                socket._mmTimeout = mmTimeout;
+                return;
+              }
+
               // Randomly assign colors
               const isUserWhite = Math.random() < 0.5;
               const whitePlayerId = isUserWhite ? socket.userId : opponent.userId;
@@ -3276,11 +3514,12 @@ io.on('connection', (socket) => {
               socket.currentGameId = gameId;
               
               console.log(`[MATCHMAKING] Looking for opponent socket: ${opponent.socketId}`);
-              const opponentSocket = io.sockets.sockets.get(opponent.socketId);
-              if (opponentSocket) {
+              // Re-fetch opponent socket (already verified alive above, but room join needs fresh ref)
+              const oppSock = io.sockets.sockets.get(opponent.socketId);
+              if (oppSock) {
                 console.log(`[MATCHMAKING] ✅ Opponent socket found: ${opponent.username}`);
-                opponentSocket.join(`game_${gameId}`);
-                opponentSocket.currentGameId = gameId;
+                oppSock.join(`game_${gameId}`);
+                oppSock.currentGameId = gameId;
               } else {
                 console.log(`[MATCHMAKING] ❌ WARNING: Opponent socket NOT found! Socket ID: ${opponent.socketId}`);
               }
@@ -3302,9 +3541,9 @@ io.on('connection', (socket) => {
               console.log(`[MATCHMAKING] Sending match_found to ${user.username} (socket: ${socket.id})`);
               socket.emit('match_found', gameData);
               
-              if (opponentSocket) {
+              if (oppSock) {
                 console.log(`[MATCHMAKING] Sending match_found to ${opponent.username} (socket: ${opponent.socketId})`);
-                opponentSocket.emit('match_found', gameData);
+                oppSock.emit('match_found', gameData);
               } else {
                 console.log(`[MATCHMAKING] ❌ Cannot send match_found to opponent - socket not found`);
               }
@@ -3327,7 +3566,7 @@ io.on('connection', (socket) => {
               socket.emit('matchmaking_joined', { position: validQueue.length });
               
               // Set timeout (30 seconds) - if no match, start bot game
-              setTimeout(() => {
+              const mmTimeout = setTimeout(() => {
                 const currentQueue = matchmakingQueue.get(betAmount) || [];
                 const stillInQueue = currentQueue.find(entry => entry.userId === socket.userId);
                 
@@ -3355,6 +3594,8 @@ io.on('connection', (socket) => {
                   socket.emit('matchmaking_timeout');
                 }
               }, 30000);
+              // Track timeout so we can cancel it on disconnect
+              socket._mmTimeout = mmTimeout;
             }
         } catch (error) {
           console.error('[MATCHMAKING] Bet deduction error:', error);
@@ -3400,6 +3641,7 @@ io.on('connection', (socket) => {
 
   // Make a move
   socket.on('make_move', async (data) => {
+    if (isRateLimited()) return;
     try {
       const { gameId, move } = data;
       const game = activeGames.get(gameId);
@@ -3797,6 +4039,7 @@ io.on('connection', (socket) => {
 
   // Resign
   socket.on('resign', async (data) => {
+    if (isRateLimited()) return;
     try {
       console.log(`[RESIGN] ========== RESIGN REQUEST ==========`);
       console.log(`[RESIGN] Data received:`, data);
@@ -4006,6 +4249,7 @@ io.on('connection', (socket) => {
 
   // Draw offer/accept
   socket.on('respond_draw', async (data) => {
+    if (isRateLimited()) return;
     try {
       const { gameId, accepted } = data;
       
@@ -4283,6 +4527,19 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('Chess client disconnected:', socket.id);
+
+    // ── Cancel any pending matchmaking timeout timer ──
+    if (socket._mmTimeout) {
+      clearTimeout(socket._mmTimeout);
+      socket._mmTimeout = null;
+    }
+
+    // ── Remove this socket from playerSockets tracking ──
+    if (socket.userId && playerSockets.has(socket.userId)) {
+      const sockets = playerSockets.get(socket.userId);
+      sockets.delete(socket.id);
+      if (sockets.size === 0) playerSockets.delete(socket.userId);
+    }
     
     // Remove from matchmaking queue and refund if still waiting
     if (socket.userId) {
@@ -4306,6 +4563,44 @@ io.on('connection', (socket) => {
           });
         }
       });
+
+      // ── Handle mid-game disconnect with 30-second grace period ──
+      const activeGameId = findActiveGameForPlayer(socket.userId);
+      if (activeGameId) {
+        // Check if user has other active sockets (multiple tabs)
+        const remainingSockets = playerSockets.get(socket.userId);
+        if (remainingSockets && remainingSockets.size > 0) {
+          console.log(`[DISCONNECT] User ${socket.username} lost one socket but has ${remainingSockets.size} remaining — no forfeit`);
+        } else {
+          // No active sockets — start 30-second grace period
+          console.log(`[DISCONNECT] ⏳ User ${socket.username} disconnected mid-game ${activeGameId} — 30s grace period to reconnect`);
+
+          // Notify opponent
+          const game = activeGames.get(activeGameId);
+          if (game) {
+            const opponentId = socket.userId === game.whitePlayerId ? game.blackPlayerId : game.whitePlayerId;
+            io.to(`user_${opponentId}`).emit('opponent_disconnected', {
+              gameId: activeGameId,
+              gracePeriodSeconds: 30
+            });
+          }
+
+          const disconnUserId = socket.userId;
+          const timer = setTimeout(() => {
+            disconnectTimers.delete(disconnUserId);
+            // Check again if they reconnected during the grace period
+            const currentSockets = playerSockets.get(disconnUserId);
+            if (!currentSockets || currentSockets.size === 0) {
+              console.log(`[DISCONNECT] ❌ User ${disconnUserId} did not reconnect — forfeiting game ${activeGameId}`);
+              forfeitGameForPlayer(disconnUserId, activeGameId);
+            } else {
+              console.log(`[DISCONNECT] ✅ User ${disconnUserId} reconnected during grace period`);
+            }
+          }, 30000);
+
+          disconnectTimers.set(disconnUserId, { timer, gameId: activeGameId });
+        }
+      }
     }
   });
 });
