@@ -2663,10 +2663,10 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
         userId: userId
       });
       
-      if (winnerId === game.white_player_id) {
+      if (winnerId !== null && winnerId === game.white_player_id) {
         whiteBalanceChange = game.pot_amount;
         console.log(`[CHESS GAME END] ✅ White player wins - adding $${whiteBalanceChange} to white player ${game.white_player_id}`);
-      } else if (winnerId === game.black_player_id) {
+      } else if (winnerId !== null && winnerId === game.black_player_id) {
         blackBalanceChange = game.pot_amount;
         console.log(`[CHESS GAME END] ✅ Black player wins - adding $${blackBalanceChange} to black player ${game.black_player_id}`);
       } else {
@@ -2718,19 +2718,25 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
                 console.error('[CHESS GAME END] Error updating white player stats:', updateWhiteStatsErr);
               }
               
-              // Update white player balance via ledger
-              console.log(`[CHESS GAME END] 💰 Updating white player ${game.white_player_id} balance: +${whiteBalanceChange}`);
-              const whiteEntryType = whiteBalanceChange > 0 ? ledger.ENTRY_TYPES.WIN_CREDIT : ledger.ENTRY_TYPES.BET_REFUND;
-              ledger.createLedgerEntry({
-                userId: game.white_player_id,
-                type: whiteEntryType,
-                amount: whiteBalanceChange,
-                currency: 'USD',
-                referenceType: 'chess_game',
-                referenceId: gameId,
-                metadata: { result: winner, pot_amount: game.pot_amount }
-              }).then(entry => {
-                console.log(`[CHESS GAME END] ✅ White player balance: $${entry.balance_after}`);
+              // Update white player balance via ledger (only if there's a payout)
+              console.log(`[CHESS GAME END] 💰 White player ${game.white_player_id} balance change: ${whiteBalanceChange}`);
+              const doWhiteLedger = whiteBalanceChange > 0
+                ? ledger.createLedgerEntry({
+                    userId: game.white_player_id,
+                    type: ledger.ENTRY_TYPES.WIN_CREDIT,
+                    amount: whiteBalanceChange,
+                    currency: 'USD',
+                    referenceType: 'chess_game',
+                    referenceId: gameId,
+                    metadata: { result: 'win', pot_amount: game.pot_amount }
+                  })
+                : Promise.resolve({ balance_after: null }); // loss - bet already deducted at game start
+              doWhiteLedger.then(entry => {
+                if (entry.balance_after !== null) {
+                  console.log(`[CHESS GAME END] ✅ White player balance: $${entry.balance_after}`);
+                } else {
+                  console.log(`[CHESS GAME END] ℹ️ White player lost - bet was deducted at game start, no credit needed`);
+                }
                 
                 // 3. Update black player stats and balance (if multiplayer)
                 if (game.black_player_id) {

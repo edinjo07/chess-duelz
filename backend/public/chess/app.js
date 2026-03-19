@@ -2431,7 +2431,7 @@ loginBtn.addEventListener('click', async () => {
     authMessage.textContent = '⏳ Logging in...';
     authMessage.style.color = '#ffaa00';
     
-    const response = await fetch(window.location.origin + '/login', {
+    const response = await fetch((window.CHESS_API || window.location.origin) + '/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: user, password: pass })
@@ -7295,7 +7295,7 @@ async function recordMoveToDatabase(moveNotation, fenAfter) {
   if (!authToken) return;
   
   try {
-    await fetch(window.location.origin + '/chess/game/move', {
+    await fetch((window.CHESS_API || window.location.origin) + '/chess/game/move', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -7330,7 +7330,7 @@ async function endGameInDatabase(outcome) {
   balanceUpdateInProgress = true;
   
   try {
-    const response = await fetch(window.location.origin + '/chess/game/end', {
+    const response = await fetch((window.CHESS_API || window.location.origin) + '/chess/game/end', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
