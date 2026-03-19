@@ -1327,7 +1327,7 @@ function onEngineMessage(line){
 }
 function sendToEngine(cmd){ engineReady? engine.postMessage(cmd) : engineQueue.push(cmd); }
 async function createEngineWorker(){
-  const paths=['assets/stockfish/stockfish.js','/assets/stockfish/stockfish.js'];
+  const paths=['/chess/assets/stockfish/stockfish.js','assets/stockfish/stockfish.js','/assets/stockfish/stockfish.js'];
   const abs=p=>new URL(p,location.href).toString();
   const waitReady=w=>new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('not ready')),10000);const h=e=>{const s=String(e.data);if(s==='readyok'||s.includes('uciok')){clearTimeout(t);w.removeEventListener('message',h);engineReady=true;while(engineReady&&engineQueue.length) w.postMessage(engineQueue.shift());res();}};w.addEventListener('message',h);w.postMessage('uci');w.postMessage('isready');});
   for(const rel of paths){try{const b=new Blob([`importScripts("${abs(rel)}");`],{type:'application/javascript'});const u=URL.createObjectURL(b);const w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>onEngineMessage(e.data);await waitReady(w);return w;}catch(e){}}
@@ -7256,7 +7256,7 @@ async function startGameInDatabase(betAmount, opponentType) {
   balanceUpdateInProgress = true;
   
   try {
-    const response = await fetch(window.location.origin + '/chess/game/start', {
+    const response = await fetch((window.CHESS_API || window.location.origin) + '/chess/game/start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

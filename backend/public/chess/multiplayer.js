@@ -37,8 +37,9 @@ class MultiplayerManager {
         return false;
       }
 
-      // Use current origin (works for both localhost and production)
-      const serverUrl = window.location.origin;
+      // Use CHESS_API (Railway backend) — window.location.origin would point to
+      // Vercel (static host) which does not run Socket.IO
+      const serverUrl = window.CHESS_API || window.location.origin;
       
       console.log(`[MULTIPLAYER] Creating socket.io connection to ${serverUrl}`);
       
