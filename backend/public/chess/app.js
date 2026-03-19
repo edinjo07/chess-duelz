@@ -1327,11 +1327,21 @@ function onEngineMessage(line){
 }
 function sendToEngine(cmd){ engineReady? engine.postMessage(cmd) : engineQueue.push(cmd); }
 async function createEngineWorker(){
-  const paths=['/chess/assets/stockfish/stockfish.js','assets/stockfish/stockfish.js','/assets/stockfish/stockfish.js'];
-  const abs=p=>new URL(p,location.href).toString();
+  const relPaths=['/chess/assets/stockfish/stockfish.js','assets/stockfish/stockfish.js','/assets/stockfish/stockfish.js'];
+  // Build full URLs from both the current origin and the API backend (Railway)
+  const apiBase = window.CHESS_API || window.location.origin;
+  const origins = [window.location.origin];
+  if (apiBase !== window.location.origin) origins.push(apiBase);
+  const paths = [];
+  for (const origin of origins) {
+    for (const rel of relPaths) {
+      paths.push(new URL(rel, origin + '/').toString());
+    }
+  }
   const waitReady=w=>new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('not ready')),10000);const h=e=>{const s=String(e.data);if(s==='readyok'||s.includes('uciok')){clearTimeout(t);w.removeEventListener('message',h);engineReady=true;while(engineReady&&engineQueue.length) w.postMessage(engineQueue.shift());res();}};w.addEventListener('message',h);w.postMessage('uci');w.postMessage('isready');});
-  for(const rel of paths){try{const b=new Blob([`importScripts("${abs(rel)}");`],{type:'application/javascript'});const u=URL.createObjectURL(b);const w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>onEngineMessage(e.data);await waitReady(w);return w;}catch(e){}}
-  for(const rel of paths){try{const r=await fetch(abs(rel),{cache:'no-store'});if(!r.ok) throw 0;const code=await r.text();const b=new Blob([code],{type:'application/javascript'});const u=URL.createObjectURL(b);const w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>onEngineMessage(e.data);await waitReady(w);return w;}catch(e){}}
+  for(const url of paths){try{const b=new Blob([`importScripts("${url}");`],{type:'application/javascript'});const u=URL.createObjectURL(b);const w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>onEngineMessage(e.data);await waitReady(w);console.log('[ENGINE] ✅ Loaded stockfish from:', url);return w;}catch(e){console.log('[ENGINE] importScripts failed for:', url);}}
+  for(const url of paths){try{const r=await fetch(url,{cache:'no-store'});if(!r.ok) throw 0;const code=await r.text();const b=new Blob([code],{type:'application/javascript'});const u=URL.createObjectURL(b);const w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>onEngineMessage(e.data);await waitReady(w);console.log('[ENGINE] ✅ Loaded stockfish via fetch from:', url);return w;}catch(e){console.log('[ENGINE] fetch failed for:', url);}}
+  console.error('[ENGINE] ❌ All stockfish paths failed');
   return null;
 }
 async function ensureEngine(){
