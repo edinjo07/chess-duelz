@@ -63,13 +63,28 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   FRONTEND_URL
 ].filter(Boolean);
+
+// Explicit preflight handler — ensures OPTIONS always gets CORS headers
+// even behind reverse proxies (Railway, etc.)
+app.options('*', cors({
+  origin: (origin, cb) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
 app.use(cors({
   origin: (origin, cb) => {
     // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-    cb(new Error(`CORS blocked: ${origin}`));
+    cb(null, false);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
 
