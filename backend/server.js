@@ -530,28 +530,40 @@ async function initializeDatabase() {
     await run(`
       CREATE TABLE IF NOT EXISTS chess_games (
         id SERIAL PRIMARY KEY,
-        room_id VARCHAR(100) UNIQUE NOT NULL,
+        room_id VARCHAR(100) UNIQUE,
         white_player_id INT,
         black_player_id INT,
         white_username VARCHAR(50),
         black_username VARCHAR(50),
-        stake DECIMAL(10,2) DEFAULT 0.00,
+        bet_amount DECIMAL(10,2) DEFAULT 0.00,
+        pot_amount DECIMAL(10,2) DEFAULT 0.00,
+        game_type VARCHAR(20) DEFAULT 'bot',
         currency VARCHAR(3) DEFAULT 'USD',
         status VARCHAR(20) DEFAULT 'waiting',
         winner_id INT,
         winner_username VARCHAR(50),
+        outcome VARCHAR(20),
         result VARCHAR(20),
         pgn TEXT,
-        final_fen TEXT,
+        fen TEXT,
         time_control INT DEFAULT 600,
         white_time INT DEFAULT 600,
         black_time INT DEFAULT 600,
         move_count INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         started_at TIMESTAMP,
-        completed_at TIMESTAMP
+        ended_at TIMESTAMP
       )
     `);
+    // Migrate existing tables: add missing columns if table already exists
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS bet_amount DECIMAL(10,2) DEFAULT 0.00`);
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS pot_amount DECIMAL(10,2) DEFAULT 0.00`);
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS game_type VARCHAR(20) DEFAULT 'bot'`);
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS fen TEXT`);
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS outcome VARCHAR(20)`);
+    await run(`ALTER TABLE chess_games ADD COLUMN IF NOT EXISTS ended_at TIMESTAMP`);
+    // Make room_id nullable for bot games (no room needed)
+    await run(`ALTER TABLE chess_games ALTER COLUMN room_id DROP NOT NULL`);
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_room_id ON chess_games(room_id)`);
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_white ON chess_games(white_player_id)`);
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_games_black ON chess_games(black_player_id)`);
@@ -564,8 +576,9 @@ async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         game_id INT NOT NULL,
         move_number INT NOT NULL,
-        player_id INT NOT NULL,
-        move_san VARCHAR(10) NOT NULL,
+        player_id INT,
+        move_san VARCHAR(10),
+        move_notation VARCHAR(10),
         move_from VARCHAR(5),
         move_to VARCHAR(5),
         fen_after TEXT,
@@ -573,6 +586,9 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    await run(`ALTER TABLE chess_game_moves ADD COLUMN IF NOT EXISTS move_notation VARCHAR(10)`);
+    await run(`ALTER TABLE chess_game_moves ALTER COLUMN player_id DROP NOT NULL`);
+    await run(`ALTER TABLE chess_game_moves ALTER COLUMN move_san DROP NOT NULL`);
     await run(`CREATE INDEX IF NOT EXISTS idx_chess_moves_game_id ON chess_game_moves(game_id)`);
     console.log('✅ chess_game_moves table ready');
 
@@ -1848,7 +1864,7 @@ app.delete('/admin/games/:gameId', verifyAdminToken, adminAuth.requirePermission
   logAdminAction(req.user.userId, req.user.username, 'DELETE_GAME', { gameId, ip: getClientIP(req) });
   
   // Delete moves first
-  db.query('DELETE FROM chess_moves WHERE game_id = ?', [gameId], (err) => {
+  db.query('DELETE FROM chess_game_moves WHERE game_id = ?', [gameId], (err) => {
     if (err && !err.message.includes("doesn't exist")) {
       console.error('Error deleting moves:', err);
     }
@@ -1883,16 +1899,21 @@ app.delete('/admin/cleanup/old-games', verifyAdminToken, adminAuth.requirePermis
   logAdminAction(req.user.userId, req.user.username, 'CLEANUP_OLD_GAMES', { daysAgo, ip: getClientIP(req) });
   
   db.query(
-    `DELETE g, m FROM chess_games g
-     LEFT JOIN chess_moves m ON m.game_id = g.id
-     WHERE g.finished_at < DATE_SUB(NOW(), INTERVAL ? DAY)`,
+    `DELETE FROM chess_game_moves WHERE game_id IN (SELECT id FROM chess_games WHERE ended_at < NOW() - INTERVAL '1 day' * ?)`,
     [daysAgo],
-    (err, result) => {
-      if (err) {
-        console.error('Error cleaning up games:', err);
-        return res.status(500).json({ error: 'Database error: ' + err.message });
-      }
-      res.json({ message: `Deleted games older than ${daysAgo} days`, deletedCount: result.affectedRows });
+    (moveErr) => {
+      if (moveErr) console.error('Error deleting old moves:', moveErr);
+      db.query(
+        `DELETE FROM chess_games WHERE ended_at < NOW() - INTERVAL '1 day' * ?`,
+        [daysAgo],
+        (err, result) => {
+          if (err) {
+            console.error('Error cleaning up games:', err);
+            return res.status(500).json({ error: 'Database error: ' + err.message });
+          }
+          res.json({ message: `Deleted games older than ${daysAgo} days`, deletedCount: result.affectedRows });
+        }
+      );
     }
   );
 });
@@ -2859,7 +2880,7 @@ app.delete('/admin/users/:userId', verifyAdminToken, adminAuth.requirePermission
   const deleteRelatedQueries = [
     'DELETE FROM chess_statistics WHERE user_id = ?',
     'DELETE FROM chess_matchmaking WHERE user_id = ?',
-    'DELETE FROM chess_moves WHERE game_id IN (SELECT id FROM chess_games WHERE white_player_id = ? OR black_player_id = ?)',
+    'DELETE FROM chess_game_moves WHERE game_id IN (SELECT id FROM chess_games WHERE white_player_id = ? OR black_player_id = ?)',
     'DELETE FROM chess_games WHERE white_player_id = ? OR black_player_id = ?'
   ];
   
