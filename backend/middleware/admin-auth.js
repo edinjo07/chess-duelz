@@ -2,9 +2,12 @@
 // Enhanced admin authentication and RBAC middleware
 
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET || 'your_secret_key';
-// Separate secret for admin-issued tokens — must match server.js ADMIN_JWT_SECRET
-const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin_secret_change_me_in_production';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET;
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
+if (!JWT_SECRET || !ADMIN_JWT_SECRET) {
+  console.error('[FATAL] JWT secrets must be set in environment');
+  process.exit(1);
+}
 
 /**
  * Enhanced admin authentication middleware
@@ -71,11 +74,10 @@ function requirePermission(...requiredPermissions) {
     try {
       const userPermissions = await getUserPermissions(req.user.userId);
       
-      // TEMPORARY: If user has no roles/permissions assigned yet, grant full access
-      // This allows the first admin to access everything to set up the system
+      // Admins with no roles assigned get NO access — assign roles first
       if (userPermissions.length === 0) {
-        console.log(`[RBAC] Admin ${req.user.username} has no roles assigned - granting temporary full access`);
-        return next();
+        console.warn(`[RBAC] Admin ${req.user.username} has no roles assigned — access denied`);
+        return res.status(403).json({ error: 'No permissions assigned. Contact a super admin.' });
       }
       
       // Check if user has at least one of the required permissions

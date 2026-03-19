@@ -11,6 +11,8 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { Chess } = require('chess.js');
 const adminAuth = require('./middleware/admin-auth');
 const ledger = require('./lib/ledger');
@@ -43,10 +45,13 @@ const io = socketIo(server, {
 
 // ---------- CONFIG ----------
 const PORT = process.env.PORT || 4000;
-const JWT_ACCESS_SECRET  = process.env.JWT_ACCESS_SECRET  || 'your_secret_key';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_refresh_secret_key';
-// Separate secret for admin JWTs — must differ from player JWT secrets
-const ADMIN_JWT_SECRET   = process.env.ADMIN_JWT_SECRET   || 'admin_secret_change_me_in_production';
+const JWT_ACCESS_SECRET  = process.env.JWT_ACCESS_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+const ADMIN_JWT_SECRET   = process.env.ADMIN_JWT_SECRET;
+if (!JWT_ACCESS_SECRET || !JWT_REFRESH_SECRET || !ADMIN_JWT_SECRET) {
+  console.error('[FATAL] JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, and ADMIN_JWT_SECRET must be set in environment');
+  process.exit(1);
+}
 
 // If you serve the frontend from this server, FRONTEND_URL should be this server's origin
 // (e.g. http://localhost:4000). If your frontend is elsewhere, set it accordingly.
@@ -56,12 +61,26 @@ const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 const EMAIL_USER = process.env.EMAIL_USER || 'your-email@gmail.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || 'your-app-password';
 
+// ── Token Blacklist (in-memory — clears on restart, keeps revoked tokens until they expire) ──
+const tokenBlacklist = new Set();
+// Clean expired entries every hour
+setInterval(() => {
+  for (const token of tokenBlacklist) {
+    try {
+      jwt.verify(token, JWT_ACCESS_SECRET);
+    } catch {
+      tokenBlacklist.delete(token); // expired, no longer dangerous
+    }
+  }
+}, 60 * 60 * 1000);
+
 // ── House Rake (per bet tier in dollars) ──
 // $5 bet each → winner gets $8 (20% rake on $10 pot)
 // $10 bet each → winner gets $16 (20% rake on $20 pot)
 // $50 bet each → winner gets $90 (10% rake on $100 pot)
 // Default: 10% rake for unlisted tiers
 const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10, 100: 0.10 };
+const ALLOWED_BETS = Object.keys(RAKE_TABLE).map(Number); // [1, 5, 10, 50, 100]
 function getHouseRake(betAmountDollars) {
   return RAKE_TABLE[betAmountDollars] || 0.10;
 }
@@ -102,6 +121,50 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
+
+// ── Security Headers ──
+app.use(helmet({
+  contentSecurityPolicy: false, // CSP handled by frontend HTML meta tags
+  crossOriginEmbedderPolicy: false, // Allow cross-origin resources (chess assets)
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+
+// ── Rate Limiters ──
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutes
+  max: 15,                     // 15 attempts per window
+  message: { error: 'Too many attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.ip
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  max: 5,                     // 5 registrations per hour per IP
+  message: { error: 'Too many registrations. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.ip
+});
+
+const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many reset requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.ip
+});
+
+const withdrawalLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  max: 10,                     // 10 withdrawal requests per hour
+  message: { error: 'Too many withdrawal requests.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.ip
+});
 
 // Serve static frontend from /public
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -880,7 +943,7 @@ const transporter = nodemailer.createTransport({
 // ============================ AUTH ============================
 
 // Register (updated: sets balance/currency and returns token + user)
-app.post('/register', (req, res) => {
+app.post('/register', registerLimiter, (req, res) => {
   const { email, username, password, dob, phone, referral, lang } = req.body;
 
   // Basic validation (kept from your code)
@@ -903,7 +966,7 @@ app.post('/register', (req, res) => {
   if (age < 18) return res.status(400).json({ error: 'You must be 18 or older' });
 
   // Hash secret
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
+  bcrypt.hash(password, 12, (err, hashedPassword) => {
     if (err) return res.status(500).json({ error: 'Hash error' });
 
     // Uniqueness check (case-insensitive)
@@ -930,8 +993,8 @@ app.post('/register', (req, res) => {
           const tokenPayload = { userId, username };
           let accessToken, refreshToken;
           try {
-            accessToken = jwt.sign(tokenPayload, JWT_ACCESS_SECRET, { expiresIn: '7d' });
-            refreshToken = jwt.sign(tokenPayload, JWT_REFRESH_SECRET, { expiresIn: '30d' });
+            accessToken = jwt.sign(tokenPayload, JWT_ACCESS_SECRET, { expiresIn: '2h' });
+            refreshToken = jwt.sign(tokenPayload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
           } catch (e) {
             return res.status(500).json({ error: 'Token generation failed' });
           }
@@ -957,7 +1020,7 @@ app.post('/register', (req, res) => {
 
 
 // Login (email OR username via "identifier")
-app.post('/login', (req, res) => {
+app.post('/login', authLimiter, (req, res) => {
   const { identifier, username, email, password } = req.body;
   const id = identifier || username || email; // accept any
   if (!id || !password) return res.status(400).json({ error: 'Identifier and password required' });
@@ -977,8 +1040,8 @@ app.post('/login', (req, res) => {
       if (cmpErr) return res.status(500).json({ error: 'Compare error' });
       if (!ok) return res.status(400).json({ error: 'Invalid password' });
 
-      const accessToken = jwt.sign({ userId: user.id, username: user.username, isAdmin: !!user.is_admin }, JWT_ACCESS_SECRET, { expiresIn: '7d' });
-      const refreshToken = jwt.sign({ userId: user.id, username: user.username, isAdmin: !!user.is_admin }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
+      const accessToken = jwt.sign({ userId: user.id, username: user.username, isAdmin: !!user.is_admin }, JWT_ACCESS_SECRET, { expiresIn: '2h' });
+      const refreshToken = jwt.sign({ userId: user.id, username: user.username, isAdmin: !!user.is_admin }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
       // Return user data along with tokens (for frontend compatibility)
       res.json({ 
@@ -1005,15 +1068,25 @@ app.post('/refresh-token', (req, res) => {
 
   jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ error: 'Invalid or expired refresh token' });
-    const accessToken = jwt.sign({ userId: decoded.userId, username: decoded.username }, JWT_ACCESS_SECRET, { expiresIn: '7d' });
+    const accessToken = jwt.sign({ userId: decoded.userId, username: decoded.username }, JWT_ACCESS_SECRET, { expiresIn: '2h' });
     res.json({ accessToken });
   });
+});
+
+// Logout — blacklist the current token
+app.post('/logout', (req, res) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (token) {
+    tokenBlacklist.add(token);
+  }
+  res.json({ message: 'Logged out' });
 });
 
 // ===================== PASSWORD RESET =====================
 
 // Request reset: store HASHED token + expiry (DB sets expiry to avoid timezone issues)
-app.post('/password-reset-request', (req, res) => {
+app.post('/password-reset-request', passwordResetLimiter, (req, res) => {
   const { email } = req.body;
   console.log('Password reset requested for:', email);
   
@@ -1069,12 +1142,10 @@ If you did not request this, ignore this email.`
         transporter.sendMail(mailOptions, (mailErr) => {
           if (mailErr) {
             console.error('Email error:', mailErr);
-            // For dev, still expose token so you can test without email:
-            console.log('Reset URL (dev mode):', resetUrl);
-            return res.json({ message: 'Email service unavailable. Contact support.', resetToken: rawToken, resetUrl });
+            return res.json({ message: 'If that email exists, a reset link was sent.' });
           }
           console.log('Password reset email sent to:', user.email);
-          res.json({ message: 'Password reset email sent' });
+          res.json({ message: 'If that email exists, a reset link was sent.' });
         });
       }
     );
@@ -1115,7 +1186,7 @@ const doReset = (req, res) => {
       const user = rows[0];
       console.log('Valid reset token found for user:', user.username);
 
-      bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+      bcrypt.hash(password, 12, (hashErr, hashedPassword) => {
         if (hashErr) {
           console.error('Password hash error:', hashErr);
           return res.status(500).json({ error: 'Hash error' });
@@ -1168,22 +1239,8 @@ app.post('/password-reset', doReset);
 
 // ============================ ADMIN SECURITY ============================
 
-// Admin IP allowlist (add your trusted IPs here)
-const ADMIN_ALLOWED_IPS = new Set([
-  '127.0.0.1',
-  '::1',
-  '::ffff:127.0.0.1',
-  // Whitelisted admin IPs
-  '84.233.178.37',
-  '84.233.178.38',
-  '84.233.178.39',
-  '84.233.178.40',
-  '84.233.178.41',
-  '84.233.178.42',
-  '84.233.178.43',
-  '84.233.178.44',
-  '84.233.178.45',
-]);
+// Admin IP allowlist — configured via ADMIN_ALLOWED_IPS env var (comma-separated)
+// Falls back to localhost only if env var is not set
 
 // Get real client IP (handles proxies/CDNs)
 function getClientIP(req) {
@@ -1259,6 +1316,11 @@ function verifyToken(req, res, next) {
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token) return res.status(403).json({ error: 'Token missing' });
 
+  // Check if token was revoked via logout
+  if (tokenBlacklist.has(token)) {
+    return res.status(401).json({ error: 'Token revoked — please log in again' });
+  }
+
   try {
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
     req.user = decoded;
@@ -1283,14 +1345,18 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// IP allowlist for admin routes - DISABLED for development (allows all IPs)
+// IP allowlist for admin routes - set ADMIN_ALLOWED_IPS env var (comma-separated) to enable
+const ADMIN_ALLOWED_IPS = process.env.ADMIN_ALLOWED_IPS
+  ? new Set(process.env.ADMIN_ALLOWED_IPS.split(',').map(ip => ip.trim()))
+  : null;
+
 function ipAllowlist(req, res, next) {
-  // Temporarily disabled during platform development
-  // const clientIP = getClientIP(req);
-  // if (!ADMIN_ALLOWED_IPS.has(clientIP)) {
-  //   console.warn(`[SECURITY] Admin access denied for IP: ${clientIP}`);
-  //   return res.status(403).json({ error: 'Forbidden: IP not allowed' });
-  // }
+  if (!ADMIN_ALLOWED_IPS) return next(); // No allowlist configured = allow all (set env var to restrict)
+  const clientIP = getClientIP(req);
+  if (!ADMIN_ALLOWED_IPS.has(clientIP)) {
+    console.warn(`[SECURITY] Admin access denied for IP: ${clientIP}`);
+    return res.status(403).json({ error: 'Forbidden: IP not allowed' });
+  }
   next();
 }
 
@@ -1977,8 +2043,10 @@ app.post('/api/setup-admin', async (req, res) => {
 
   const { username, secretKey } = req.body;
   
-  // Secret key protection - change this to something secure
-  const SETUP_SECRET = process.env.ADMIN_SETUP_SECRET || 'CHANGE_ME_IN_PRODUCTION_12345';
+  const SETUP_SECRET = process.env.ADMIN_SETUP_SECRET;
+  if (!SETUP_SECRET) {
+    return res.status(403).json({ error: 'ADMIN_SETUP_SECRET not configured on server' });
+  }
   
   if (secretKey !== SETUP_SECRET) {
     console.warn(`[SECURITY] Invalid admin setup attempt from IP: ${getClientIP(req)}`);
@@ -2080,8 +2148,10 @@ app.get('/api/check-admin/:username', (req, res) => {
 app.post('/api/setup-king1-permissions', async (req, res) => {
   const { secretKey } = req.body;
   
-  // Secret key protection
-  const SETUP_SECRET = process.env.ADMIN_SETUP_SECRET || 'CHANGE_ME_IN_PRODUCTION_12345';
+  const SETUP_SECRET = process.env.ADMIN_SETUP_SECRET;
+  if (!SETUP_SECRET) {
+    return res.status(403).json({ error: 'ADMIN_SETUP_SECRET not configured on server' });
+  }
   
   if (secretKey !== SETUP_SECRET) {
     console.warn(`[SECURITY] Invalid King1 permissions setup attempt from IP: ${getClientIP(req)}`);
@@ -3086,7 +3156,7 @@ app.use('/api/nowpayments', nowpaymentsIpnRouter);
 
 // Withdrawal routes (new)
 const withdrawRouter = require('./routes/withdraw');
-app.use('/api/withdraw', withdrawRouter);
+app.use('/api/withdraw', withdrawalLimiter, withdrawRouter);
 
 // Admin withdrawal approval routes (new)
 const adminWithdrawRouter = require('./routes/admin_withdraw');
@@ -3341,9 +3411,9 @@ io.on('connection', (socket) => {
         return;
       }
       
-      if (isNaN(betAmount) || betAmount <= 0) {
+      if (isNaN(betAmount) || !ALLOWED_BETS.includes(betAmount)) {
         console.log(`[MATCHMAKING] ERROR: Invalid bet amount: ${betAmount}`);
-        socket.emit('error', { message: 'Invalid bet amount' });
+        socket.emit('error', { message: `Invalid bet. Allowed: $${ALLOWED_BETS.join(', $')}` });
         return;
       }
       

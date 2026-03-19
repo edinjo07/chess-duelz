@@ -2,7 +2,11 @@
 // JWT authentication middleware
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET || 'your_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET;
+if (!JWT_SECRET) {
+  console.error('[FATAL] JWT_SECRET or JWT_ACCESS_SECRET must be set in environment');
+  process.exit(1);
+}
 
 // Auth middleware - extracts userId from JWT token
 function auth(req, res, next) {

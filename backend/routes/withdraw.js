@@ -37,29 +37,26 @@ const MIN_WITHDRAWAL = {
  */
 function withdrawAuth(req, res, next) {
   const jwt = require('jsonwebtoken');
-  const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_secret_key';
+  const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+  if (!JWT_ACCESS_SECRET) {
+    console.error('[SECURITY] JWT_ACCESS_SECRET not set — refusing to authenticate');
+    return res.status(500).json({ error: 'Server misconfiguration' });
+  }
   
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
-      req.user = { id: decoded.id || decoded.userId };
-      return next();
-    } catch (err) {
-      // Token invalid, fall through to x-user-id
-    }
+  if (!token) {
+    return res.status(401).json({ error: 'Authentication required' });
   }
-  
-  // Fallback for testing
-  const userId = req.headers['x-user-id'];
-  if (userId) {
-    req.user = { id: parseInt(userId) };
+
+  try {
+    const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
+    req.user = { id: decoded.id || decoded.userId };
     return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
-  
-  return res.status(401).json({ error: 'Unauthorized' });
 }
 
 /**

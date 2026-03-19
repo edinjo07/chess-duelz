@@ -9,7 +9,7 @@ function verifyToken(req, res, next) {
   if (!token) return res.status(403).json({ error: 'Token missing' });
 
   try {
-    const decoded = require('jsonwebtoken').verify(token, process.env.JWT_ACCESS_SECRET || 'your_secret_key');
+    const decoded = require('jsonwebtoken').verify(token, process.env.JWT_ACCESS_SECRET);
     req.user = decoded;
     next();
   } catch {
@@ -85,10 +85,13 @@ router.post('/matchmaking/join', verifyToken, async (req, res) => {
   try {
     const { betAmount } = req.body;
     const db = req.app.get('db');
+    
+    // Whitelist of allowed bet amounts
+    const ALLOWED_BETS = [1, 5, 10, 50, 100];
 
     // Validate bet amount
-    if (!betAmount || betAmount <= 0) {
-      return res.status(400).json({ error: 'Invalid bet amount' });
+    if (!betAmount || !ALLOWED_BETS.includes(Number(betAmount))) {
+      return res.status(400).json({ error: `Invalid bet. Allowed: $${ALLOWED_BETS.join(', $')}` });
     }
 
     // Check user balance
@@ -144,6 +147,11 @@ router.post('/game/create', verifyToken, async (req, res) => {
   try {
     const { betAmount, opponent } = req.body;
     const db = req.app.get('db');
+    const ALLOWED_BETS = [1, 5, 10, 50, 100];
+
+    if (!betAmount || !ALLOWED_BETS.includes(Number(betAmount))) {
+      return res.status(400).json({ error: `Invalid bet. Allowed: $${ALLOWED_BETS.join(', $')}` });
+    }
 
     // Deduct bet from player's balance
     await new Promise((resolve, reject) => {
