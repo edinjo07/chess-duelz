@@ -1513,10 +1513,10 @@ app.post('/api/profile/deposit-limits', verifyToken, (req, res) => {
   db.query(
     `INSERT INTO responsible_gaming_limits (user_id, daily_limit, weekly_limit, monthly_limit)
      VALUES (?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE
-       daily_limit = VALUES(daily_limit),
-       weekly_limit = VALUES(weekly_limit),
-       monthly_limit = VALUES(monthly_limit)`,
+     ON CONFLICT (user_id) DO UPDATE SET
+       daily_limit = EXCLUDED.daily_limit,
+       weekly_limit = EXCLUDED.weekly_limit,
+       monthly_limit = EXCLUDED.monthly_limit`,
     [userId, daily, weekly, monthly],
     (err) => {
       if (err) {
@@ -2083,9 +2083,9 @@ app.post('/api/setup-king1-permissions', async (req, res) => {
       db.query(`
         INSERT INTO admin_roles (role_name, permissions, description)
         VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE 
-          permissions = VALUES(permissions),
-          description = VALUES(description),
+        ON CONFLICT (role_name) DO UPDATE SET
+          permissions = EXCLUDED.permissions,
+          description = EXCLUDED.description,
           updated_at = CURRENT_TIMESTAMP
       `, [
         'Super Admin',
@@ -2128,7 +2128,7 @@ app.post('/api/setup-king1-permissions', async (req, res) => {
       db.query(`
         INSERT INTO user_admin_roles (user_id, role_id, assigned_by)
         VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE assigned_at = CURRENT_TIMESTAMP
+        ON CONFLICT (user_id, role_id) DO UPDATE SET assigned_at = CURRENT_TIMESTAMP
       `, [king1.id, roleId, king1.id], (err) => {
         if (err) return reject(err);
         resolve();

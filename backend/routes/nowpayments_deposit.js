@@ -3,11 +3,22 @@
 
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { pool, getUserBalance, formatAtomic, decimalsFor } = require('../lib/mysql_pool');
+const { db } = require('../pool');
+const { formatAtomic, decimalsFor } = require('../lib/mysql_pool');
 const { nowpCreatePayment, nowpGetPayment, nowpGetMinAmount } = require('../lib/nowpayments');
 
 const depositRouter = express.Router();
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_secret_key';
+
+// Promise wrapper for the pg-compat db layer
+function queryAsync(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.query(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
 
 /**
  * Currency mapping: internal asset codes to NOWPayments currency codes
@@ -146,15 +157,15 @@ depositRouter.post('/create', depositAuth, async (req, res) => {
     });
 
     // Save deposit intent to database
-    await pool.query(
+    await queryAsync(
       `INSERT INTO deposit_intents
         (user_id, provider, payment_id, pay_currency, price_amount, price_currency, pay_amount, pay_address, status)
        VALUES (?, 'nowpayments', ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE
-         pay_amount = VALUES(pay_amount),
-         pay_address = VALUES(pay_address),
-         status = VALUES(status),
-         updated_at = CURRENT_TIMESTAMP`,
+       ON CONFLICT (provider, payment_id) DO UPDATE SET
+         pay_amount = EXCLUDED.pay_amount,
+         pay_address = EXCLUDED.pay_address,
+         status = EXCLUDED.status,
+         updated_at = NOW()`,
       [
         req.user.id,
         payment.payment_id,
@@ -201,7 +212,7 @@ depositRouter.get('/status', depositAuth, async (req, res) => {
     }
 
     // Check if payment belongs to user
-    const [rows] = await pool.query(
+    const rows = await queryAsync(
       `SELECT user_id, status FROM deposit_intents
        WHERE provider = 'nowpayments' AND payment_id = ? AND user_id = ? LIMIT 1`,
       [paymentId, req.user.id]
@@ -215,7 +226,7 @@ depositRouter.get('/status', depositAuth, async (req, res) => {
     const payment = await nowpGetPayment(paymentId);
 
     // Update local cache
-    await pool.query(
+    await queryAsync(
       `UPDATE deposit_intents
        SET status = ?, 
            pay_amount = COALESCE(?, pay_amount), 
@@ -249,7 +260,7 @@ depositRouter.get('/status', depositAuth, async (req, res) => {
  */
 depositRouter.get('/recent', depositAuth, async (req, res) => {
   try {
-    const [rows] = await pool.query(
+    const rows = await queryAsync(
       `SELECT payment_id AS paymentId, 
               pay_currency AS payCurrency, 
               pay_amount AS payAmount,
@@ -281,7 +292,7 @@ depositRouter.get('/recent', depositAuth, async (req, res) => {
  */
 depositRouter.get('/balances', depositAuth, async (req, res) => {
   try {
-    const [rows] = await pool.query(
+    const rows = await queryAsync(
       `SELECT asset, available_atomic, locked_atomic
        FROM balances
        WHERE user_id = ?`,
@@ -314,7 +325,7 @@ depositRouter.get('/balances', depositAuth, async (req, res) => {
  */
 depositRouter.get('/health', async (req, res) => {
   try {
-    const [tables] = await pool.query('SHOW TABLES');
+    const tables = await queryAsync('SHOW TABLES');
     const tableNames = tables.map(t => Object.values(t)[0]);
     const hasDepositIntents = tableNames.includes('deposit_intents');
     const hasBalances = tableNames.includes('balances');
@@ -380,7 +391,7 @@ depositRouter.get('/history', depositAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 50;
 
     // Check if deposit_intents table exists
-    const [tables] = await pool.query("SHOW TABLES LIKE 'deposit_intents'");
+    const tables = await queryAsync("SHOW TABLES LIKE 'deposit_intents'");
     
     if (tables.length === 0) {
       // Table doesn't exist, return empty array
@@ -390,7 +401,7 @@ depositRouter.get('/history', depositAuth, async (req, res) => {
       });
     }
 
-    const [deposits] = await pool.execute(
+    const deposits = await queryAsync(
       `SELECT 
         id, 
         pay_currency as asset, 

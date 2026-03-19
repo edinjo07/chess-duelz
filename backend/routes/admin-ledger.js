@@ -692,7 +692,7 @@ module.exports = (db, verifyToken, requireAdmin) => {
    */
   router.get('/entries/stats/summary', verifyToken, requireAdmin, (req, res) => {
     // Check if ledger_entries table exists first
-    db.query('SHOW TABLES LIKE "ledger_entries"', (checkErr, tables) => {
+    db.query("SHOW TABLES LIKE 'ledger_entries'", (checkErr, tables) => {
       if (checkErr || !tables || tables.length === 0) {
         // Table doesn't exist yet, return empty stats
         return res.json({

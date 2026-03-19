@@ -152,21 +152,21 @@ module.exports = (db, adminAuth) => {
         updateQuery = `
           INSERT INTO user_risk_profiles (user_id, is_frozen, freeze_reason, frozen_at, frozen_by)
           VALUES (?, TRUE, ?, NOW(), ?)
-          ON DUPLICATE KEY UPDATE
+          ON CONFLICT (user_id) DO UPDATE SET
             is_frozen = TRUE,
-            freeze_reason = VALUES(freeze_reason),
+            freeze_reason = EXCLUDED.freeze_reason,
             frozen_at = NOW(),
-            frozen_by = VALUES(frozen_by)
+            frozen_by = EXCLUDED.frozen_by
         `;
       } else if (freezeType === 'withdrawals') {
         updateQuery = `
           INSERT INTO user_risk_profiles (user_id, withdrawals_frozen, withdrawal_freeze_reason, frozen_at, frozen_by)
           VALUES (?, TRUE, ?, NOW(), ?)
-          ON DUPLICATE KEY UPDATE
+          ON CONFLICT (user_id) DO UPDATE SET
             withdrawals_frozen = TRUE,
-            withdrawal_freeze_reason = VALUES(withdrawal_freeze_reason),
+            withdrawal_freeze_reason = EXCLUDED.withdrawal_freeze_reason,
             frozen_at = NOW(),
-            frozen_by = VALUES(frozen_by)
+            frozen_by = EXCLUDED.frozen_by
         `;
       } else {
         return res.status(400).json({ success: false, error: 'Invalid freezeType' });

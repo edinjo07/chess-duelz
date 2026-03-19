@@ -39,9 +39,35 @@ function mysqlToPg(sql) {
     .replace(/\bYEAR\(([^)]+)\)/gi, (_, e) => `EXTRACT(YEAR FROM ${e})::INT`)
     .replace(/\bMONTH\(([^)]+)\)/gi, (_, e) => `EXTRACT(MONTH FROM ${e})::INT`)
     .replace(/\bDATE\(([^)]+)\)/gi, (_, e) => `(${e})::DATE`)
-    // SHOW TABLES LIKE 'name'
-    .replace(/SHOW\s+TABLES\s+LIKE\s+'([^']+)'/gi,
+    // TIMESTAMPDIFF(UNIT, expr1, expr2) → integer difference
+    .replace(/TIMESTAMPDIFF\s*\(\s*(\w+)\s*,\s*([^,]+?)\s*,\s*((?:[^)(]|\([^)]*\))+?)\s*\)/gi, (_, unit, e1, e2) => {
+      const u = unit.toUpperCase();
+      const epoch = `EXTRACT(EPOCH FROM ((${e2.trim()}) - (${e1.trim()})))`;
+      if (u === 'SECOND') return `(${epoch})::BIGINT`;
+      if (u === 'MINUTE') return `(${epoch} / 60)::BIGINT`;
+      if (u === 'HOUR')   return `(${epoch} / 3600)::BIGINT`;
+      if (u === 'DAY')    return `(${epoch} / 86400)::BIGINT`;
+      return `(${epoch})::BIGINT`;
+    })
+    // DATE_SUB(expr, INTERVAL n UNIT) → expr - INTERVAL 'n units'
+    .replace(/DATE_SUB\s*\(\s*((?:[^)(]|\([^)]*\))+?)\s*,\s*INTERVAL\s+(\d+)\s+(\w+)\s*\)/gi,
+      (_, e, n, u) => `((${e.trim()}) - INTERVAL '${n} ${u.toLowerCase()}s')`)
+    // DATE_ADD(expr, INTERVAL n UNIT) → expr + INTERVAL 'n units'
+    .replace(/DATE_ADD\s*\(\s*((?:[^)(]|\([^)]*\))+?)\s*,\s*INTERVAL\s+(\d+)\s+(\w+)\s*\)/gi,
+      (_, e, n, u) => `((${e.trim()}) + INTERVAL '${n} ${u.toLowerCase()}s')`)
+    // DATE_FORMAT(expr, 'format') → TO_CHAR(expr, 'pgformat')
+    .replace(/DATE_FORMAT\s*\(\s*([^,]+?)\s*,\s*'([^']+)'\s*\)/gi, (_, e, fmt) => {
+      const pgFmt = fmt
+        .replace(/%Y/g, 'YYYY').replace(/%m/g, 'MM').replace(/%d/g, 'DD')
+        .replace(/%H/g, 'HH24').replace(/%i/g, 'MI').replace(/%s/g, 'SS');
+      return `TO_CHAR(${e.trim()}, '${pgFmt}')`;
+    })
+    // SHOW TABLES LIKE 'name' (single or double quotes)
+    .replace(/SHOW\s+TABLES\s+LIKE\s+["']([^"']+)["']/gi,
       (_, t) => `SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='${t}'`)
+    // SHOW TABLES (no filter) → list all user tables
+    .replace(/\bSHOW\s+TABLES\b(?!\s+LIKE)/gi,
+      `SELECT table_name FROM information_schema.tables WHERE table_schema='public'`)
     // SHOW COLUMNS FROM table LIKE 'col'
     .replace(/SHOW\s+COLUMNS\s+FROM\s+(\w+)\s+LIKE\s+'([^']+)'/gi,
       (_, t, c) => `SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='${t}' AND column_name='${c}'`)
