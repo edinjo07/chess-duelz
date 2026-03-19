@@ -2539,10 +2539,12 @@ function setPot(c){
   }
 }
 /* ===== Pot Fee (Rake) ===== */
-const POT_FEE_RATE = 0.00; // No fee - pot = full sum of bets
+// House rake by bet tier (in dollars): $5→20%, $10→20%, $50→10%, default→10%
+const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10 };
 function netPot(totalPotCents){
-  // keep integers (cents); clamp floor at 0
-  return Math.max(0, Math.round(totalPotCents * (1 - POT_FEE_RATE)));
+  const betDollars = Math.round(totalPotCents / 2 / 100); // each player's bet in dollars
+  const rake = RAKE_TABLE[betDollars] || 0.10;
+  return Math.max(0, Math.round(totalPotCents * (1 - rake)));
 }
 const STATS_KEYS = { day: 'stats:day', games: 'stats:gamesToday', money: 'stats:moneyToday' };
 

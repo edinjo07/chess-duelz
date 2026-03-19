@@ -56,6 +56,21 @@ const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 const EMAIL_USER = process.env.EMAIL_USER || 'your-email@gmail.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || 'your-app-password';
 
+// ── House Rake (per bet tier in dollars) ──
+// $5 bet each → winner gets $8 (20% rake on $10 pot)
+// $10 bet each → winner gets $16 (20% rake on $20 pot)
+// $50 bet each → winner gets $90 (10% rake on $100 pot)
+// Default: 10% rake for unlisted tiers
+const RAKE_TABLE = { 1: 0.10, 5: 0.20, 10: 0.20, 50: 0.10 };
+function getHouseRake(betAmountDollars) {
+  return RAKE_TABLE[betAmountDollars] || 0.10;
+}
+function calcNetPot(betAmountDollars) {
+  const grossPot = betAmountDollars * 2;
+  const rake = getHouseRake(betAmountDollars);
+  return parseFloat((grossPot * (1 - rake)).toFixed(2));
+}
+
 // ---------- MIDDLEWARE ----------
 const ALLOWED_ORIGINS = [
   'https://chess-duelz.vercel.app',
@@ -2310,10 +2325,13 @@ app.post('/chess/deduct-bet', verifyToken, async (req, res) => {
 
 // Update balance after bot game (chess)
 app.post('/chess/update-balance', verifyToken, async (req, res) => {
-  const { outcome, betAmount, potAmount } = req.body;
+  const { outcome, betAmount } = req.body;
   const userId = req.user.userId;
   
-  console.log(`[CHESS BALANCE] User ${userId} game ended - Outcome: ${outcome}, Bet: $${betAmount}, Pot: $${potAmount}`);
+  // Server-authoritative pot calculation (never trust client potAmount)
+  const serverPot = calcNetPot(betAmount);
+  
+  console.log(`[CHESS BALANCE] User ${userId} game ended - Outcome: ${outcome}, Bet: $${betAmount}, Net Pot: $${serverPot}`);
   
   try {
     // Calculate balance change based on outcome
@@ -2321,10 +2339,10 @@ app.post('/chess/update-balance', verifyToken, async (req, res) => {
     let entryType = null;
     
     if (outcome === 'win') {
-      balanceChange = potAmount; // Winner gets the pot
+      balanceChange = serverPot; // Winner gets the net pot (after house rake)
       entryType = ledger.ENTRY_TYPES.WIN_CREDIT;
     } else if (outcome === 'draw') {
-      balanceChange = potAmount / 2; // Split pot
+      balanceChange = serverPot / 2; // Split net pot
       entryType = ledger.ENTRY_TYPES.WIN_CREDIT;
     } else if (outcome === 'lose') {
       // Loss - bet already deducted, no ledger entry needed
@@ -2349,7 +2367,8 @@ app.post('/chess/update-balance', verifyToken, async (req, res) => {
         game_type: 'chess_bot',
         outcome: outcome,
         bet_amount: betAmount,
-        pot_amount: potAmount
+        pot_amount: serverPot,
+        house_rake: parseFloat((betAmount * 2 - serverPot).toFixed(2))
       }
     });
     
@@ -2417,8 +2436,8 @@ app.post('/chess/game/start', verifyToken, async (req, res) => {
             }
           );
           
-          // Calculate pot amount (always 2x bet - winner takes all)
-          const potAmount = betAmount * 2;
+          // Calculate pot amount with house rake
+          const potAmount = calcNetPot(betAmount);
           
           // Determine player colors (white_player_id)
           const whitePlayerId = userId;
@@ -3453,7 +3472,7 @@ io.on('connection', (socket) => {
                       white_player_id, black_player_id, fen, pot_amount, bet_amount, 
                       game_type, status
                     ) VALUES (?, ?, ?, ?, ?, 'multiplayer', 'in_progress')`,
-                    [whitePlayerId, blackPlayerId, 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', betAmount * 2, betAmount],
+                    [whitePlayerId, blackPlayerId, 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', calcNetPot(betAmount), betAmount],
                     (err, result) => {
                       if (err) reject(err);
                       else resolve(result);
@@ -3488,7 +3507,7 @@ io.on('connection', (socket) => {
                   whiteUsername: isUserWhite ? user.username : opponent.username,
                   blackPlayerId: blackPlayerId,
                   blackUsername: isUserWhite ? opponent.username : user.username,
-                  potAmount: betAmount * 2,
+                  potAmount: calcNetPot(betAmount),
                   betAmount: betAmount,
                   createdAt: Date.now(),
                   moveCount: 0,
@@ -3532,7 +3551,7 @@ io.on('connection', (socket) => {
                 blackPlayerId: isUserWhite ? opponent.userId : socket.userId,
                 blackUsername: isUserWhite ? opponent.username : user.username,
                 betAmount: betAmount,
-                potAmount: betAmount * 2,
+                potAmount: calcNetPot(betAmount),
                 // Include initial clock times
                 whiteTimeMs: 60000,
                 blackTimeMs: 60000
@@ -4456,7 +4475,7 @@ io.on('connection', (socket) => {
             white_player_id, black_player_id, fen, pot_amount, bet_amount, 
             game_type, status
           ) VALUES (?, ?, ?, ?, ?, 'multiplayer', 'in_progress')`,
-          [whitePlayerId, blackPlayerId, 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', betAmount * 2, betAmount],
+          [whitePlayerId, blackPlayerId, 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', calcNetPot(betAmount), betAmount],
           (err, result) => {
             if (err) reject(err);
             else resolve(result);
@@ -4486,7 +4505,7 @@ io.on('connection', (socket) => {
         whitePlayerId,
         blackPlayerId,
         chess,
-        potAmount: betAmount * 2,
+        potAmount: calcNetPot(betAmount),
         betAmount: betAmount,
         dbGameId: createGameResult.insertId,
         // Clock state for bullet 1+1
@@ -4507,7 +4526,7 @@ io.on('connection', (socket) => {
         blackPlayerId,
         blackUsername: blackUser.username,
         betAmount: betAmount,
-        potAmount: betAmount * 2,
+        potAmount: calcNetPot(betAmount),
         isRematch: true,  // Flag to indicate this is a rematch (server already created DB record)
         dbGameId: createGameResult.insertId,  // Include DB ID for client tracking
         // Include initial clock times
