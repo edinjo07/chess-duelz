@@ -69,7 +69,7 @@ function getClientIP(req) {
          req.connection.remoteAddress;
 }
 
-module.exports = (db, verifyToken) => {
+module.exports = (db, verifyToken, verifyAdminToken) => {
   
   // ==================== USER ENDPOINTS ====================
   
@@ -319,7 +319,7 @@ module.exports = (db, verifyToken) => {
   }
   
   // Get all pending KYC submissions (Admin only)
-  router.get('/admin/pending', verifyToken, requireAdmin, (req, res) => {
+  router.get('/admin/pending', verifyAdminToken, (req, res) => {
     // First check if kyc tables exist
     db.query(`SHOW TABLES LIKE 'kyc_documents'`, (tableErr, tables) => {
       if (tableErr || tables.length === 0) {
@@ -362,7 +362,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Get all KYC submissions with filters (Admin only)
-  router.get('/admin/all', verifyToken, requireAdmin, (req, res) => {
+  router.get('/admin/all', verifyAdminToken, (req, res) => {
     const { status, limit = 50, offset = 0 } = req.query;
     
     let query = `
@@ -405,7 +405,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Get specific user's KYC details (Admin only)
-  router.get('/admin/user/:userId', verifyToken, requireAdmin, (req, res) => {
+  router.get('/admin/user/:userId', verifyAdminToken, (req, res) => {
     const userId = req.params.userId;
     
     // Get user info and KYC status
@@ -469,7 +469,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // View/Download document (Admin only)
-  router.get('/admin/document/:documentId', verifyToken, requireAdmin, (req, res) => {
+  router.get('/admin/document/:documentId', verifyAdminToken, (req, res) => {
     const documentId = req.params.documentId;
     
     db.query(`
@@ -499,7 +499,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Approve specific document (Admin only)
-  router.post('/admin/document/:documentId/approve', verifyToken, requireAdmin, (req, res) => {
+  router.post('/admin/document/:documentId/approve', verifyAdminToken, (req, res) => {
     const documentId = req.params.documentId;
     const adminId = req.user.userId;
     
@@ -582,7 +582,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Reject specific document (Admin only)
-  router.post('/admin/document/:documentId/reject', verifyToken, requireAdmin, (req, res) => {
+  router.post('/admin/document/:documentId/reject', verifyAdminToken, (req, res) => {
     const documentId = req.params.documentId;
     const adminId = req.user.userId;
     const { reason } = req.body;
@@ -649,7 +649,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Approve entire KYC submission (Admin only)
-  router.post('/admin/user/:userId/approve', verifyToken, requireAdmin, (req, res) => {
+  router.post('/admin/user/:userId/approve', verifyAdminToken, (req, res) => {
     const userId = req.params.userId;
     const adminId = req.user.userId;
     const { notes } = req.body;
@@ -697,7 +697,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Reject entire KYC submission (Admin only)
-  router.post('/admin/user/:userId/reject', verifyToken, requireAdmin, (req, res) => {
+  router.post('/admin/user/:userId/reject', verifyAdminToken, (req, res) => {
     const userId = req.params.userId;
     const adminId = req.user.userId;
     const { reason, notes } = req.body;
@@ -748,7 +748,7 @@ module.exports = (db, verifyToken) => {
   });
   
   // Add admin notes (Admin only)
-  router.post('/admin/user/:userId/notes', verifyToken, requireAdmin, (req, res) => {
+  router.post('/admin/user/:userId/notes', verifyAdminToken, (req, res) => {
     const userId = req.params.userId;
     const adminId = req.user.userId;
     const { notes } = req.body;

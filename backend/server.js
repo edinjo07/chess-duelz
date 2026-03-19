@@ -2797,7 +2797,7 @@ const chessRoutes = require('./routes/chess');
 app.use('/api/chess', chessRoutes);
 
 // KYC API routes
-const kycRoutes = require('./routes/kyc')(db, verifyToken);
+const kycRoutes = require('./routes/kyc')(db, verifyToken, verifyAdminToken);
 app.use('/api/kyc', kycRoutes);
 
 // ============ ENHANCED ADMIN ROUTES WITH RBAC ============
