@@ -2733,10 +2733,16 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
       
       const game = rows[0];
       
+      // Parse numeric fields (PostgreSQL DECIMAL returns strings)
+      game.pot_amount = parseFloat(game.pot_amount) || 0;
+      game.bet_amount = parseFloat(game.bet_amount) || 0;
+      
       // Verify user is part of this game
       if (game.white_player_id !== userId && game.black_player_id !== userId) {
         return res.status(403).json({ error: 'Not authorized for this game' });
       }
+      
+      const isBotGame = game.game_type === 'bot' || !game.black_player_id;
       
       // Determine winner and game outcome
       let gameOutcome, winnerId = null;
@@ -2748,7 +2754,7 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
         whiteResult = (userId === game.white_player_id) ? 1 : 0;
         blackResult = (userId === game.white_player_id) ? 0 : 1;
       } else if (outcome === 'lose') {
-        winnerId = (userId === game.white_player_id) ? game.black_player_id : game.white_player_id;
+        winnerId = isBotGame ? null : ((userId === game.white_player_id) ? game.black_player_id : game.white_player_id);
         gameOutcome = (userId === game.white_player_id) ? 'win_black' : 'win_white';
         whiteResult = (userId === game.white_player_id) ? 0 : 1;
         blackResult = (userId === game.white_player_id) ? 1 : 0;
@@ -2772,7 +2778,7 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
       const newWhiteElo = whiteElo + whiteEloChange;
       const newBlackElo = blackElo + blackEloChange;
       
-      // Calculate payout
+      // Calculate payout based on outcome (handles bot games where black_player_id is null)
       let whiteBalanceChange = 0;
       let blackBalanceChange = 0;
       
@@ -2781,24 +2787,41 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
         pot_amount: game.pot_amount,
         bet_amount: game.bet_amount,
         game_type: game.game_type,
+        isBotGame: isBotGame,
         white_player_id: game.white_player_id,
         black_player_id: game.black_player_id,
         winnerId: winnerId,
-        userId: userId
+        userId: userId,
+        outcome: outcome
       });
       
-      if (winnerId !== null && winnerId === game.white_player_id) {
-        whiteBalanceChange = game.pot_amount;
-        console.log(`[CHESS GAME END] ✅ White player wins - adding $${whiteBalanceChange} to white player ${game.white_player_id}`);
-      } else if (winnerId !== null && winnerId === game.black_player_id) {
-        blackBalanceChange = game.pot_amount;
-        console.log(`[CHESS GAME END] ✅ Black player wins - adding $${blackBalanceChange} to black player ${game.black_player_id}`);
+      if (outcome === 'win') {
+        // Requesting user won — credit their side
+        if (userId === game.white_player_id) {
+          whiteBalanceChange = game.pot_amount;
+        } else {
+          blackBalanceChange = game.pot_amount;
+        }
+        console.log(`[CHESS GAME END] ✅ User ${userId} wins - payout $${game.pot_amount}`);
+      } else if (outcome === 'lose') {
+        // Requesting user lost — bet already deducted at game start
+        if (!isBotGame) {
+          // Multiplayer: credit the other player
+          if (userId === game.white_player_id) {
+            blackBalanceChange = game.pot_amount;
+          } else {
+            whiteBalanceChange = game.pot_amount;
+          }
+          console.log(`[CHESS GAME END] ❌ User ${userId} lost - crediting opponent $${game.pot_amount}`);
+        } else {
+          console.log(`[CHESS GAME END] ❌ User ${userId} lost bot game - no payout (bet deducted at start)`);
+        }
       } else {
         // Draw - split pot
         const splitAmount = game.pot_amount / 2;
         whiteBalanceChange = splitAmount;
-        blackBalanceChange = splitAmount;
-        console.log(`[CHESS GAME END] ⚖️ Draw - splitting pot: white gets $${whiteBalanceChange}, black gets $${blackBalanceChange}`);
+        blackBalanceChange = isBotGame ? 0 : splitAmount;
+        console.log(`[CHESS GAME END] ⚖️ Draw - white gets $${whiteBalanceChange}, black gets $${blackBalanceChange}`);
       }
       
       // Start transaction-like updates

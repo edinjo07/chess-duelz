@@ -92,7 +92,11 @@ async function createLedgerEntry(params) {
           }
 
           const balanceBefore = parseFloat(balanceRows[0].balance) || 0;
-          const balanceAfter = balanceBefore + amount;
+          const numericAmount = parseFloat(amount);
+          if (isNaN(numericAmount)) {
+            throw new Error(`Invalid amount: ${amount}`);
+          }
+          const balanceAfter = balanceBefore + numericAmount;
 
           // Check for negative balance (optional - can be enabled)
           // if (balanceAfter < 0) {

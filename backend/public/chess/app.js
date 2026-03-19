@@ -5274,7 +5274,18 @@ duelBtn.addEventListener('click', async ()=>{
     console.log('[REMATCH] Using existing DB game ID:', currentGameId);
   } else {
     // Normal game or bot: Create new DB record via HTTP API
-    await startGameInDatabase(selectedBetCents, isMultiplayer ? "multiplayer" : "bot");
+    const dbGameId = await startGameInDatabase(selectedBetCents, isMultiplayer ? "multiplayer" : "bot");
+    if (!dbGameId) {
+      // Server failed to create game — refund local balance and abort
+      console.error('[GAME INIT] ❌ Failed to create game in database — aborting');
+      balance += stake; // Refund local deduction
+      updateBalanceUI();
+      matchStarted = false;
+      mm.style.display = 'none';
+      statusMsg.textContent = 'Failed to start game. Please try again.';
+      statusMsg.style.color = '#ff0000';
+      return;
+    }
   }
   document.body.classList.add('game-active'); // Add game-active class for CSS
   mm.style.display='none';
@@ -7356,12 +7367,18 @@ async function endGameInDatabase(outcome) {
       currentGameId = null;
       balanceUpdateInProgress = false; // Clear flag after successful update
       return data;
+    } else {
+      console.error('[endGameInDatabase] ❌ Server returned:', response.status);
     }
   } catch (error) {
     console.error('[endGameInDatabase] Error:', error);
   }
   
-  balanceUpdateInProgress = false; // Clear flag even on error
+  // Failed — resync balance from server to correct any local drift
+  console.log('[endGameInDatabase] ⚠️ Falling back to fetchUserStats to resync balance');
+  balanceUpdateInProgress = false;
+  currentGameId = null;
+  await fetchUserStats();
   return null;
 }
 
