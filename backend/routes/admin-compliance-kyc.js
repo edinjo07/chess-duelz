@@ -3,7 +3,10 @@ const moment = require('moment');
 
 module.exports = (db, adminAuth) => {
   const router = express.Router();
-  const { requireAdmin, requirePermission, logAdminAction } = adminAuth;
+  const { requireAdmin, requirePermission, logAdminAction, verifyAdminToken } = adminAuth;
+
+  // All routes require a valid admin token
+  router.use(verifyAdminToken);
 
   // ============================================
   // KYC TIER MANAGEMENT ENDPOINTS

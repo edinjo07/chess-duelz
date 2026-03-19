@@ -5043,7 +5043,7 @@ app.get('/api/contact/my-messages', verifyToken, async (req, res) => {
 });
 
 // ADMIN: Get all contact messages
-app.get('/api/admin/contact/messages', verifyToken, requireAdmin, (req, res) => {
+app.get('/api/admin/contact/messages', verifyAdminToken, (req, res) => {
   try {
     const { status, priority, limit = 100 } = req.query;
 
@@ -5118,7 +5118,7 @@ app.get('/api/admin/contact/messages', verifyToken, requireAdmin, (req, res) => 
 });
 
 // ADMIN: Get single contact message with replies
-app.get('/api/admin/contact/message/:id', verifyToken, requireAdmin, async (req, res) => {
+app.get('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) => {
   try {
     const messageId = req.params.id;
 
@@ -5168,7 +5168,7 @@ app.get('/api/admin/contact/message/:id', verifyToken, requireAdmin, async (req,
 });
 
 // ADMIN: Update contact message status
-app.put('/api/admin/contact/message/:id', verifyToken, requireAdmin, async (req, res) => {
+app.put('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) => {
   try {
     const messageId = req.params.id;
     const { status, priority, assigned_to, admin_notes } = req.body;
@@ -5235,7 +5235,7 @@ app.put('/api/admin/contact/message/:id', verifyToken, requireAdmin, async (req,
 });
 
 // ADMIN: Add reply to contact message
-app.post('/api/admin/contact/message/:id/reply', verifyToken, requireAdmin, async (req, res) => {
+app.post('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) => {
   try {
     const messageId = req.params.id;
     const { reply_text } = req.body;
@@ -5284,7 +5284,7 @@ app.post('/api/admin/contact/message/:id/reply', verifyToken, requireAdmin, asyn
 });
 
 // ADMIN: Get contact message statistics
-app.get('/api/admin/contact/stats', verifyToken, requireAdmin, (req, res) => {
+app.get('/api/admin/contact/stats', verifyAdminToken, (req, res) => {
   try {
     db.query(`
       SELECT 

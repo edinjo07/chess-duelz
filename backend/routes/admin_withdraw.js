@@ -2,6 +2,7 @@
 // Admin withdrawal approval endpoints (CommonJS)
 
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { pool, atomicToDecimal, decimalsFor } = require('../lib/mysql_pool');
 const { createPayout, verifyPayout, getPayoutStatus } = require('../lib/nowpayments_payouts');
 
@@ -20,35 +21,27 @@ const NETWORK_CURRENCY = {
 };
 
 /**
- * Middleware: Admin authentication
+ * Middleware: Admin authentication — requires a valid admin token (ADMIN_JWT_SECRET, isAdminToken: true)
  */
 function adminAuth(req, res, next) {
-  const jwt = require('jsonwebtoken');
-  const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_secret_key';
-  
+  const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin_secret_change_me_in_production';
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
-      if (decoded.role === 'admin' || decoded.isAdmin) {
-        req.admin = { id: decoded.id || decoded.userId };
-        return next();
-      }
-    } catch (err) {
-      // Token invalid
+
+  if (!token) {
+    return res.status(403).json({ error: 'Admin token required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    if (!decoded.isAdminToken) {
+      return res.status(403).json({ error: 'Forbidden: Not a valid admin token' });
     }
+    req.admin = { id: decoded.adminId, username: decoded.username };
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired admin token' });
   }
-  
-  // Fallback for testing (REMOVE IN PRODUCTION)
-  const adminKey = req.headers['x-admin-key'];
-  if (adminKey === process.env.ADMIN_SECRET_KEY) {
-    req.admin = { id: 1 };
-    return next();
-  }
-  
-  return res.status(403).json({ error: 'Admin access required' });
 }
 
 /**

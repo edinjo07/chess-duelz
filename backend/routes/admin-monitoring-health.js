@@ -4,7 +4,10 @@ const os = require('os');
 
 module.exports = (db, adminAuth) => {
   const router = express.Router();
-  const { requireAdmin, requirePermission, logAdminAction } = adminAuth;
+  const { requireAdmin, requirePermission, logAdminAction, verifyAdminToken } = adminAuth;
+
+  // All routes require a valid admin token
+  router.use(verifyAdminToken);
 
   // ============================================
   // SYSTEM HEALTH MONITORING ENDPOINTS

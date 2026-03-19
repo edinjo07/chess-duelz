@@ -3,6 +3,8 @@
 
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET || 'your_secret_key';
+// Separate secret for admin-issued tokens — must match server.js ADMIN_JWT_SECRET
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin_secret_change_me_in_production';
 
 /**
  * Enhanced admin authentication middleware
@@ -162,42 +164,27 @@ async function getUserPermissions(userId) {
 }
 
 /**
- * Enhanced token verification with admin session tracking
+ * Verify token is a valid admin token (signed with ADMIN_JWT_SECRET, isAdminToken: true)
+ * Used by all admin API routes in route files (risk, disputes, games, compliance, monitoring)
  */
 function verifyAdminToken(req, res, next) {
   const header = req.header('Authorization') || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  
+
   if (!token) {
-    return res.status(403).json({ 
-      error: 'Token missing',
-      code: 'TOKEN_MISSING'
-    });
+    return res.status(403).json({ error: 'Admin token missing', code: 'TOKEN_MISSING' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    
-    // Verify admin session is still valid
-    verifyAdminSession(token, decoded.userId, (err, isValid) => {
-      if (err || !isValid) {
-        return res.status(401).json({ 
-          error: 'Invalid or expired session',
-          code: 'SESSION_INVALID'
-        });
-      }
-      
-      // Update last activity
-      updateSessionActivity(token);
-      next();
-    });
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    if (!decoded.isAdminToken) {
+      return res.status(403).json({ error: 'Forbidden: Not a valid admin token', code: 'INVALID_ADMIN_TOKEN' });
+    }
+    // Set req.user so requireAdmin / requirePermission still work
+    req.user = { userId: decoded.adminId, username: decoded.username, isAdmin: true, isSuperAdmin: true };
+    next();
   } catch (error) {
-    console.error('JWT verification failed:', error.message);
-    return res.status(401).json({ 
-      error: 'Invalid or expired token',
-      code: 'TOKEN_INVALID'
-    });
+    return res.status(401).json({ error: 'Invalid or expired admin token', code: 'TOKEN_INVALID' });
   }
 }
 
