@@ -825,8 +825,8 @@ app.post('/register', (req, res) => {
   bcrypt.hash(password, 10, (err, hashedPassword) => {
     if (err) return res.status(500).json({ error: 'Hash error' });
 
-    // Uniqueness check
-    db.query('SELECT id FROM users WHERE email = ? OR username = ?', [email, username], (selErr, rows) => {
+    // Uniqueness check (case-insensitive)
+    db.query('SELECT id FROM users WHERE LOWER(email) = LOWER(?) OR LOWER(username) = LOWER(?)', [email, username], (selErr, rows) => {
       if (selErr) return res.status(500).json({ error: 'Database error' });
       if (rows.length) return res.status(400).json({ error: 'Email or Username already exists' });
 
@@ -882,8 +882,10 @@ app.post('/login', (req, res) => {
   if (!id || !password) return res.status(400).json({ error: 'Identifier and password required' });
 
   const byEmail = isEmail(id);
-  const sql = byEmail ? 'SELECT * FROM users WHERE email = ? LIMIT 1'
-                      : 'SELECT * FROM users WHERE username = ? LIMIT 1';
+  // Use LOWER() for case-insensitive matching (PostgreSQL is case-sensitive by default, MySQL was not)
+  const sql = byEmail
+    ? 'SELECT * FROM users WHERE LOWER(email) = LOWER(?) LIMIT 1'
+    : 'SELECT * FROM users WHERE LOWER(username) = LOWER(?) LIMIT 1';
 
   db.query(sql, [id], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Database error' });
