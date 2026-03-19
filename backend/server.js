@@ -774,6 +774,41 @@ async function initializeDatabase() {
     await run(`CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens(user_id)`);
     console.log('✅ refresh_tokens table ready');
 
+    // ── contact_messages ──────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id SERIAL PRIMARY KEY,
+        user_id INT,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        subject VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        priority VARCHAR(20) DEFAULT 'medium',
+        status VARCHAR(20) DEFAULT 'new',
+        assigned_to INT,
+        admin_notes TEXT,
+        resolved_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_contact_status ON contact_messages(status)`);
+    await run(`CREATE INDEX IF NOT EXISTS idx_contact_user_id ON contact_messages(user_id)`);
+    console.log('✅ contact_messages table ready');
+
+    // ── contact_replies ───────────────────────────────────────────────
+    await run(`
+      CREATE TABLE IF NOT EXISTS contact_replies (
+        id SERIAL PRIMARY KEY,
+        message_id INT NOT NULL,
+        admin_id INT NOT NULL,
+        reply_text TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await run(`CREATE INDEX IF NOT EXISTS idx_contact_replies_msg ON contact_replies(message_id)`);
+    console.log('✅ contact_replies table ready');
+
     console.log('✅ All database tables initialized successfully');
   } catch (err) {
     console.error('❌ Database initialization error:', err.message);
@@ -5050,11 +5085,14 @@ app.post('/api/contact/submit', async (req, res) => {
     }
 
     // Insert into database
-    const [result] = await db.promise().execute(
-      `INSERT INTO contact_messages (user_id, name, email, subject, message, priority, status)
-       VALUES (?, ?, ?, ?, ?, ?, 'new')`,
-      [userId, name, email, subject, message, priority]
-    );
+    await new Promise((resolve, reject) => {
+      db.query(
+        `INSERT INTO contact_messages (user_id, name, email, subject, message, priority, status)
+         VALUES (?, ?, ?, ?, ?, ?, 'new')`,
+        [userId, name, email, subject, message, priority],
+        (err, result) => { if (err) reject(err); else resolve(result); }
+      );
+    });
 
     console.log(`📧 New contact message from ${name} (${email}) - Priority: ${priority}`);
 
@@ -5078,13 +5116,15 @@ app.get('/api/contact/my-messages', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const [messages] = await db.promise().execute(
-      `SELECT id, subject, message, status, priority, created_at, updated_at, resolved_at
-       FROM contact_messages
-       WHERE user_id = ?
-       ORDER BY created_at DESC`,
-      [userId]
-    );
+    const messages = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT id, subject, message, status, priority, created_at, updated_at, resolved_at
+         FROM contact_messages
+         WHERE user_id = ?
+         ORDER BY created_at DESC`,
+        [userId], (err, rows) => { if (err) reject(err); else resolve(rows); }
+      );
+    });
 
     res.json({
       success: true,
@@ -5141,7 +5181,7 @@ app.get('/api/admin/contact/messages', verifyAdminToken, (req, res) => {
       if (err) {
         console.error('Admin get messages error:', err);
         // If table doesn't exist, return empty array
-        if (err.code === 'ER_NO_SUCH_TABLE') {
+        if (err.code === 'ER_NO_SUCH_TABLE' || err.code === '42P01') {
           return res.json({
             success: true,
             messages: [],
@@ -5157,7 +5197,7 @@ app.get('/api/admin/contact/messages', verifyAdminToken, (req, res) => {
       }
 
       // Get count of new messages
-      db.query('SELECT COUNT(*) as count FROM contact_messages WHERE status = "new"', (countErr, newCount) => {
+      db.query('SELECT COUNT(*) as count FROM contact_messages WHERE status = \'new\'', (countErr, newCount) => {
         res.json({
           success: true,
           messages: messages || [],
@@ -5180,41 +5220,35 @@ app.get('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) => 
   try {
     const messageId = req.params.id;
 
-    const [messages] = await db.promise().execute(
-      `SELECT 
-        cm.*, 
-        u.username as user_username,
-        u.email as user_email,
-        a.username as assigned_to_username
-       FROM contact_messages cm
-       LEFT JOIN users u ON cm.user_id = u.id
-       LEFT JOIN users a ON cm.assigned_to = a.id
-       WHERE cm.id = ?`,
-      [messageId]
-    );
+    const messages = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT cm.*, u.username as user_username, u.email as user_email,
+                a.username as assigned_to_username
+         FROM contact_messages cm
+         LEFT JOIN users u ON cm.user_id = u.id
+         LEFT JOIN users a ON cm.assigned_to = a.id
+         WHERE cm.id = ?`,
+        [messageId], (err, rows) => { if (err) reject(err); else resolve(rows); }
+      );
+    });
 
     if (messages.length === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Message not found' 
-      });
+      return res.status(404).json({ success: false, error: 'Message not found' });
     }
 
     // Get replies
-    const [replies] = await db.promise().execute(
-      `SELECT r.*, u.username as admin_username
-       FROM contact_replies r
-       JOIN users u ON r.admin_id = u.id
-       WHERE r.message_id = ?
-       ORDER BY r.created_at ASC`,
-      [messageId]
-    );
-
-    res.json({
-      success: true,
-      message: messages[0],
-      replies: replies
+    const replies = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT r.*, u.username as admin_username
+         FROM contact_replies r
+         JOIN users u ON r.admin_id = u.id
+         WHERE r.message_id = ?
+         ORDER BY r.created_at ASC`,
+        [messageId], (err, rows) => { if (err) reject(err); else resolve(rows); }
+      );
     });
+
+    res.json({ success: true, message: messages[0], replies: replies });
 
   } catch (error) {
     console.error('Admin get message error:', error);
@@ -5268,10 +5302,12 @@ app.put('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) => 
 
     params.push(messageId);
 
-    await db.promise().execute(
-      `UPDATE contact_messages SET ${updates.join(', ')} WHERE id = ?`,
-      params
-    );
+    await new Promise((resolve, reject) => {
+      db.query(
+        `UPDATE contact_messages SET ${updates.join(', ')} WHERE id = ?`,
+        params, (err) => { if (err) reject(err); else resolve(); }
+      );
+    });
 
     logAdminAction(adminId, req.user.username, 'UPDATE_CONTACT_MESSAGE', { 
       messageId, 
@@ -5307,23 +5343,24 @@ app.post('/api/admin/contact/message/:id', verifyAdminToken, async (req, res) =>
     }
 
     // Insert reply
-    const [result] = await db.promise().execute(
-      `INSERT INTO contact_replies (message_id, admin_id, reply_text)
-       VALUES (?, ?, ?)`,
-      [messageId, adminId, reply_text]
-    );
+    const replyResult = await new Promise((resolve, reject) => {
+      db.query(
+        `INSERT INTO contact_replies (message_id, admin_id, reply_text) VALUES (?, ?, ?)`,
+        [messageId, adminId, reply_text], (err, result) => { if (err) reject(err); else resolve(result); }
+      );
+    });
 
     // Update message status to in_progress if it's new
-    await db.promise().execute(
-      `UPDATE contact_messages 
-       SET status = CASE WHEN status = 'new' THEN 'in_progress' ELSE status END
-       WHERE id = ?`,
-      [messageId]
-    );
+    await new Promise((resolve, reject) => {
+      db.query(
+        `UPDATE contact_messages SET status = CASE WHEN status = 'new' THEN 'in_progress' ELSE status END WHERE id = ?`,
+        [messageId], (err) => { if (err) reject(err); else resolve(); }
+      );
+    });
 
     logAdminAction(adminId, req.user.username, 'REPLY_CONTACT_MESSAGE', { 
       messageId, 
-      replyId: result.insertId 
+      replyId: replyResult.insertId
     });
 
     res.json({
@@ -5359,7 +5396,7 @@ app.get('/api/admin/contact/stats', verifyAdminToken, (req, res) => {
       if (err) {
         console.error('Admin stats error:', err);
         // If table doesn't exist, return zeros
-        if (err.code === 'ER_NO_SUCH_TABLE') {
+        if (err.code === 'ER_NO_SUCH_TABLE' || err.code === '42P01') {
           return res.json({
             success: true,
             stats: {
