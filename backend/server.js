@@ -47,11 +47,16 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 4000;
 const JWT_ACCESS_SECRET  = process.env.JWT_ACCESS_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
-const ADMIN_JWT_SECRET   = process.env.ADMIN_JWT_SECRET;
-if (!JWT_ACCESS_SECRET || !JWT_REFRESH_SECRET || !ADMIN_JWT_SECRET) {
-  console.error('[FATAL] JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, and ADMIN_JWT_SECRET must be set in environment');
+if (!JWT_ACCESS_SECRET || !JWT_REFRESH_SECRET) {
+  console.error('[FATAL] JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be set in environment');
   process.exit(1);
 }
+// Admin secret: required for admin panel — auto-generated if missing (admin tokens won't persist across restarts)
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || (() => {
+  const generated = crypto.randomBytes(48).toString('base64');
+  console.warn('[SECURITY] ADMIN_JWT_SECRET not set — using random secret (admin tokens will not survive restarts)');
+  return generated;
+})();
 
 // If you serve the frontend from this server, FRONTEND_URL should be this server's origin
 // (e.g. http://localhost:4000). If your frontend is elsewhere, set it accordingly.
@@ -122,11 +127,12 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ── Security Headers ──
+// ── Security Headers (applied AFTER cors so CORS headers are preserved) ──
 app.use(helmet({
-  contentSecurityPolicy: false, // CSP handled by frontend HTML meta tags
-  crossOriginEmbedderPolicy: false, // Allow cross-origin resources (chess assets)
-  crossOriginResourcePolicy: { policy: 'cross-origin' }
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: false,
+  crossOriginResourcePolicy: false
 }));
 
 // ── Rate Limiters ──

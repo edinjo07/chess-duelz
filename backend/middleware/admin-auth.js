@@ -4,9 +4,12 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET;
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
-if (!JWT_SECRET || !ADMIN_JWT_SECRET) {
-  console.error('[FATAL] JWT secrets must be set in environment');
+if (!JWT_SECRET) {
+  console.error('[FATAL] JWT_SECRET or JWT_ACCESS_SECRET must be set in environment');
   process.exit(1);
+}
+if (!ADMIN_JWT_SECRET) {
+  console.warn('[SECURITY] ADMIN_JWT_SECRET not set — admin RBAC middleware will reject all admin-token requests');
 }
 
 /**
