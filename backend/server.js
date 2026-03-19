@@ -103,9 +103,7 @@ const ALLOWED_ORIGINS = [
   FRONTEND_URL
 ].filter(Boolean);
 
-// Explicit preflight handler — ensures OPTIONS always gets CORS headers
-// even behind reverse proxies (Railway, etc.)
-app.options('*', cors({
+const corsOptions = {
   origin: (origin, cb) => {
     if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
     cb(null, false);
@@ -113,18 +111,13 @@ app.options('*', cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+};
 
-app.use(cors({
-  origin: (origin, cb) => {
-    // Allow requests with no origin (mobile apps, curl, Postman)
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-    cb(null, false);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+// CORS must be the very first middleware — before helmet, before json parsing
+app.use(cors(corsOptions));
+
+// Explicit preflight handler for Express 5 (wildcard syntax changed from '*' to '{*path}')
+app.options('/{*path}', cors(corsOptions));
 app.use(express.json());
 
 // ── Security Headers (applied AFTER cors so CORS headers are preserved) ──
