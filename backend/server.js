@@ -2924,7 +2924,7 @@ app.post('/chess/game/end', verifyToken, (req, res) => {
                       currency: 'USD',
                       referenceType: 'chess_game',
                       referenceId: gameId,
-                      metadata: { result: winner, pot_amount: game.pot_amount }
+                      metadata: { result: gameOutcome, pot_amount: game.pot_amount }
                     }).catch(err => {
                       console.error('[CHESS GAME END] Error updating black player balance:', err);
                     });
